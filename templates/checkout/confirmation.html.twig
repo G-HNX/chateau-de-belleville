@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande confirmée - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Commande confirmée</h1>
+        <p>Merci pour votre achat !</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 700px; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">🎉</div>
+            <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); margin-bottom: 1rem;">Merci pour votre commande !</h2>
+            <p style="color: var(--color-secondary); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                Votre commande a bien été enregistrée. Vous recevrez un email de confirmation avec les détails.
+            </p>
+
+            <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; text-align: left; margin-bottom: 2rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Détails de la commande</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Référence</div>
+                        <div style="color: var(--color-primary); font-weight: 600; font-size: 1.1rem;">{{ order.reference }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Statut</div>
+                        <div style="color: var(--color-gold); font-weight: 500;">{{ order.status.label }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Date</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ order.createdAt|date('d/m/Y H:i') }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Total</div>
+                        <div style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-gold); font-weight: 600;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</div>
+                    </div>
+                </div>
+
+                <h4 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 1rem;">Articles commandés</h4>
+                {% for item in order.items %}
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--color-beige);">
+                        <div>
+                            <span style="font-weight: 500;">{{ item.wineName }}</span>
+                            <span style="color: var(--color-secondary); font-size: 0.9rem;"> x{{ item.quantity }}</span>
+                        </div>
+                        <span style="font-weight: 500;">{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="{{ path('app_home') }}" class="btn btn-secondary">Retour à l'accueil</a>
+                {% if app.user %}
+                    <a href="{{ path('app_account_orders') }}" class="btn btn-primary">Mes commandes</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

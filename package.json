@@ -1,0 +1,26 @@
+{
+  "name": "chateau-de-belleville",
+  "version": "1.0.0",
+  "description": "Site web officiel du vignoble Château de Belleville.",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i ./assets/styles/app.css -o ./public/build/app.css --watch",
+    "build": "npx @tailwindcss/cli -i ./assets/styles/app.css -o ./public/build/app.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/G-HNX/chateau-de-belleville.git"
+  },
+  "keywords": [
+    "symfony",
+    "wine",
+    "e-commerce",
+    "tailwindcss"
+  ],
+  "author": "Gabriel HENEAUX",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
+}

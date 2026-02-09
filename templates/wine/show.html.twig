@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ wine.name }} - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>{{ wine.name }}</h1>
+        <p>{% if wine.appellation %}{{ wine.appellation }}{% endif %}{% if wine.vintage %} - {{ wine.vintage }}{% endif %}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container grid-2-col" style="gap: 4rem; align-items: start;">
+            {# Image #}
+            <div class="wine-show-image" style="background: var(--color-cream); border-radius: 12px; padding: 2rem; text-align: center;">
+                {% if wine.mainImage %}
+                    <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}" style="max-height: 500px; width: auto; object-fit: contain;">
+                {% else %}
+                    <div style="font-size: 10rem; opacity: 0.3; padding: 4rem;">🍷</div>
+                {% endif %}
+            </div>
+
+            {# Details #}
+            <div class="wine-show-details">
+                {% if wine.type %}
+                    <span class="wine-badge" style="position: static; display: inline-block; margin-bottom: 1rem;">{{ wine.type.label }}</span>
+                {% endif %}
+
+                <h2 style="font-family: var(--font-display); font-size: 3rem; color: var(--color-primary); margin-bottom: 0.5rem;">{{ wine.name }}</h2>
+
+                {% if wine.appellation %}
+                    <div style="font-size: 1rem; color: var(--color-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">{{ wine.appellation }}</div>
+                {% endif %}
+
+                <div class="wine-show-price" style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); margin-bottom: 2rem;">
+                    {{ wine.formattedPrice }}
+                </div>
+
+                {% if wine.shortDescription %}
+                    <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 2rem; font-size: 1.1rem;">{{ wine.shortDescription }}</p>
+                {% endif %}
+
+                {# Characteristics #}
+                <div class="wine-characteristics">
+                    {% if wine.grapeVarieties|length > 0 %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Cépages</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.grapeVarietiesAsString }}</div>
+                        </div>
+                    {% endif %}
+                    {% if wine.servingTemperature %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Température</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.servingTemperature }}</div>
+                        </div>
+                    {% endif %}
+                    {% if wine.alcoholDegree %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Degré</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.alcoholDegree }}°</div>
+                        </div>
+                    {% endif %}
+                    {% if wine.agingPotential %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Garde</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.agingPotential }}</div>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Volume</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ wine.volumeCl }} cl</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Stock</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{% if wine.inStock %}En stock{% else %}Rupture{% endif %}</div>
+                    </div>
+                </div>
+
+                {# Add to cart #}
+                {% if wine.available %}
+                    <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" class="wine-add-form">
+                        <div class="quantity-selector">
+                            <button type="button" class="quantity-btn" onclick="this.nextElementSibling.stepDown()">-</button>
+                            <input type="number" name="quantity" class="quantity-input" value="1" min="1" max="{{ wine.stock }}">
+                            <button type="button" class="quantity-btn" onclick="this.previousElementSibling.stepUp()">+</button>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Ajouter au panier</button>
+                    </form>
+                {% else %}
+                    <p style="color: var(--color-accent); font-weight: 500;">Ce vin est actuellement indisponible.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    {# Description #}
+    {% if wine.description or wine.tastingNotes or wine.foodPairings or wine.terroir %}
+        <section class="section section-cream">
+            <div class="container">
+                {% if wine.description %}
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Description</h3>
+                        <p style="color: var(--color-secondary); line-height: 1.8;">{{ wine.description }}</p>
+                    </div>
+                {% endif %}
+
+                {% if wine.tastingNotes %}
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Notes de dégustation</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                            {% if wine.tastingNotes.visual is defined %}
+                                <div class="value-card">
+                                    <div class="value-icon">👁️</div>
+                                    <h4 class="value-title">Visuel</h4>
+                                    <p class="value-text">{{ wine.tastingNotes.visual }}</p>
+                                </div>
+                            {% endif %}
+                            {% if wine.tastingNotes.nose is defined %}
+                                <div class="value-card">
+                                    <div class="value-icon">👃</div>
+                                    <h4 class="value-title">Nez</h4>
+                                    <p class="value-text">{{ wine.tastingNotes.nose }}</p>
+                                </div>
+                            {% endif %}
+                            {% if wine.tastingNotes.palate is defined %}
+                                <div class="value-card">
+                                    <div class="value-icon">👅</div>
+                                    <h4 class="value-title">Bouche</h4>
+                                    <p class="value-text">{{ wine.tastingNotes.palate }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if wine.foodPairings %}
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Accords mets-vins</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                            {% for pairing in wine.foodPairings %}
+                                <span style="background: white; padding: 0.5rem 1.2rem; border-radius: 20px; color: var(--color-secondary); font-size: 0.9rem; box-shadow: 0 2px 10px rgba(91, 70, 56, 0.1);">{{ pairing }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if wine.terroir %}
+                    <div>
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Terroir</h3>
+                        <p style="color: var(--color-secondary); line-height: 1.8;">{{ wine.terroir }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="section section-white" style="text-align: center;">
+        <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">← Retour aux vins</a>
+    </section>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Compte - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Mon Compte</h1>
+        <p>Bienvenue, {{ app.user.firstName }} !</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {# Sidebar #}
+                {% include 'account/_sidebar.html.twig' %}
+
+                {# Dashboard #}
+                <div>
+                    <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Tableau de bord</h2>
+
+                    {# Quick Stats #}
+                    <div class="grid-3-col" style="gap: 1.5rem; margin-bottom: 3rem;">
+                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                            <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); font-weight: 700;">{{ recentOrders|length }}</div>
+                            <div style="font-size: 0.85rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px;">Commandes</div>
+                        </div>
+                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                            <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); font-weight: 700;">{{ upcomingReservations|length }}</div>
+                            <div style="font-size: 0.85rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px;">Réservations</div>
+                        </div>
+                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                            <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); font-weight: 700;">{{ app.user.firstName|first }}</div>
+                            <div style="font-size: 0.85rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px;">{{ app.user.email }}</div>
+                        </div>
+                    </div>
+
+                    {# Recent Orders #}
+                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Dernières commandes</h3>
+                    {% if recentOrders|length > 0 %}
+                        <div style="margin-bottom: 3rem;">
+                            {% for order in recentOrders|slice(0, 3) %}
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--color-beige);">
+                                    <div>
+                                        <span style="font-weight: 500; color: var(--color-primary);">{{ order.reference }}</span>
+                                        <span style="font-size: 0.85rem; color: var(--color-secondary); margin-left: 1rem;">{{ order.createdAt|date('d/m/Y') }}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; background: var(--color-cream); color: var(--color-secondary);">{{ order.status.label }}</span>
+                                        <span style="font-weight: 500;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                                        <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" style="color: var(--color-gold); text-decoration: none; font-size: 0.9rem;">Voir</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <a href="{{ path('app_account_orders') }}" style="display: inline-block; margin-top: 1rem; color: var(--color-gold); text-decoration: none; font-size: 0.9rem;">Voir toutes les commandes →</a>
+                        </div>
+                    {% else %}
+                        <p style="color: var(--color-secondary); margin-bottom: 3rem;">Aucune commande pour le moment.</p>
+                    {% endif %}
+
+                    {# Upcoming Reservations #}
+                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Prochaines réservations</h3>
+                    {% if upcomingReservations|length > 0 %}
+                        {% for reservation in upcomingReservations|slice(0, 3) %}
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--color-beige);">
+                                <div>
+                                    <span style="font-weight: 500; color: var(--color-primary);">{{ reservation.slot.tasting.name }}</span>
+                                    <span style="font-size: 0.85rem; color: var(--color-secondary); margin-left: 1rem;">{{ reservation.slot.date|date('d/m/Y') }} à {{ reservation.slot.startTime|date('H:i') }}</span>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--color-secondary);">{{ reservation.numberOfParticipants }} pers.</span>
+                            </div>
+                        {% endfor %}
+                        <a href="{{ path('app_account_reservations') }}" style="display: inline-block; margin-top: 1rem; color: var(--color-gold); text-decoration: none; font-size: 0.9rem;">Voir toutes les réservations →</a>
+                    {% else %}
+                        <p style="color: var(--color-secondary);">Aucune réservation à venir.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Connexion</h1>
+        <p>Accédez à votre espace personnel.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 500px;">
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);">
+                {% if error %}
+                    <div class="flash-message flash-error" style="position: static; margin-bottom: 1.5rem;">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="username">Email</label>
+                        <input type="email" id="username" name="_username" value="{{ last_username }}" required autofocus>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="_password" required>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <input type="checkbox" id="remember_me" name="_remember_me">
+                        <label for="remember_me" style="font-size: 0.9rem; color: var(--color-secondary); margin-bottom: 0;">Se souvenir de moi</label>
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+                </form>
+
+                <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-beige);">
+                    <p style="color: var(--color-secondary); font-size: 0.9rem;">
+                        Pas encore de compte ?
+                        <a href="{{ path('app_register') }}" style="color: var(--color-gold); text-decoration: none; font-weight: 500;">Créer un compte</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

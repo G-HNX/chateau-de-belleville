@@ -1,0 +1,17 @@
+{# Account Sidebar Navigation #}
+<div style="background: var(--color-cream); border-radius: 12px; padding: 1.5rem; position: sticky; top: 120px;">
+    <div style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-beige);">
+        <div style="width: 60px; height: 60px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-family: var(--font-display); font-size: 1.5rem; margin: 0 auto 0.75rem;">{{ app.user.firstName|first }}{{ app.user.lastName|first }}</div>
+        <div style="font-weight: 500; color: var(--color-primary);">{{ app.user.fullName }}</div>
+        <div style="font-size: 0.85rem; color: var(--color-secondary);">{{ app.user.email }}</div>
+    </div>
+    <nav style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <a href="{{ path('app_account_index') }}" style="display: block; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; color: {% if app.request.attributes.get('_route') == 'app_account_index' %}var(--color-primary); background: white; font-weight: 500;{% else %}var(--color-secondary);{% endif %}">Tableau de bord</a>
+        <a href="{{ path('app_account_orders') }}" style="display: block; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; color: {% if app.request.attributes.get('_route') starts with 'app_account_order' %}var(--color-primary); background: white; font-weight: 500;{% else %}var(--color-secondary);{% endif %}">Mes commandes</a>
+        <a href="{{ path('app_account_reservations') }}" style="display: block; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; color: {% if app.request.attributes.get('_route') == 'app_account_reservations' %}var(--color-primary); background: white; font-weight: 500;{% else %}var(--color-secondary);{% endif %}">Mes réservations</a>
+        <a href="{{ path('app_account_profile') }}" style="display: block; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; color: {% if app.request.attributes.get('_route') == 'app_account_profile' %}var(--color-primary); background: white; font-weight: 500;{% else %}var(--color-secondary);{% endif %}">Mon profil</a>
+        <a href="{{ path('app_account_password') }}" style="display: block; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; color: {% if app.request.attributes.get('_route') == 'app_account_password' %}var(--color-primary); background: white; font-weight: 500;{% else %}var(--color-secondary);{% endif %}">Mot de passe</a>
+        <div style="height: 1px; background: var(--color-beige); margin: 0.5rem 0;"></div>
+        <a href="{{ path('app_logout') }}" style="display: block; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; color: var(--color-accent);">Déconnexion</a>
+    </nav>
+</div>

@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ tasting.name }} - Dégustations - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>{{ tasting.name }}</h1>
+        <p>{{ tasting.formattedPrice }} — Durée : {{ tasting.formattedDuration }}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-2-col" style="gap: 4rem; align-items: start;">
+                {# Description #}
+                <div>
+                    <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">{{ tasting.name }}</h2>
+
+                    <div style="font-family: var(--font-display); font-size: 2rem; color: var(--color-gold); margin-bottom: 2rem;">
+                        {{ tasting.formattedPrice }}
+                    </div>
+
+                    {% if tasting.description %}
+                        <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 2rem;">{{ tasting.description }}</p>
+                    {% endif %}
+
+                    {% if tasting.includedItems %}
+                        <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Inclus dans cette formule</h3>
+                        <ul style="list-style: none; margin-bottom: 2rem;">
+                            {% for item in tasting.includedItems %}
+                                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--color-beige); color: var(--color-secondary); display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="color: var(--color-gold); font-weight: bold;">✓</span>
+                                    {{ item }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1.5rem; background: var(--color-cream); border-radius: 8px;">
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Durée</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ tasting.formattedDuration }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Participants</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ tasting.minParticipants }} - {{ tasting.maxParticipants }} pers.</div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Available Slots #}
+                <div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Créneaux disponibles</h3>
+                    {% if availableSlots|length > 0 %}
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            {% for slot in availableSlots %}
+                                <div class="slot-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.1); display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 500; color: var(--color-primary); margin-bottom: 0.3rem;">
+                                            {{ slot.date|date('l d F Y') }}
+                                        </div>
+                                        <div style="font-size: 0.9rem; color: var(--color-secondary);">
+                                            {{ slot.startTime|date('H:i') }} - {{ slot.endTime|date('H:i') }}
+                                            — {{ slot.remainingSpots }} place{{ slot.remainingSpots > 1 ? 's' : '' }} restante{{ slot.remainingSpots > 1 ? 's' : '' }}
+                                        </div>
+                                    </div>
+                                    <a href="{{ path('app_tasting_reserve', {slug: tasting.slug, slotId: slot.id}) }}" class="btn btn-primary btn-sm">Réserver</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 3rem; background: var(--color-cream); border-radius: 8px;">
+                            <p style="color: var(--color-secondary);">Aucun créneau disponible pour le moment.</p>
+                            <p style="color: var(--color-accent); font-size: 0.9rem; margin-top: 0.5rem;">Revenez bientôt ou contactez-nous.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-cream" style="text-align: center;">
+        <a href="{{ path('app_tasting_index') }}" class="btn btn-secondary">← Retour aux dégustations</a>
+    </section>
+{% endblock %}

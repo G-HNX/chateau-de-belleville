@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Finaliser la commande</h1>
+        <p>Renseignez vos informations pour valider votre achat.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <form method="post" action="{{ path('app_checkout_process') }}">
+                <div class="grid-checkout">
+                    {# Form #}
+                    <div>
+                        {# Contact Info #}
+                        {% if not app.user %}
+                            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
+                                <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Vos coordonnées</h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="firstName">Prénom *</label>
+                                        <input type="text" id="firstName" name="firstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName">Nom *</label>
+                                        <input type="text" id="lastName" name="lastName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email *</label>
+                                        <input type="email" id="email" name="email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Téléphone</label>
+                                        <input type="tel" id="phone" name="phone">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Billing Address #}
+                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
+                            <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Adresse de facturation</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="billing_firstName">Prénom *</label>
+                                    <input type="text" id="billing_firstName" name="billing_firstName" value="{{ app.user ? app.user.firstName : '' }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="billing_lastName">Nom *</label>
+                                    <input type="text" id="billing_lastName" name="billing_lastName" value="{{ app.user ? app.user.lastName : '' }}" required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="billing_street">Adresse *</label>
+                                    <input type="text" id="billing_street" name="billing_street" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="billing_zipCode">Code postal *</label>
+                                    <input type="text" id="billing_zipCode" name="billing_zipCode" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="billing_city">Ville *</label>
+                                    <input type="text" id="billing_city" name="billing_city" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Shipping Address #}
+                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
+                            <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Adresse de livraison</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="shipping_firstName">Prénom *</label>
+                                    <input type="text" id="shipping_firstName" name="shipping_firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="shipping_lastName">Nom *</label>
+                                    <input type="text" id="shipping_lastName" name="shipping_lastName" required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="shipping_street">Adresse *</label>
+                                    <input type="text" id="shipping_street" name="shipping_street" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="shipping_zipCode">Code postal *</label>
+                                    <input type="text" id="shipping_zipCode" name="shipping_zipCode" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="shipping_city">Ville *</label>
+                                    <input type="text" id="shipping_city" name="shipping_city" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Notes #}
+                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08);">
+                            <div class="form-group">
+                                <label for="notes">Notes de commande (optionnel)</label>
+                                <textarea id="notes" name="notes" placeholder="Instructions de livraison, message..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Order Summary #}
+                    <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; position: sticky; top: 120px;">
+                        <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Récapitulatif</h3>
+                        {% for item in cart.items %}
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--color-beige);">
+                                <div>
+                                    <div style="font-weight: 500; color: var(--color-primary);">{{ item.wine.name }}</div>
+                                    <div style="font-size: 0.85rem; color: var(--color-secondary);">x{{ item.quantity }}</div>
+                                </div>
+                                <div style="font-weight: 500;">{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</div>
+                            </div>
+                        {% endfor %}
+
+                        <div style="margin-top: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span style="color: var(--color-secondary);">Sous-total</span>
+                                <span>{{ (cart.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span style="color: var(--color-secondary);">Livraison</span>
+                                <span>{% if cart.totalInCents >= 15000 %}Offerte{% else %}À calculer{% endif %}</span>
+                            </div>
+                            <div style="height: 1px; background: var(--color-beige); margin: 1rem 0;"></div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);">Total</span>
+                                <span style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold); font-weight: 600;">{{ (cart.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1.5rem;">Valider la commande</button>
+                        <a href="{{ path('app_cart_index') }}" style="display: block; text-align: center; margin-top: 1rem; color: var(--color-secondary); text-decoration: none; font-size: 0.9rem;">← Retour au panier</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

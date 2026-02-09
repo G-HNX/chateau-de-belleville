@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande {{ order.reference }} - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Commande {{ order.reference }}</h1>
+        <p>{{ order.createdAt|date('d/m/Y à H:i') }} — {{ order.status.label }}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {% include 'account/_sidebar.html.twig' %}
+
+                <div>
+                    {# Order Info #}
+                    <div class="grid-2-col" style="margin-bottom: 2rem;">
+                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.75rem;">Adresse de livraison</h4>
+                            {% if order.shippingAddress %}
+                                <p style="color: var(--color-secondary); line-height: 1.6;">
+                                    {{ order.shippingAddress.firstName ?? '' }} {{ order.shippingAddress.lastName ?? '' }}<br>
+                                    {{ order.shippingAddress.street ?? '' }}<br>
+                                    {{ order.shippingAddress.zipCode ?? '' }} {{ order.shippingAddress.city ?? '' }}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.75rem;">Adresse de facturation</h4>
+                            {% if order.billingAddress %}
+                                <p style="color: var(--color-secondary); line-height: 1.6;">
+                                    {{ order.billingAddress.firstName ?? '' }} {{ order.billingAddress.lastName ?? '' }}<br>
+                                    {{ order.billingAddress.street ?? '' }}<br>
+                                    {{ order.billingAddress.zipCode ?? '' }} {{ order.billingAddress.city ?? '' }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# Order Items #}
+                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Articles</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-beige);">
+                                <th style="padding: 0.75rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Produit</th>
+                                <th style="padding: 0.75rem; text-align: center; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Qté</th>
+                                <th style="padding: 0.75rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Prix unitaire</th>
+                                <th style="padding: 0.75rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                                <tr style="border-bottom: 1px solid var(--color-beige);">
+                                    <td style="padding: 0.75rem; font-weight: 500; color: var(--color-primary);">{{ item.wineName }}</td>
+                                    <td style="padding: 0.75rem; text-align: center; color: var(--color-secondary);">{{ item.quantity }}</td>
+                                    <td style="padding: 0.75rem; text-align: right; color: var(--color-secondary);">{{ (item.unitPriceInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                                    <td style="padding: 0.75rem; text-align: right; font-weight: 500;">{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    {# Totals #}
+                    <div style="max-width: 350px; margin-left: auto;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span style="color: var(--color-secondary);">Sous-total HT</span>
+                            <span>{{ (order.subtotalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span style="color: var(--color-secondary);">TVA (20%)</span>
+                            <span>{{ (order.taxInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span style="color: var(--color-secondary);">Livraison</span>
+                            <span>{{ (order.shippingInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                        <div style="height: 1px; background: var(--color-beige); margin: 0.5rem 0;"></div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary);">Total TTC</span>
+                            <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-gold); font-weight: 600;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <a href="{{ path('app_account_orders') }}" class="btn btn-secondary">← Retour aux commandes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

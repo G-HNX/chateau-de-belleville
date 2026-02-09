@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Vins - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Nos Vins</h1>
+        <p>Découvrez notre gamme complète de vins d'Anjou, élaborés avec passion et savoir-faire.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    {# Filters #}
+    <section style="padding: 2rem 5%; background: white; border-bottom: 1px solid var(--color-beige);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="{{ path('app_wine_index') }}" class="filter-btn{% if currentFilters is empty %} active{% endif %}">Tous</a>
+            {% for type in wineTypes %}
+                <a href="{{ path('app_wine_index', {type: type.value}) }}" class="filter-btn{% if currentFilters.type is defined and currentFilters.type == type %} active{% endif %}">{{ type.label }}s</a>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# Wine Grid #}
+    <section style="padding: 4rem 5%; background: white;">
+        <div class="container-lg grid-product">
+            {% for wine in wines %}
+                <div class="wine-card">
+                    <div class="wine-image">
+                        {% if wine.type %}
+                            <span class="wine-badge">{{ wine.type.label }}</span>
+                        {% endif %}
+                        {% if wine.mainImage %}
+                            <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}">
+                        {% else %}
+                            <div style="font-size: 6rem; opacity: 0.3;">🍷</div>
+                        {% endif %}
+                    </div>
+                    <div class="wine-content">
+                        <h3 class="wine-name">{{ wine.name }}</h3>
+                        <div class="wine-type">
+                            {% if wine.appellation %}{{ wine.appellation }}{% endif %}
+                            {% if wine.grapeVarieties|length > 0 %} - {{ wine.grapeVarietiesAsString }}{% endif %}
+                        </div>
+                        <p class="wine-desc">{{ wine.shortDescription }}</p>
+                        <div class="wine-details">
+                            {% if wine.grapeVarieties|length > 0 %}
+                                <div class="wine-detail">
+                                    <span>🍇</span>
+                                    <span>{{ wine.grapeVarietiesAsString }}</span>
+                                </div>
+                            {% endif %}
+                            {% if wine.servingTemperature %}
+                                <div class="wine-detail">
+                                    <span>🌡️</span>
+                                    <span>{{ wine.servingTemperature }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="wine-actions">
+                            <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="btn btn-outline">Détails</a>
+                            {% if wine.available %}
+                                <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" style="flex: 1;">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-primary" style="width: 100%;">Acheter</button>
+                                </form>
+                            {% else %}
+                                <span class="btn btn-outline" style="opacity: 0.5; cursor: default;">Indisponible</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+                    <p style="color: var(--color-secondary); font-size: 1.1rem;">Aucun vin ne correspond à vos critères.</p>
+                    <a href="{{ path('app_wine_index') }}" class="btn btn-secondary" style="margin-top: 1rem;">Voir tous les vins</a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

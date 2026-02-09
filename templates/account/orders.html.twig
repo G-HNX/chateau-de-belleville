@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Commandes - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Mes Commandes</h1>
+        <p>Retrouvez l'historique de toutes vos commandes.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {% include 'account/_sidebar.html.twig' %}
+
+                <div>
+                    <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Historique des commandes</h2>
+                    {% if orders|length > 0 %}
+                        <div class="responsive-table">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--color-beige);">
+                                        <th style="padding: 1rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Référence</th>
+                                        <th style="padding: 1rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Date</th>
+                                        <th style="padding: 1rem; text-align: center; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Statut</th>
+                                        <th style="padding: 1rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Total</th>
+                                        <th style="padding: 1rem; text-align: center; width: 80px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                        <tr style="border-bottom: 1px solid var(--color-beige);">
+                                            <td style="padding: 1rem; font-weight: 500; color: var(--color-primary);">{{ order.reference }}</td>
+                                            <td style="padding: 1rem; color: var(--color-secondary);">{{ order.createdAt|date('d/m/Y') }}</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; background: var(--color-cream); color: var(--color-secondary);">{{ order.status.label }}</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right; font-weight: 500;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" class="btn btn-outline btn-sm">Détails</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 3rem; background: var(--color-cream); border-radius: 8px;">
+                            <p style="color: var(--color-secondary); margin-bottom: 1rem;">Vous n'avez pas encore passé de commande.</p>
+                            <a href="{{ path('app_wine_index') }}" class="btn btn-primary">Découvrir nos vins</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

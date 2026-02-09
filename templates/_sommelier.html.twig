@@ -1,0 +1,43 @@
+{# Widget Sommelier IA #}
+<div data-controller="sommelier">
+    <button class="sommelier-toggle"
+            data-sommelier-target="toggle"
+            data-action="sommelier#togglePanel"
+            aria-label="Ouvrir le sommelier IA">
+        🍷
+    </button>
+
+    <div class="sommelier-panel" data-sommelier-target="panel">
+        <div class="sommelier-header">
+            <div class="sommelier-header-info">
+                <div class="sommelier-avatar">🍷</div>
+                <div class="sommelier-header-text">
+                    <h3>Sommelier IA</h3>
+                    <p>Je vous guide dans vos choix</p>
+                </div>
+            </div>
+            <button class="sommelier-close" data-action="sommelier#close" aria-label="Fermer">✕</button>
+        </div>
+
+        <div class="sommelier-messages" data-sommelier-target="messages">
+            <div class="sommelier-msg bot">
+                Bonjour ! Je suis le sommelier virtuel du Château de Belleville. Comment puis-je vous aider aujourd'hui ?
+            </div>
+        </div>
+
+        <div class="sommelier-suggestions" data-sommelier-target="suggestions">
+            <button class="sommelier-suggestion" data-action="sommelier#suggest">Quel vin avec du poisson&nbsp;?</button>
+            <button class="sommelier-suggestion" data-action="sommelier#suggest">Recommandez-moi un rouge</button>
+            <button class="sommelier-suggestion" data-action="sommelier#suggest">Parlez-moi de vos dégustations</button>
+        </div>
+
+        <div class="sommelier-input">
+            <input type="text"
+                   placeholder="Votre question..."
+                   data-sommelier-target="input"
+                   data-action="keydown->sommelier#handleKeydown"
+                   autocomplete="off">
+            <button class="sommelier-send" data-action="sommelier#send" aria-label="Envoyer">➤</button>
+        </div>
+    </div>
+</div>

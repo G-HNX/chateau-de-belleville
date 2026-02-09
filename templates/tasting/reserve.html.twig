@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver - {{ tasting.name }} - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Réserver</h1>
+        <p>{{ tasting.name }} — {{ slot.date|date('d/m/Y') }} à {{ slot.startTime|date('H:i') }}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 800px;">
+            {# Recap #}
+            <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Récapitulatif</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Formule</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ tasting.name }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Prix</span>
+                        <div style="color: var(--color-gold); font-weight: 500;">{{ tasting.formattedPrice }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Date</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ slot.date|date('d/m/Y') }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Horaire</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ slot.startTime|date('H:i') }} - {{ slot.endTime|date('H:i') }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Places restantes</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ slot.remainingSpots }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {# Form #}
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);">
+                <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem; text-align: center;">Vos informations</h2>
+                <form method="post" class="form-grid">
+                    <div class="form-group">
+                        <label for="lastName">Nom *</label>
+                        <input type="text" id="lastName" name="lastName" value="{{ reservation.lastName }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">Prénom *</label>
+                        <input type="text" id="firstName" name="firstName" value="{{ reservation.firstName }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" value="{{ reservation.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Téléphone *</label>
+                        <input type="tel" id="phone" name="phone" value="{{ reservation.phone }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="numberOfParticipants">Nombre de participants *</label>
+                        <select id="numberOfParticipants" name="numberOfParticipants" required>
+                            {% for i in tasting.minParticipants..min(tasting.maxParticipants, slot.remainingSpots) %}
+                                <option value="{{ i }}" {% if reservation.numberOfParticipants == i %}selected{% endif %}>{{ i }} personne{{ i > 1 ? 's' : '' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="message">Message (optionnel)</label>
+                        <textarea id="message" name="message" placeholder="Allergies alimentaires, occasion spéciale, questions...">{{ reservation.message }}</textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Confirmer la réservation</button>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dégustations - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Dégustations</h1>
+        <p>Venez découvrir nos vins et notre savoir-faire lors d'une visite guidée de notre domaine.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    {# Formules #}
+    <section class="section section-white">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center;">Nos Formules</h2>
+            <p style="color: var(--color-secondary); text-align: center; max-width: 700px; margin: 0 auto 3rem; line-height: 1.8;">
+                Choisissez l'expérience qui vous correspond parmi nos formules de dégustation,
+                adaptées à tous les amateurs de vin.
+            </p>
+
+            <div class="grid-3-col" style="margin-bottom: 4rem;">
+                {% for tasting in tastings %}
+                    <div class="formule-card{% if loop.index == 2 %} featured{% endif %}">
+                        <div class="formule-header">
+                            {% if loop.index == 2 %}
+                                <span class="formule-badge">Populaire</span>
+                            {% endif %}
+                            <h3>{{ tasting.name }}</h3>
+                            <div class="formule-price">
+                                {% if tasting.free %}
+                                    Gratuit
+                                {% else %}
+                                    {{ tasting.price|number_format(0, ',', ' ') }}€ <span>/ personne</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="formule-body">
+                            {% if tasting.includedItems %}
+                                <ul>
+                                    {% for item in tasting.includedItems %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <div class="formule-duration">⏱ Durée : {{ tasting.formattedDuration }}</div>
+                        <div style="padding: 1.5rem; text-align: center;">
+                            <a href="{{ path('app_tasting_show', {slug: tasting.slug}) }}" class="btn btn-primary btn-full">Voir les créneaux</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {# Infos Pratiques #}
+    <section class="section section-cream">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center;">Informations Pratiques</h2>
+            <div class="grid-4-col" style="margin-top: 3rem;">
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">📅</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.5rem;">Horaires</h3>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.6;">
+                        Du lundi au samedi<br>
+                        10h - 12h30 / 14h - 18h<br>
+                        Fermé dimanche et jours fériés
+                    </p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">👥</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.5rem;">Groupes</h3>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.6;">
+                        Minimum 2 personnes<br>
+                        Maximum 15 personnes<br>
+                        Sur réservation uniquement
+                    </p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🚗</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.5rem;">Accès</h3>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.6;">
+                        Parking gratuit<br>
+                        Accessible PMR<br>
+                        À 5 min de Thouars
+                    </p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎁</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.5rem;">Bon à savoir</h3>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.6;">
+                        Chèques cadeaux disponibles<br>
+                        Animaux acceptés<br>
+                        Paiement CB accepté
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

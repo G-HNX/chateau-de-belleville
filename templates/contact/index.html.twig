@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Contact</h1>
+        <p>Une question, une commande ou une réservation ? N'hésitez pas à nous contacter.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-contact">
+                {# Contact Info #}
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div class="contact-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(91, 70, 56, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 50px; height: 50px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📍</div>
+                            <h3 style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);">Adresse</h3>
+                        </div>
+                        <p style="color: var(--color-secondary); line-height: 1.8;">
+                            Château de Belleville<br>
+                            36 rue de la Garde<br>
+                            79100 Sainte-Verge<br>
+                            France
+                        </p>
+                    </div>
+
+                    <div class="contact-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(91, 70, 56, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 50px; height: 50px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📞</div>
+                            <h3 style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);">Téléphone & Email</h3>
+                        </div>
+                        <a href="tel:+33670327488" style="color: var(--color-secondary); text-decoration: none; display: block; line-height: 1.8;">06 70 32 74 88</a>
+                        <a href="mailto:chateaudebelleville@gmail.com" style="color: var(--color-secondary); text-decoration: none; display: block; line-height: 1.8;">chateaudebelleville@gmail.com</a>
+                    </div>
+
+                    <div class="contact-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(91, 70, 56, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 50px; height: 50px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🕐</div>
+                            <h3 style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);">Horaires d'ouverture</h3>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--color-beige);">
+                                <span style="color: var(--color-primary); font-weight: 500;">Vendredis</span>
+                                <span style="color: var(--color-secondary);">10h-12h / 15h-18h30</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                                <span style="color: var(--color-primary); font-weight: 500;">Autres jours</span>
+                                <span style="color: var(--color-accent);">Sur rendez-vous</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Contact Form #}
+                <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(91, 70, 56, 0.1);">
+                    <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Envoyez-nous un message</h2>
+                    <form method="post" class="form-grid">
+                        <div class="form-group">
+                            <label for="nom">Nom *</label>
+                            <input type="text" id="nom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom">Prénom *</label>
+                            <input type="text" id="prenom" name="prenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telephone">Téléphone</label>
+                            <input type="tel" id="telephone" name="telephone">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="sujet">Sujet *</label>
+                            <select id="sujet" name="sujet" required>
+                                <option value="">Sélectionnez un sujet</option>
+                                <option value="commande">Question sur une commande</option>
+                                <option value="reservation">Réservation dégustation</option>
+                                <option value="produit">Information produit</option>
+                                <option value="partenariat">Partenariat professionnel</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="message">Votre message *</label>
+                            <textarea id="message" name="message" placeholder="Écrivez votre message ici..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Envoyer le message</button>
+                    </form>
+                </div>
+            </div>
+
+            {# Map #}
+            <div style="margin-top: 3rem;">
+                <div style="width: 100%; height: 350px; background: linear-gradient(135deg, var(--color-beige), var(--color-cream)); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
+                    <span style="font-size: 4rem;">🗺️</span>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem;">Carte interactive</p>
+                </div>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p style="color: var(--color-secondary); line-height: 1.8;"><strong>Château de Belleville</strong> — 36 rue de la Garde, 79100 Sainte-Verge</p>
+                    <a href="https://www.google.com/maps/search/36+rue+de+la+garde+sainte-verge+79100" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--color-gold); color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                        📍 Obtenir l'itinéraire
+                    </a>
+                </div>
+            </div>
+
+            {# Social #}
+            <div style="text-align: center; padding: 3rem; background: var(--color-cream); border-radius: 12px; margin-top: 3rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Suivez-nous</h3>
+                <div style="display: flex; justify-content: center; gap: 1.5rem;">
+                    <a href="#" style="width: 50px; height: 50px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.1);">📘</a>
+                    <a href="#" style="width: 50px; height: 50px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.1);">📷</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

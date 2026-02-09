@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Château de Belleville - Vins d'Anjou{% endblock %}
+
+{% block header %}
+    <section class="hero">
+        <div class="container-lg grid-2-col" style="padding: 0 5%; gap: 4rem; align-items: center; position: relative; z-index: 1;">
+            <div class="hero-content">
+                <img src="{{ asset('images/logo.jpg') }}" alt="Logo Château de Belleville" style="width: 180px; height: auto; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 8px 30px rgba(91, 70, 56, 0.25);">
+                <div style="font-size: 0.95rem; font-weight: 500; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 1rem;">Vignoble Paysan</div>
+                <h1 class="hero-title">L'Excellence<br>des Vins d'Anjou</h1>
+                <p class="hero-description">
+                    Découvrez nos cuvées artisanales, fruit d'un savoir-faire traditionnel
+                    et d'une passion pour le terroir depuis plusieurs générations.
+                </p>
+                <div class="hero-buttons">
+                    <a href="{{ path('app_wine_index') }}" class="btn btn-primary">Découvrir nos vins</a>
+                    <a href="{{ path('app_tasting_index') }}" class="btn btn-secondary">Réserver une dégustation</a>
+                </div>
+            </div>
+            <div class="hero-stats" style="display: flex; flex-direction: column; gap: 2rem; animation: slideInRight 1s ease-out;">
+                <div class="hero-stat" style="background: white; padding: 2rem 3rem; border-radius: 8px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.15); display: flex; align-items: center; gap: 1.5rem;">
+                    <div class="hero-stat-number" style="font-family: var(--font-display); font-size: 4rem; font-weight: 700; color: var(--color-gold); line-height: 1;">6</div>
+                    <div class="hero-stat-label" style="font-size: 1rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4;">Cuvées<br>d'exception</div>
+                </div>
+                <div class="hero-stat" style="background: white; padding: 2rem 3rem; border-radius: 8px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.15); display: flex; align-items: center; gap: 1.5rem;">
+                    <div class="hero-stat-number" style="font-family: var(--font-display); font-size: 4rem; font-weight: 700; color: var(--color-gold); line-height: 1;">15</div>
+                    <div class="hero-stat-label" style="font-size: 1rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4;">Hectares<br>de vignes</div>
+                </div>
+                <div class="hero-stat" style="background: white; padding: 2rem 3rem; border-radius: 8px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.15); display: flex; align-items: center; gap: 1.5rem;">
+                    <div class="hero-stat-number" style="font-family: var(--font-display); font-size: 4rem; font-weight: 700; color: var(--color-gold); line-height: 1;">3</div>
+                    <div class="hero-stat-label" style="font-size: 1rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4;">Générations<br>de passion</div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block body %}
+    {# Collection Section #}
+    <section class="section section-white" style="position: relative;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--color-gold), transparent);"></div>
+        <div class="section-header">
+            <div class="section-subtitle">Notre Gamme</div>
+            <h2 class="section-title">Nos Cuvées d'Exception</h2>
+            <p class="section-description">
+                Une sélection de vins d'Anjou élaborés avec passion, reflétant l'authenticité
+                de notre terroir et notre engagement pour la qualité.
+            </p>
+        </div>
+        <div class="container-lg grid-product" style="gap: 3rem;">
+            {% for wine in featuredWines %}
+                <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="wine-card" style="text-decoration: none;">
+                    <div class="wine-image">
+                        {% if wine.mainImage %}
+                            <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}">
+                        {% else %}
+                            <div style="font-size: 6rem; opacity: 0.3;">🍷</div>
+                        {% endif %}
+                        {% if wine.type %}
+                            <span class="wine-badge">{{ wine.type.label }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="wine-content">
+                        <h3 class="wine-name">{{ wine.name }}</h3>
+                        {% if wine.appellation %}
+                            <div class="wine-type">{{ wine.appellation }}</div>
+                        {% endif %}
+                        <p class="wine-desc">{{ wine.shortDescription }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">Voir tous nos vins</a>
+        </div>
+    </section>
+
+    {# Features Section #}
+    <section class="section section-dark section-padded">
+        <div class="section-header">
+            <div class="section-subtitle">Expérience Unique</div>
+            <h2 class="section-title">Un Site à Votre Service</h2>
+            <p class="section-description">
+                Découvrez toutes les fonctionnalités qui rendront votre expérience
+                simple, fluide et personnalisée.
+            </p>
+        </div>
+        <div class="container-lg grid-3-col">
+            <div style="background: rgba(245, 242, 237, 0.05); padding: 3rem; border-radius: 4px; border: 1px solid rgba(245, 242, 237, 0.1);">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">🛒</div>
+                <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-cream);">Boutique en Ligne</h3>
+                <p style="line-height: 1.8; color: var(--color-beige);">Commandez vos vins préférés en toute sécurité, avec suivi de commande et livraison à domicile.</p>
+            </div>
+            <div style="background: rgba(245, 242, 237, 0.05); padding: 3rem; border-radius: 4px; border: 1px solid rgba(245, 242, 237, 0.1);">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">📅</div>
+                <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-cream);">Réservation en Ligne</h3>
+                <p style="line-height: 1.8; color: var(--color-beige);">Réservez votre dégustation en quelques clics avec confirmation automatique.</p>
+            </div>
+            <div style="background: rgba(245, 242, 237, 0.05); padding: 3rem; border-radius: 4px; border: 1px solid rgba(245, 242, 237, 0.1);">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">👤</div>
+                <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-cream);">Espace Personnel</h3>
+                <p style="line-height: 1.8; color: var(--color-beige);">Accédez à votre historique d'achats et gérez vos réservations.</p>
+            </div>
+        </div>
+    </section>
+
+    {# Tastings Section #}
+    {% if tastings|length > 0 %}
+        <section class="section section-cream">
+            <div class="section-header">
+                <div class="section-subtitle">Vivez l'expérience</div>
+                <h2 class="section-title">Nos Dégustations</h2>
+                <p class="section-description">
+                    Choisissez l'expérience qui vous correspond parmi nos formules de dégustation.
+                </p>
+            </div>
+            <div class="container grid-3-col">
+                {% for tasting in tastings %}
+                    <div class="formule-card{% if loop.index == 2 %} featured{% endif %}">
+                        <div class="formule-header">
+                            {% if loop.index == 2 %}
+                                <span class="formule-badge">Populaire</span>
+                            {% endif %}
+                            <h3>{{ tasting.name }}</h3>
+                            <div class="formule-price">
+                                {% if tasting.free %}
+                                    Gratuit
+                                {% else %}
+                                    {{ tasting.price|number_format(0, ',', ' ') }}€ <span>/ personne</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="formule-body">
+                            {% if tasting.includedItems %}
+                                <ul>
+                                    {% for item in tasting.includedItems %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <div class="formule-duration">⏱ Durée : {{ tasting.formattedDuration }}</div>
+                        <div style="padding: 1.5rem; text-align: center;">
+                            <a href="{{ path('app_tasting_show', {slug: tasting.slug}) }}" class="btn btn-primary btn-full">Réserver</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}
