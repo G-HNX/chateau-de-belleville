@@ -50,6 +50,7 @@
                                     </td>
                                     <td style="padding: 1.5rem 1rem; text-align: center;">
                                         <form action="{{ path('app_cart_update', {id: item.id}) }}" method="post" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('cart_update') }}">
                                             <div class="quantity-selector">
                                                 <button type="submit" name="quantity" value="{{ item.quantity - 1 }}" class="quantity-btn" {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
                                                 <input type="number" name="quantity" class="quantity-input" value="{{ item.quantity }}" min="1" max="{{ item.wine.stock }}" onchange="this.form.submit()">
@@ -62,6 +63,7 @@
                                     </td>
                                     <td style="padding: 1.5rem 0.5rem; text-align: center;">
                                         <form action="{{ path('app_cart_remove', {id: item.id}) }}" method="post">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('cart_remove') }}">
                                             <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--color-accent);" title="Retirer">✕</button>
                                         </form>
                                     </td>
@@ -76,6 +78,7 @@
                     <div style="display: flex; gap: 1rem;">
                         <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">Continuer mes achats</a>
                         <form action="{{ path('app_cart_clear') }}" method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('cart_clear') }}">
                             <button type="submit" class="btn btn-outline" onclick="return confirm('Vider tout le panier ?')">Vider le panier</button>
                         </form>
                     </div>

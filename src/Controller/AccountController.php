@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Form\ChangePasswordType;
+use App\Form\ProfileType;
 use App\Repository\Booking\ReservationRepository;
 use App\Repository\Order\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,21 +68,20 @@ class AccountController extends AbstractController
     public function profile(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
+        $form = $this->createForm(ProfileType::class, $user);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('POST')) {
-            $user->setFirstName($request->request->get('firstName', ''));
-            $user->setLastName($request->request->get('lastName', ''));
-            $user->setPhone($request->request->get('phone'));
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
 
-            $this->addFlash('success', 'Profil mis a jour.');
+            $this->addFlash('success', 'Profil mis à jour.');
 
             return $this->redirectToRoute('app_account_profile');
         }
 
         return $this->render('account/profile.html.twig', [
             'user' => $user,
+            'form' => $form,
         ]);
     }
 
@@ -91,11 +92,11 @@ class AccountController extends AbstractController
         EntityManagerInterface $em,
     ): Response {
         $user = $this->getUser();
+        $form = $this->createForm(ChangePasswordType::class);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('POST')) {
-            $currentPassword = $request->request->get('currentPassword', '');
-            $newPassword = $request->request->get('newPassword', '');
-            $confirmPassword = $request->request->get('confirmPassword', '');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $currentPassword = $form->get('currentPassword')->getData();
 
             if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
                 $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
@@ -103,26 +104,17 @@ class AccountController extends AbstractController
                 return $this->redirectToRoute('app_account_password');
             }
 
-            if ($newPassword !== $confirmPassword) {
-                $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
-
-                return $this->redirectToRoute('app_account_password');
-            }
-
-            if (strlen($newPassword) < 6) {
-                $this->addFlash('error', 'Le mot de passe doit contenir au moins 6 caracteres.');
-
-                return $this->redirectToRoute('app_account_password');
-            }
-
+            $newPassword = $form->get('newPassword')->getData();
             $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
             $em->flush();
 
-            $this->addFlash('success', 'Mot de passe modifie.');
+            $this->addFlash('success', 'Mot de passe modifié.');
 
             return $this->redirectToRoute('app_account_index');
         }
 
-        return $this->render('account/password.html.twig');
+        return $this->render('account/password.html.twig', [
+            'form' => $form,
+        ]);
     }
 }

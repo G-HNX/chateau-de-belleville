@@ -79,13 +79,15 @@
 
                 {# Add to cart #}
                 {% if wine.available %}
-                    <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" class="wine-add-form">
+                    <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" class="wine-add-form"
+                          data-controller="cart-add" data-action="submit->cart-add#add">
+                        <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
                         <div class="quantity-selector">
                             <button type="button" class="quantity-btn" onclick="this.nextElementSibling.stepDown()">-</button>
                             <input type="number" name="quantity" class="quantity-input" value="1" min="1" max="{{ wine.stock }}">
                             <button type="button" class="quantity-btn" onclick="this.previousElementSibling.stepUp()">+</button>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">Ajouter au panier</button>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;" data-cart-add-target="button">Ajouter au panier</button>
                     </form>
                 {% else %}
                     <p style="color: var(--color-accent); font-weight: 500;">Ce vin est actuellement indisponible.</p>
@@ -154,6 +156,98 @@
             </div>
         </section>
     {% endif %}
+
+    {# Reviews #}
+    <section class="section section-white" id="avis">
+        <div class="container">
+            <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1.5rem;">Avis clients</h3>
+
+            {# Summary #}
+            {% if reviews|length > 0 %}
+                <div class="review-summary">
+                    <span class="review-summary-score">{{ wine.averageRating|number_format(1, ',') }}</span>
+                    <div>
+                        <div class="review-summary-stars">
+                            {% for i in 1..5 %}
+                                <span{% if i > wine.averageRating|round %} class="star-empty"{% endif %}>&#9733;</span>
+                            {% endfor %}
+                        </div>
+                        <span class="review-summary-count">{{ reviews|length }} avis</span>
+                    </div>
+                </div>
+
+                {% for review in reviews %}
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div>
+                                <span class="review-author">{{ review.user.firstName }} {{ review.user.lastName|slice(0, 1) }}.</span>
+                                {% if review.user.id in purchaserIds %}
+                                    <span class="review-verified-badge">&#10003; Achat vérifié</span>
+                                {% endif %}
+                                <span class="review-date">{{ review.createdAt|date('d/m/Y') }}</span>
+                            </div>
+                            <div class="review-stars">
+                                {% for i in 1..5 %}
+                                    <span{% if i > review.rating %} class="star-empty"{% endif %}>&#9733;</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if review.title %}
+                            <div class="review-title">{{ review.title }}</div>
+                        {% endif %}
+                        {% if review.content %}
+                            <p class="review-content">{{ review.content }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: var(--color-secondary); margin-bottom: 2rem;">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+            {% endif %}
+
+            {# Review form #}
+            {% if reviewForm %}
+                <div class="review-form">
+                    <h3>Laisser un avis</h3>
+                    {{ form_start(reviewForm, {attr: {novalidate: 'novalidate'}}) }}
+                        <div class="form-group">
+                            {{ form_label(reviewForm.rating) }}
+                            <div class="star-rating-input" data-controller="star-rating">
+                                {% for i in 1..5 %}
+                                    <button type="button" class="star-btn"
+                                            data-star-rating-target="star"
+                                            data-value="{{ i }}"
+                                            data-action="click->star-rating#select mouseenter->star-rating#hover mouseleave->star-rating#leave"
+                                            aria-label="{{ i }} étoile{{ i > 1 ? 's' : '' }}">&#9733;</button>
+                                {% endfor %}
+                                <div class="review-radios-hidden">
+                                    {{ form_widget(reviewForm.rating) }}
+                                </div>
+                            </div>
+                            {{ form_errors(reviewForm.rating) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(reviewForm.title) }}
+                            {{ form_widget(reviewForm.title) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(reviewForm.content) }}
+                            {{ form_widget(reviewForm.content) }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Publier mon avis</button>
+                    {{ form_end(reviewForm) }}
+                </div>
+            {% elseif hasReviewed %}
+                <p style="color: var(--color-secondary); font-style: italic; margin-top: 1rem;">Vous avez déjà laissé un avis pour ce vin.</p>
+            {% elseif not app.user %}
+                <p style="color: var(--color-secondary); margin-top: 1rem;">
+                    <a href="{{ path('app_login') }}" style="color: var(--color-gold);">Connectez-vous</a> pour laisser un avis.
+                </p>
+            {% endif %}
+        </div>
+    </section>
 
     <section class="section section-white" style="text-align: center;">
         <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">← Retour aux vins</a>

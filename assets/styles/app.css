@@ -1001,8 +1001,16 @@ body {
     align-items: center;
     position: relative;
     padding-top: 80px;
-    background: linear-gradient(135deg, rgba(245, 242, 237, 0.92) 0%, rgba(232, 227, 217, 0.92) 100%);
+    background: url('/images/hero-vignes.jpg') center/cover no-repeat;
     overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(245, 242, 237, 0.88) 0%, rgba(232, 227, 217, 0.82) 50%, rgba(201, 168, 124, 0.15) 100%);
+    z-index: 0;
 }
 
 .hero-content {
@@ -1696,23 +1704,391 @@ body {
 }
 
 /* ============================================
+   Legal Page (Mentions legales)
+   ============================================ */
+.legal-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.legal-nav-list li a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--color-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    background: var(--color-cream);
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.legal-nav-list li a:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+.legal-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08);
+}
+
+.legal-card h2 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-beige);
+}
+
+.legal-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--color-primary);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.legal-card p {
+    color: var(--color-secondary);
+    line-height: 1.8;
+    margin-bottom: 0.75rem;
+}
+
+.legal-card a {
+    color: var(--color-gold);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.legal-card a:hover {
+    color: var(--color-primary);
+}
+
+.legal-card ul {
+    color: var(--color-secondary);
+    line-height: 1.8;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.legal-card ul li {
+    margin-bottom: 0.3rem;
+}
+
+.legal-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.legal-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.legal-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.legal-value {
+    color: var(--color-secondary);
+    font-size: 0.95rem;
+}
+
+.legal-value a {
+    color: var(--color-gold);
+    text-decoration: none;
+}
+
+.legal-note {
+    background: var(--color-cream);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+    border-left: 3px solid var(--color-gold);
+}
+
+.legal-success {
+    background: #ecfdf5;
+    color: #065f46;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+    border-left: 3px solid #10b981;
+}
+
+.legal-rights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.legal-right {
+    background: var(--color-cream);
+    padding: 1.25rem;
+    border-radius: 8px;
+}
+
+.legal-right strong {
+    display: block;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.legal-right span {
+    color: var(--color-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.legal-credits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.legal-credit {
+    background: var(--color-cream);
+    padding: 1.25rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.legal-credit strong {
+    display: block;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+}
+
+.legal-credit span {
+    color: var(--color-secondary);
+    font-size: 0.85rem;
+}
+
+/* ============================================
+   Reviews
+   ============================================ */
+.review-summary {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.review-summary-score {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    color: var(--color-primary);
+    font-weight: 600;
+    line-height: 1;
+}
+
+.review-summary-stars {
+    display: flex;
+    gap: 0.15rem;
+    color: var(--color-gold);
+    font-size: 1.2rem;
+}
+
+.review-summary-count {
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+}
+
+.review-stars {
+    display: flex;
+    gap: 0.1rem;
+    color: var(--color-gold);
+    font-size: 0.95rem;
+}
+
+.review-stars-small {
+    display: inline-flex;
+    gap: 0.05rem;
+    color: var(--color-gold);
+    font-size: 0.8rem;
+    vertical-align: middle;
+}
+
+.review-stars .star-empty,
+.review-stars-small .star-empty {
+    color: var(--color-beige);
+}
+
+.review-card {
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08);
+    margin-bottom: 1rem;
+}
+
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.75rem;
+    gap: 1rem;
+}
+
+.review-author {
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+}
+
+.review-date {
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.review-verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: #ecfdf5;
+    color: #065f46;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+}
+
+.review-title {
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+}
+
+.review-content {
+    color: var(--color-secondary);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+/* Star rating input (interactive) */
+.star-rating-input {
+    display: flex;
+    gap: 0.25rem;
+    position: relative;
+}
+
+.star-rating-input .star-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--color-beige);
+    transition: color 0.15s, transform 0.15s;
+    padding: 0;
+    line-height: 1;
+}
+
+.star-rating-input .star-btn:hover {
+    transform: scale(1.15);
+}
+
+.star-rating-input .star-btn.star-active {
+    color: var(--color-gold);
+}
+
+/* Hide the native radio buttons when replaced by stars */
+.review-radios-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+.review-form {
+    background: var(--color-cream);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-top: 2rem;
+}
+
+.review-form h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+}
+
+.review-form .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.review-form label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    margin-bottom: 0.4rem;
+}
+
+.review-form input[type="text"],
+.review-form textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-beige);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-dark);
+    transition: border-color 0.2s;
+    background: white;
+}
+
+.review-form input[type="text"]:focus,
+.review-form textarea:focus {
+    border-color: var(--color-gold);
+    outline: none;
+}
+
+/* ============================================
    Responsive
    ============================================ */
 @media (max-width: 1024px) {
     .footer-content { grid-template-columns: 1fr 1fr; }
     .info-grid { grid-template-columns: repeat(2, 1fr); }
-    .nav-separator { margin: 0 0.75rem; }
-    .nav-links a { font-size: 0.75rem; letter-spacing: 0.5px; }
-    .nav-action-link span { display: none; }
-    .nav-boutique-btn { padding: 0.45rem 0.9rem; font-size: 0.72rem; }
-    .logo-title { font-size: 1.15rem; }
-    .logo-subtitle { font-size: 0.65rem; letter-spacing: 1px; }
     .grid-4-col { grid-template-columns: repeat(2, 1fr); }
     .hero-title { font-size: 3.5rem; }
     .hero-description { font-size: 1.1rem; }
     .hero-stats { gap: 1.25rem !important; }
     .hero-stat { padding: 1.5rem 2rem !important; }
     .hero-stat-number { font-size: 3rem !important; }
+
+    /* Navbar: passer en mode hamburger a 1024px */
+    .nav-links { display: none; }
+    .nav-separator { display: none; }
+    .nav-actions { display: none; }
+    .nav-boutique-btn { display: none; }
+    .hamburger { display: flex; }
 }
 
 @media (max-width: 768px) {
@@ -1725,11 +2101,6 @@ body {
     .form-grid { grid-template-columns: 1fr; }
     .form-group.full-width { grid-column: span 1; }
     .info-grid { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
-    .nav-separator { display: none; }
-    .nav-actions { display: none; }
-    .nav-boutique-btn { display: none; }
-    .hamburger { display: flex; }
 
     .grid-2-col { grid-template-columns: 1fr; }
     .grid-3-col { grid-template-columns: 1fr; }
@@ -1836,4 +2207,11 @@ body {
         height: 36px;
         width: auto;
     }
+
+    /* Legal page responsive */
+    .legal-nav-list { grid-template-columns: 1fr; }
+    .legal-info-grid { grid-template-columns: 1fr; }
+    .legal-rights-grid { grid-template-columns: 1fr; }
+    .legal-credits-grid { grid-template-columns: 1fr; }
+    .legal-card { padding: 1.5rem; }
 }

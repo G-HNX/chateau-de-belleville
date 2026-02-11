@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User\User;
+use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,38 +46,24 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
-        if ($request->isMethod('POST')) {
-            $user = new User();
-            $user->setEmail($request->request->get('email', ''));
-            $user->setFirstName($request->request->get('firstName', ''));
-            $user->setLastName($request->request->get('lastName', ''));
-            $user->setPhone($request->request->get('phone'));
+        $user = new User();
+        $form = $this->createForm(RegistrationType::class, $user);
+        $form->handleRequest($request);
 
-            $password = $request->request->get('password', '');
-            $confirmPassword = $request->request->get('confirmPassword', '');
-
-            if ($password !== $confirmPassword) {
-                $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
-
-                return $this->render('security/register.html.twig');
-            }
-
-            if (strlen($password) < 6) {
-                $this->addFlash('error', 'Le mot de passe doit contenir au moins 6 caracteres.');
-
-                return $this->render('security/register.html.twig');
-            }
-
-            $user->setPassword($passwordHasher->hashPassword($user, $password));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
 
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', 'Votre compte a ete cree. Vous pouvez vous connecter.');
+            $this->addFlash('success', 'Votre compte a été créé. Vous pouvez vous connecter.');
 
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('security/register.html.twig');
+        return $this->render('security/register.html.twig', [
+            'form' => $form,
+        ]);
     }
 }

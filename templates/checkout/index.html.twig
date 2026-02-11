@@ -12,30 +12,34 @@
 {% block body %}
     <section class="section section-white">
         <div class="container">
-            <form method="post" action="{{ path('app_checkout_process') }}">
+            {{ form_start(form, {'action': path('app_checkout_index')}) }}
                 <div class="grid-checkout">
                     {# Form #}
                     <div>
-                        {# Contact Info #}
+                        {# Contact Info (guest only) #}
                         {% if not app.user %}
                             <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
                                 <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Vos coordonnées</h3>
                                 <div class="form-grid">
                                     <div class="form-group">
-                                        <label for="firstName">Prénom *</label>
-                                        <input type="text" id="firstName" name="firstName" required>
+                                        {{ form_label(form.firstName) }}
+                                        {{ form_widget(form.firstName) }}
+                                        {{ form_errors(form.firstName) }}
                                     </div>
                                     <div class="form-group">
-                                        <label for="lastName">Nom *</label>
-                                        <input type="text" id="lastName" name="lastName" required>
+                                        {{ form_label(form.lastName) }}
+                                        {{ form_widget(form.lastName) }}
+                                        {{ form_errors(form.lastName) }}
                                     </div>
                                     <div class="form-group">
-                                        <label for="email">Email *</label>
-                                        <input type="email" id="email" name="email" required>
+                                        {{ form_label(form.email) }}
+                                        {{ form_widget(form.email) }}
+                                        {{ form_errors(form.email) }}
                                     </div>
                                     <div class="form-group">
-                                        <label for="phone">Téléphone</label>
-                                        <input type="tel" id="phone" name="phone">
+                                        {{ form_label(form.phone) }}
+                                        {{ form_widget(form.phone) }}
+                                        {{ form_errors(form.phone) }}
                                     </div>
                                 </div>
                             </div>
@@ -46,26 +50,32 @@
                             <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Adresse de facturation</h3>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="billing_firstName">Prénom *</label>
-                                    <input type="text" id="billing_firstName" name="billing_firstName" value="{{ app.user ? app.user.firstName : '' }}" required>
+                                    {{ form_label(form.billingAddress.firstName) }}
+                                    {{ form_widget(form.billingAddress.firstName) }}
+                                    {{ form_errors(form.billingAddress.firstName) }}
                                 </div>
                                 <div class="form-group">
-                                    <label for="billing_lastName">Nom *</label>
-                                    <input type="text" id="billing_lastName" name="billing_lastName" value="{{ app.user ? app.user.lastName : '' }}" required>
+                                    {{ form_label(form.billingAddress.lastName) }}
+                                    {{ form_widget(form.billingAddress.lastName) }}
+                                    {{ form_errors(form.billingAddress.lastName) }}
                                 </div>
                                 <div class="form-group full-width">
-                                    <label for="billing_street">Adresse *</label>
-                                    <input type="text" id="billing_street" name="billing_street" required>
+                                    {{ form_label(form.billingAddress.street) }}
+                                    {{ form_widget(form.billingAddress.street) }}
+                                    {{ form_errors(form.billingAddress.street) }}
                                 </div>
                                 <div class="form-group">
-                                    <label for="billing_zipCode">Code postal *</label>
-                                    <input type="text" id="billing_zipCode" name="billing_zipCode" required>
+                                    {{ form_label(form.billingAddress.zipCode) }}
+                                    {{ form_widget(form.billingAddress.zipCode) }}
+                                    {{ form_errors(form.billingAddress.zipCode) }}
                                 </div>
                                 <div class="form-group">
-                                    <label for="billing_city">Ville *</label>
-                                    <input type="text" id="billing_city" name="billing_city" required>
+                                    {{ form_label(form.billingAddress.city) }}
+                                    {{ form_widget(form.billingAddress.city) }}
+                                    {{ form_errors(form.billingAddress.city) }}
                                 </div>
                             </div>
+                            {{ form_widget(form.billingAddress.country) }}
                         </div>
 
                         {# Shipping Address #}
@@ -73,33 +83,40 @@
                             <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Adresse de livraison</h3>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="shipping_firstName">Prénom *</label>
-                                    <input type="text" id="shipping_firstName" name="shipping_firstName" required>
+                                    {{ form_label(form.shippingAddress.firstName) }}
+                                    {{ form_widget(form.shippingAddress.firstName) }}
+                                    {{ form_errors(form.shippingAddress.firstName) }}
                                 </div>
                                 <div class="form-group">
-                                    <label for="shipping_lastName">Nom *</label>
-                                    <input type="text" id="shipping_lastName" name="shipping_lastName" required>
+                                    {{ form_label(form.shippingAddress.lastName) }}
+                                    {{ form_widget(form.shippingAddress.lastName) }}
+                                    {{ form_errors(form.shippingAddress.lastName) }}
                                 </div>
                                 <div class="form-group full-width">
-                                    <label for="shipping_street">Adresse *</label>
-                                    <input type="text" id="shipping_street" name="shipping_street" required>
+                                    {{ form_label(form.shippingAddress.street) }}
+                                    {{ form_widget(form.shippingAddress.street) }}
+                                    {{ form_errors(form.shippingAddress.street) }}
                                 </div>
                                 <div class="form-group">
-                                    <label for="shipping_zipCode">Code postal *</label>
-                                    <input type="text" id="shipping_zipCode" name="shipping_zipCode" required>
+                                    {{ form_label(form.shippingAddress.zipCode) }}
+                                    {{ form_widget(form.shippingAddress.zipCode) }}
+                                    {{ form_errors(form.shippingAddress.zipCode) }}
                                 </div>
                                 <div class="form-group">
-                                    <label for="shipping_city">Ville *</label>
-                                    <input type="text" id="shipping_city" name="shipping_city" required>
+                                    {{ form_label(form.shippingAddress.city) }}
+                                    {{ form_widget(form.shippingAddress.city) }}
+                                    {{ form_errors(form.shippingAddress.city) }}
                                 </div>
                             </div>
+                            {{ form_widget(form.shippingAddress.country) }}
                         </div>
 
                         {# Notes #}
                         <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08);">
                             <div class="form-group">
-                                <label for="notes">Notes de commande (optionnel)</label>
-                                <textarea id="notes" name="notes" placeholder="Instructions de livraison, message..."></textarea>
+                                {{ form_label(form.notes) }}
+                                {{ form_widget(form.notes) }}
+                                {{ form_errors(form.notes) }}
                             </div>
                         </div>
                     </div>
@@ -137,7 +154,7 @@
                         <a href="{{ path('app_cart_index') }}" style="display: block; text-align: center; margin-top: 1rem; color: var(--color-secondary); text-decoration: none; font-size: 0.9rem;">← Retour au panier</a>
                     </div>
                 </div>
-            </form>
+            {{ form_end(form) }}
         </div>
     </section>
 {% endblock %}

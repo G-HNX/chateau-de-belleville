@@ -58,40 +58,39 @@
                 {# Contact Form #}
                 <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(91, 70, 56, 0.1);">
                     <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Envoyez-nous un message</h2>
-                    <form method="post" class="form-grid">
+                    {{ form_start(form, {'attr': {'class': 'form-grid'}}) }}
                         <div class="form-group">
-                            <label for="nom">Nom *</label>
-                            <input type="text" id="nom" name="nom" required>
+                            {{ form_label(form.nom) }}
+                            {{ form_widget(form.nom) }}
+                            {{ form_errors(form.nom) }}
                         </div>
                         <div class="form-group">
-                            <label for="prenom">Prénom *</label>
-                            <input type="text" id="prenom" name="prenom" required>
+                            {{ form_label(form.prenom) }}
+                            {{ form_widget(form.prenom) }}
+                            {{ form_errors(form.prenom) }}
                         </div>
                         <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" name="email" required>
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email) }}
+                            {{ form_errors(form.email) }}
                         </div>
                         <div class="form-group">
-                            <label for="telephone">Téléphone</label>
-                            <input type="tel" id="telephone" name="telephone">
+                            {{ form_label(form.telephone) }}
+                            {{ form_widget(form.telephone) }}
+                            {{ form_errors(form.telephone) }}
                         </div>
                         <div class="form-group full-width">
-                            <label for="sujet">Sujet *</label>
-                            <select id="sujet" name="sujet" required>
-                                <option value="">Sélectionnez un sujet</option>
-                                <option value="commande">Question sur une commande</option>
-                                <option value="reservation">Réservation dégustation</option>
-                                <option value="produit">Information produit</option>
-                                <option value="partenariat">Partenariat professionnel</option>
-                                <option value="autre">Autre</option>
-                            </select>
+                            {{ form_label(form.sujet) }}
+                            {{ form_widget(form.sujet) }}
+                            {{ form_errors(form.sujet) }}
                         </div>
                         <div class="form-group full-width">
-                            <label for="message">Votre message *</label>
-                            <textarea id="message" name="message" placeholder="Écrivez votre message ici..." required></textarea>
+                            {{ form_label(form.message) }}
+                            {{ form_widget(form.message) }}
+                            {{ form_errors(form.message) }}
                         </div>
                         <button type="submit" class="btn-submit">Envoyer le message</button>
-                    </form>
+                    {{ form_end(form) }}
                 </div>
             </div>
 

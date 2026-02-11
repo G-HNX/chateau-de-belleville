@@ -37,6 +37,16 @@
                     </div>
                     <div class="wine-content">
                         <h3 class="wine-name">{{ wine.name }}</h3>
+                        {% if wine.averageRating %}
+                            <div style="margin-bottom: 0.3rem;">
+                                <span class="review-stars-small">
+                                    {% for i in 1..5 %}
+                                        <span{% if i > wine.averageRating|round %} class="star-empty"{% endif %}>&#9733;</span>
+                                    {% endfor %}
+                                </span>
+                                <span style="font-size: 0.75rem; color: var(--color-secondary);">({{ wine.reviews|filter(r => r.approved)|length }})</span>
+                            </div>
+                        {% endif %}
                         <div class="wine-type">
                             {% if wine.appellation %}{{ wine.appellation }}{% endif %}
                             {% if wine.grapeVarieties|length > 0 %} - {{ wine.grapeVarietiesAsString }}{% endif %}
@@ -59,9 +69,11 @@
                         <div class="wine-actions">
                             <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="btn btn-outline">Détails</a>
                             {% if wine.available %}
-                                <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" style="flex: 1;">
+                                <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" style="flex: 1;"
+                                      data-controller="cart-add" data-action="submit->cart-add#add">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn btn-primary" style="width: 100%;">Acheter</button>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%;" data-cart-add-target="button">Acheter</button>
                                 </form>
                             {% else %}
                                 <span class="btn btn-outline" style="opacity: 0.5; cursor: default;">Indisponible</span>

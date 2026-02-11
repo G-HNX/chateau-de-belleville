@@ -146,4 +146,9 @@ class Review
     {
         $this->createdAt = new \DateTime();
     }
+
+    public function __toString(): string
+    {
+        return sprintf('Avis #%d - %s', $this->id ?? 0, $this->title ?? 'Sans titre');
+    }
 }

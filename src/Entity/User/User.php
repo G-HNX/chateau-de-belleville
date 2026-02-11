@@ -319,4 +319,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return in_array('ROLE_ADMIN', $this->roles, true);
     }
+
+    public function __toString(): string
+    {
+        return $this->getFullName() ?: $this->email ?? '';
+    }
 }

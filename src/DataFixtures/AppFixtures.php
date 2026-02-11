@@ -11,6 +11,7 @@ use App\Entity\Catalog\GrapeVariety;
 use App\Entity\Catalog\Wine;
 use App\Entity\Catalog\WineCategory;
 use App\Entity\Catalog\WineImage;
+use App\Entity\Customer\Review;
 use App\Entity\User\User;
 use App\Enum\WineType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -36,13 +37,16 @@ class AppFixtures extends Fixture
         $categories = $this->createCategories($manager);
 
         // === WINES ===
-        $this->createWines($manager, $categories, $appellations, $grapeVarieties);
+        $wines = $this->createWines($manager, $categories, $appellations, $grapeVarieties);
 
         // === TASTINGS ===
         $this->createTastings($manager);
 
         // === USERS ===
-        $this->createUsers($manager);
+        $users = $this->createUsers($manager);
+
+        // === REVIEWS ===
+        $this->createReviews($manager, $wines, $users);
 
         $manager->flush();
     }
@@ -163,12 +167,15 @@ class AppFixtures extends Fixture
      * @param array<string, Appellation> $appellations
      * @param array<string, GrapeVariety> $grapeVarieties
      */
+    /**
+     * @return array<string, Wine>
+     */
     private function createWines(
         ObjectManager $manager,
         array $categories,
         array $appellations,
         array $grapeVarieties,
-    ): void {
+    ): array {
         $wines = [
             [
                 'name' => 'Escapade',
@@ -322,6 +329,7 @@ class AppFixtures extends Fixture
             ],
         ];
 
+        $wineEntities = [];
         foreach ($wines as $wineData) {
             $wine = new Wine();
             $wine->setName($wineData['name']);
@@ -357,7 +365,10 @@ class AppFixtures extends Fixture
             $manager->persist($image);
 
             $manager->persist($wine);
+            $wineEntities[$wineData['slug']] = $wine;
         }
+
+        return $wineEntities;
     }
 
     private function createTastings(ObjectManager $manager): void
@@ -436,7 +447,10 @@ class AppFixtures extends Fixture
         }
     }
 
-    private function createUsers(ObjectManager $manager): void
+    /**
+     * @return array<string, User>
+     */
+    private function createUsers(ObjectManager $manager): array
     {
         // Admin user
         $admin = new User();
@@ -458,5 +472,119 @@ class AppFixtures extends Fixture
         $customer->setPassword($this->passwordHasher->hashPassword($customer, 'client123'));
         $customer->setIsVerified(true);
         $manager->persist($customer);
+
+        // Additional reviewer
+        $reviewer = new User();
+        $reviewer->setEmail('marie@example.com');
+        $reviewer->setFirstName('Marie');
+        $reviewer->setLastName('Laurent');
+        $reviewer->setRoles(['ROLE_USER']);
+        $reviewer->setPassword($this->passwordHasher->hashPassword($reviewer, 'marie123'));
+        $reviewer->setIsVerified(true);
+        $manager->persist($reviewer);
+
+        return [
+            'admin' => $admin,
+            'client' => $customer,
+            'reviewer' => $reviewer,
+        ];
+    }
+
+    /**
+     * @param array<string, Wine> $wines
+     * @param array<string, User> $users
+     */
+    private function createReviews(ObjectManager $manager, array $wines, array $users): void
+    {
+        $reviewsData = [
+            // Escapade - 2 avis approuvés
+            [
+                'wine' => 'escapade',
+                'user' => 'client',
+                'rating' => 5,
+                'title' => 'Un blanc exceptionnel',
+                'content' => 'Frais, minéral, avec une belle longueur en bouche. Parfait avec des huîtres !',
+                'isApproved' => true,
+            ],
+            [
+                'wine' => 'escapade',
+                'user' => 'reviewer',
+                'rating' => 4,
+                'title' => 'Très agréable',
+                'content' => 'Un chenin bien travaillé, belle expression du terroir angevin.',
+                'isApproved' => true,
+            ],
+            // L'Invitée - 3 avis (2 approuvés, 1 en attente)
+            [
+                'wine' => 'l-invitee',
+                'user' => 'client',
+                'rating' => 5,
+                'title' => 'Coup de coeur',
+                'content' => 'Des tanins soyeux, une finale élégante. Ce cabernet franc est magnifique.',
+                'isApproved' => true,
+            ],
+            [
+                'wine' => 'l-invitee',
+                'user' => 'reviewer',
+                'rating' => 4,
+                'title' => null,
+                'content' => 'Très bon rouge, idéal avec un plateau de fromages.',
+                'isApproved' => true,
+            ],
+            [
+                'wine' => 'l-invitee',
+                'user' => 'admin',
+                'rating' => 5,
+                'title' => 'Notre fierté',
+                'content' => null,
+                'isApproved' => false,
+            ],
+            // Les Festives - 2 avis approuvés
+            [
+                'wine' => 'les-festives',
+                'user' => 'reviewer',
+                'rating' => 5,
+                'title' => 'Bulles parfaites',
+                'content' => 'Fines bulles, arômes de brioche et de pomme verte. Meilleur que certains champagnes !',
+                'isApproved' => true,
+            ],
+            [
+                'wine' => 'les-festives',
+                'user' => 'client',
+                'rating' => 4,
+                'title' => null,
+                'content' => 'Excellent crémant pour les fêtes.',
+                'isApproved' => true,
+            ],
+            // Estival - 1 avis approuvé
+            [
+                'wine' => 'estival',
+                'user' => 'reviewer',
+                'rating' => 4,
+                'title' => 'Le rosé de l\'été',
+                'content' => 'Frais et fruité, parfait pour les grillades en terrasse.',
+                'isApproved' => true,
+            ],
+            // Évasion - 1 avis approuvé
+            [
+                'wine' => 'evasion',
+                'user' => 'client',
+                'rating' => 3,
+                'title' => 'Correct',
+                'content' => 'Un rouge honnête pour le quotidien, bon rapport qualité-prix.',
+                'isApproved' => true,
+            ],
+        ];
+
+        foreach ($reviewsData as $data) {
+            $review = new Review();
+            $review->setWine($wines[$data['wine']]);
+            $review->setUser($users[$data['user']]);
+            $review->setRating($data['rating']);
+            $review->setTitle($data['title']);
+            $review->setContent($data['content']);
+            $review->setIsApproved($data['isApproved']);
+            $manager->persist($review);
+        }
     }
 }

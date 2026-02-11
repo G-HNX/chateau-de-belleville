@@ -13,37 +13,44 @@
     <section class="section section-white">
         <div class="container" style="max-width: 600px;">
             <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);">
-                <form method="post" class="form-grid">
+                {{ form_start(form, {'attr': {'class': 'form-grid'}}) }}
                     <div class="form-group">
-                        <label for="firstName">Prénom *</label>
-                        <input type="text" id="firstName" name="firstName" required>
+                        {{ form_label(form.firstName) }}
+                        {{ form_widget(form.firstName) }}
+                        {{ form_errors(form.firstName) }}
                     </div>
                     <div class="form-group">
-                        <label for="lastName">Nom *</label>
-                        <input type="text" id="lastName" name="lastName" required>
+                        {{ form_label(form.lastName) }}
+                        {{ form_widget(form.lastName) }}
+                        {{ form_errors(form.lastName) }}
                     </div>
                     <div class="form-group full-width">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
                     </div>
                     <div class="form-group">
-                        <label for="phone">Téléphone</label>
-                        <input type="tel" id="phone" name="phone">
+                        {{ form_label(form.phone) }}
+                        {{ form_widget(form.phone) }}
+                        {{ form_errors(form.phone) }}
                     </div>
                     <div class="form-group">
                         &nbsp;
                     </div>
                     <div class="form-group">
-                        <label for="password">Mot de passe *</label>
-                        <input type="password" id="password" name="password" required minlength="6">
-                        <small style="color: var(--color-secondary); margin-top: 0.3rem;">6 caractères minimum</small>
+                        {{ form_label(form.plainPassword.first) }}
+                        {{ form_widget(form.plainPassword.first) }}
+                        {{ form_errors(form.plainPassword.first) }}
+                        <small style="color: var(--color-secondary); margin-top: 0.3rem;">12 caractères minimum, avec majuscules, minuscules, chiffres et caractères spéciaux</small>
                     </div>
                     <div class="form-group">
-                        <label for="confirmPassword">Confirmer *</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                        {{ form_label(form.plainPassword.second) }}
+                        {{ form_widget(form.plainPassword.second) }}
+                        {{ form_errors(form.plainPassword.second) }}
                     </div>
+                    {{ form_errors(form.plainPassword) }}
                     <button type="submit" class="btn-submit">Créer mon compte</button>
-                </form>
+                {{ form_end(form) }}
 
                 <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-beige);">
                     <p style="color: var(--color-secondary); font-size: 0.9rem;">

@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Catalog\Wine;
+use App\Entity\Customer\Review;
 use App\Enum\WineType;
+use App\Form\ReviewType;
 use App\Repository\Catalog\WineCategoryRepository;
 use App\Repository\Catalog\WineRepository;
+use App\Service\ReviewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,14 +63,30 @@ class WineController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'app_wine_show')]
-    public function show(Wine $wine): Response
+    public function show(Wine $wine, ReviewService $reviewService): Response
     {
         if (!$wine->isActive()) {
             throw $this->createNotFoundException('Ce vin n\'est pas disponible.');
         }
 
+        $user = $this->getUser();
+        $reviews = $reviewService->getApprovedReviews($wine);
+        $hasReviewed = $user ? $reviewService->hasUserReviewed($user, $wine) : false;
+        $purchaserIds = $reviewService->getPurchaserIds($wine);
+
+        $reviewForm = null;
+        if ($user && !$hasReviewed) {
+            $reviewForm = $this->createForm(ReviewType::class, new Review(), [
+                'action' => $this->generateUrl('app_review_add', ['slug' => $wine->getSlug()]),
+            ]);
+        }
+
         return $this->render('wine/show.html.twig', [
             'wine' => $wine,
+            'reviews' => $reviews,
+            'reviewForm' => $reviewForm,
+            'hasReviewed' => $hasReviewed,
+            'purchaserIds' => $purchaserIds,
         ]);
     }
 }

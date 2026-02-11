@@ -1,0 +1,157 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block content_header %}
+    <div class="content-header-title">
+        <h1 class="title">Tableau de bord</h1>
+    </div>
+{% endblock %}
+
+{% block main %}
+    {# Stats Cards #}
+    <div class="row mb-4">
+        <div class="col-sm-6 col-lg-3 mb-3">
+            <div class="card text-bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fs-4 fw-bold">{{ totalOrders }}</div>
+                            <div>Commandes</div>
+                        </div>
+                        <i class="fa fa-shopping-cart fa-2x opacity-50"></i>
+                    </div>
+                    {% if pendingOrders > 0 %}
+                        <small class="mt-2 d-block">{{ pendingOrders }} en attente</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3 mb-3">
+            <div class="card text-bg-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fs-4 fw-bold">{{ pendingReviews }}</div>
+                            <div>Avis à modérer</div>
+                        </div>
+                        <i class="fa fa-star fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3 mb-3">
+            <div class="card text-bg-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fs-4 fw-bold">{{ totalWines }}</div>
+                            <div>Vins au catalogue</div>
+                        </div>
+                        <i class="fa fa-wine-glass fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3 mb-3">
+            <div class="card text-bg-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fs-4 fw-bold">{{ totalUsers }}</div>
+                            <div>Clients inscrits</div>
+                        </div>
+                        <i class="fa fa-users fa-2x opacity-50"></i>
+                    </div>
+                    {% if pendingReservations > 0 %}
+                        <small class="mt-2 d-block">{{ pendingReservations }} réservation{{ pendingReservations > 1 ? 's' : '' }} en attente</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {# Recent Orders #}
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Dernières commandes</h5>
+                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\OrderCrudController').setAction('index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                </div>
+                <div class="card-body p-0">
+                    {% if recentOrders|length > 0 %}
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Référence</th>
+                                    <th>Statut</th>
+                                    <th class="text-end">Total</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recentOrders %}
+                                    <tr>
+                                        <td><strong>{{ order.reference }}</strong></td>
+                                        <td>
+                                            <span class="badge bg-{{ {
+                                                'pending': 'warning',
+                                                'paid': 'info',
+                                                'processing': 'primary',
+                                                'shipped': 'info',
+                                                'delivered': 'success',
+                                                'cancelled': 'danger',
+                                                'refunded': 'secondary',
+                                            }[order.status.value] ?? 'secondary' }}">{{ order.status.label }}</span>
+                                        </td>
+                                        <td class="text-end">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                                        <td>{{ order.createdAt|date('d/m/Y') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted p-3 mb-0">Aucune commande.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Pending Reviews #}
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Avis en attente de modération</h5>
+                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\ReviewCrudController').setAction('index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                </div>
+                <div class="card-body p-0">
+                    {% if recentReviews|length > 0 %}
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Vin</th>
+                                    <th>Client</th>
+                                    <th>Note</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for review in recentReviews %}
+                                    <tr>
+                                        <td>{{ review.wine }}</td>
+                                        <td>{{ review.user }}</td>
+                                        <td>{% for i in 1..5 %}{{ i <= review.rating ? '★' : '☆' }}{% endfor %}</td>
+                                        <td>{{ review.createdAt|date('d/m/Y') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted p-3 mb-0">Aucun avis en attente.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -290,4 +290,9 @@ class Reservation
         }
         $this->createdAt = new \DateTime();
     }
+
+    public function __toString(): string
+    {
+        return $this->reference ?? '';
+    }
 }

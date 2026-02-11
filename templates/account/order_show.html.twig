@@ -54,7 +54,17 @@
                         <tbody>
                             {% for item in order.items %}
                                 <tr style="border-bottom: 1px solid var(--color-beige);">
-                                    <td style="padding: 0.75rem; font-weight: 500; color: var(--color-primary);">{{ item.wineName }}</td>
+                                    <td style="padding: 0.75rem;">
+                                        {% if item.wine %}
+                                            <a href="{{ path('app_wine_show', {slug: item.wine.slug}) }}" style="font-weight: 500; color: var(--color-primary); text-decoration: none; transition: color 0.2s;">
+                                                {{ item.wineName }}
+                                            </a>
+                                            <br>
+                                            <a href="{{ path('app_wine_show', {slug: item.wine.slug}) }}#avis" style="font-size: 0.8rem; color: var(--color-gold); text-decoration: none;">&#9733; Donner mon avis</a>
+                                        {% else %}
+                                            <span style="font-weight: 500; color: var(--color-primary);">{{ item.wineName }}</span>
+                                        {% endif %}
+                                    </td>
                                     <td style="padding: 0.75rem; text-align: center; color: var(--color-secondary);">{{ item.quantity }}</td>
                                     <td style="padding: 0.75rem; text-align: right; color: var(--color-secondary);">{{ (item.unitPriceInCents / 100)|number_format(2, ',', ' ') }} €</td>
                                     <td style="padding: 0.75rem; text-align: right; font-weight: 500;">{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
@@ -71,11 +81,11 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
                             <span style="color: var(--color-secondary);">TVA (20%)</span>
-                            <span>{{ (order.taxInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                            <span>{{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
                             <span style="color: var(--color-secondary);">Livraison</span>
-                            <span>{{ (order.shippingInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                            <span>{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €</span>
                         </div>
                         <div style="height: 1px; background: var(--color-beige); margin: 0.5rem 0;"></div>
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
