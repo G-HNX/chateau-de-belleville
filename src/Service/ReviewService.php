@@ -87,4 +87,10 @@ class ReviewService
         $this->em->persist($review);
         $this->em->flush();
     }
+
+    public function deleteReview(Review $review): void
+    {
+        $this->em->remove($review);
+        $this->em->flush();
+    }
 }

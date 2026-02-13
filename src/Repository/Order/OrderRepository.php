@@ -85,4 +85,71 @@ class OrderRepository extends ServiceEntityRepository
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * Nombre de commandes par statut.
+     *
+     * @return array<string, int>
+     */
+    public function countByStatus(): array
+    {
+        $rows = $this->createQueryBuilder('o')
+            ->select('o.status AS status, COUNT(o.id) AS cnt')
+            ->groupBy('o.status')
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $status = $row['status'] instanceof OrderStatus ? $row['status'] : OrderStatus::from($row['status']);
+            $result[$status->value] = (int) $row['cnt'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * CA par mois sur les N derniers mois.
+     *
+     * @return array<int, array{month: string, revenue: int, count: int}>
+     */
+    public function getMonthlyRevenue(int $months = 12): array
+    {
+        $from = new \DateTime("first day of -{$months} months midnight");
+
+        $rows = $this->createQueryBuilder('o')
+            ->select("SUBSTRING(o.createdAt, 1, 7) AS month, SUM(o.totalInCents) AS revenue, COUNT(o.id) AS cnt")
+            ->andWhere('o.createdAt >= :from')
+            ->andWhere('o.status NOT IN (:excluded)')
+            ->setParameter('from', $from)
+            ->setParameter('excluded', [OrderStatus::CANCELLED, OrderStatus::REFUNDED])
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (array $r) => [
+            'month' => $r['month'],
+            'revenue' => (int) $r['revenue'],
+            'count' => (int) $r['cnt'],
+        ], $rows);
+    }
+
+    /**
+     * Panier moyen (en centimes).
+     */
+    public function getAverageOrderValue(\DateTimeInterface $from = null): int
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->select('AVG(o.totalInCents)')
+            ->andWhere('o.status NOT IN (:excluded)')
+            ->setParameter('excluded', [OrderStatus::CANCELLED, OrderStatus::REFUNDED]);
+
+        if ($from) {
+            $qb->andWhere('o.createdAt >= :from')
+               ->setParameter('from', $from);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }

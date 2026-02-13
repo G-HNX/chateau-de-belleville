@@ -4,6 +4,7 @@ export default class extends Controller {
     static targets = ['panel', 'toggle', 'messages', 'input', 'suggestions'];
 
     connect() {
+        this.conversationHistory = [];
         const wasOpen = sessionStorage.getItem('sommelier-open') === 'true';
         if (wasOpen) {
             this.open();
@@ -38,35 +39,46 @@ export default class extends Controller {
         if (!text) return;
 
         this.addMessage(text, 'user');
+        this.conversationHistory.push({ role: 'user', content: text });
         input.value = '';
         this.hideSuggestions();
         this.showTyping();
-
-        setTimeout(() => {
-            this.hideTyping();
-            this.addMessage(
-                'Merci pour votre question ! Notre sommelier IA sera bient\u00f4t disponible pour vous conseiller personnellement. En attendant, n\'h\u00e9sitez pas \u00e0 explorer notre catalogue de vins.',
-                'bot'
-            );
-        }, 1500);
+        this.callApi(text);
     }
 
     suggest(event) {
         const text = event.currentTarget.textContent.trim();
         this.addMessage(text, 'user');
+        this.conversationHistory.push({ role: 'user', content: text });
         this.hideSuggestions();
         this.showTyping();
+        this.callApi(text);
+    }
 
-        setTimeout(() => {
+    async callApi(message) {
+        try {
+            const response = await fetch('/api/sommelier', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message,
+                    history: this.conversationHistory.slice(0, -1), // exclude the message we just sent
+                }),
+            });
+
+            const data = await response.json();
             this.hideTyping();
-            const responses = {
-                'Quel vin avec du poisson\u00a0?': 'Pour accompagner du poisson, je vous recommande notre Escapade, un Anjou Blanc frais et \u00e9l\u00e9gant (12,50\u00a0\u20ac). Ses notes d\'agrumes et de fleurs blanches s\'accordent parfaitement avec les fruits de mer et poissons grill\u00e9s.',
-                'Recommandez-moi un rouge': 'Notre cuv\u00e9e L\'Invit\u00e9e est un Anjou Rouge d\'exception (14,50\u00a0\u20ac). Cabernet Franc \u00e9l\u00e9gant avec des ar\u00f4mes de fruits rouges et une belle structure. Id\u00e9al avec des viandes ou des fromages affin\u00e9s.',
-                'Parlez-moi de vos d\u00e9gustations': 'Nous proposons 3 formules\u00a0: D\u00e9couverte (15\u00a0\u20ac, 1h, 3 vins), Prestige (25\u00a0\u20ac, 1h30, 5 vins + fromages) et Exception (55\u00a0\u20ac, 3h, 7 vins + d\u00e9jeuner). R\u00e9servez sur notre page D\u00e9gustations\u00a0!',
-            };
-            const response = responses[text] || 'Notre sommelier IA sera bient\u00f4t disponible pour r\u00e9pondre \u00e0 cette question. D\u00e9couvrez nos vins en attendant\u00a0!';
-            this.addMessage(response, 'bot');
-        }, 1200);
+
+            if (data.response) {
+                this.addMessage(data.response, 'bot');
+                this.conversationHistory.push({ role: 'assistant', content: data.response });
+            } else if (data.error) {
+                this.addMessage('Désolé, une erreur est survenue. Réessayez !', 'bot');
+            }
+        } catch (error) {
+            this.hideTyping();
+            this.addMessage('Notre sommelier est momentanément indisponible. Réessayez dans quelques instants !', 'bot');
+        }
     }
 
     addMessage(text, type) {

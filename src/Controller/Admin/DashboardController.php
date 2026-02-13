@@ -6,14 +6,20 @@ namespace App\Controller\Admin;
 
 use App\Entity\Booking\Reservation;
 use App\Entity\Booking\Tasting;
+use App\Entity\Booking\TastingSlot;
 use App\Entity\Catalog\Appellation;
 use App\Entity\Catalog\Wine;
 use App\Entity\Catalog\WineCategory;
 use App\Entity\Customer\Review;
 use App\Entity\Order\Order;
+use App\Entity\Order\OrderItem;
 use App\Entity\User\User;
 use App\Enum\OrderStatus;
 use App\Enum\ReservationStatus;
+use App\Repository\Booking\ReservationRepository;
+use App\Repository\Catalog\WineRepository;
+use App\Repository\Order\OrderItemRepository;
+use App\Repository\Order\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -30,22 +36,103 @@ class DashboardController extends AbstractDashboardController
 
     public function index(): Response
     {
+        /** @var OrderRepository $orderRepo */
         $orderRepo = $this->em->getRepository(Order::class);
-        $reviewRepo = $this->em->getRepository(Review::class);
-        $userRepo = $this->em->getRepository(User::class);
+        /** @var OrderItemRepository $orderItemRepo */
+        $orderItemRepo = $this->em->getRepository(OrderItem::class);
+        /** @var WineRepository $wineRepo */
         $wineRepo = $this->em->getRepository(Wine::class);
+        /** @var ReservationRepository $reservationRepo */
         $reservationRepo = $this->em->getRepository(Reservation::class);
 
+        $reviewRepo = $this->em->getRepository(Review::class);
+        $userRepo = $this->em->getRepository(User::class);
+
+        // --- KPIs principaux ---
+        $totalOrders = $orderRepo->count([]);
+        $pendingOrders = $orderRepo->count(['status' => OrderStatus::PENDING]);
+        $processingOrders = $orderRepo->count(['status' => OrderStatus::PROCESSING]);
+        $totalRevenue = $orderRepo->getTotalRevenue();
+        $monthStart = new \DateTime('first day of this month midnight');
+        $monthRevenue = $orderRepo->getTotalRevenue($monthStart);
+        $averageOrder = $orderRepo->getAverageOrderValue();
+
+        // --- Commandes par statut ---
+        $ordersByStatus = $orderRepo->countByStatus();
+
+        // --- CA mensuel (12 derniers mois) ---
+        $monthlyRevenue = $orderRepo->getMonthlyRevenue(12);
+
+        // --- Top vins vendus ---
+        $topWines = $orderItemRepo->getTopSellingWines(10);
+
+        // --- Stocks ---
+        $lowStockThreshold = 10;
+        $lowStockWines = $wineRepo->createQueryBuilder('w')
+            ->andWhere('w.isActive = true')
+            ->andWhere('w.stock <= :threshold')
+            ->setParameter('threshold', $lowStockThreshold)
+            ->orderBy('w.stock', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+
+        $outOfStockCount = (int) $wineRepo->createQueryBuilder('w')
+            ->select('COUNT(w.id)')
+            ->andWhere('w.isActive = true')
+            ->andWhere('w.stock = 0')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $totalStockValue = (int) ($wineRepo->createQueryBuilder('w')
+            ->select('SUM(w.priceInCents * w.stock)')
+            ->andWhere('w.isActive = true')
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0);
+
+        // --- Dégustations les plus demandées ---
+        $popularTastings = $reservationRepo->createQueryBuilder('r')
+            ->select('t.name AS tastingName, COUNT(r.id) AS reservationCount, SUM(r.numberOfParticipants) AS totalParticipants')
+            ->join('r.slot', 's')
+            ->join('s.tasting', 't')
+            ->andWhere('r.status IN (:active)')
+            ->setParameter('active', [ReservationStatus::PENDING, ReservationStatus::CONFIRMED])
+            ->groupBy('t.name')
+            ->orderBy('reservationCount', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        // --- Réservations à venir ---
+        $upcomingReservations = array_slice($reservationRepo->findUpcoming(), 0, 8);
+
+        // --- Dernières commandes ---
+        $recentOrders = $orderRepo->findBy([], ['createdAt' => 'DESC'], 8);
+
+        // --- Avis en attente ---
+        $pendingReviews = $reviewRepo->count(['isApproved' => false]);
+        $recentReviews = $reviewRepo->findBy(['isApproved' => false], ['createdAt' => 'DESC'], 5);
+
         return $this->render('admin/dashboard.html.twig', [
-            'totalOrders' => $orderRepo->count([]),
-            'pendingOrders' => $orderRepo->count(['status' => OrderStatus::PENDING]),
-            'pendingReviews' => $reviewRepo->count(['isApproved' => false]),
+            'totalOrders' => $totalOrders,
+            'pendingOrders' => $pendingOrders,
+            'processingOrders' => $processingOrders,
+            'totalRevenue' => $totalRevenue,
+            'monthRevenue' => $monthRevenue,
+            'averageOrder' => $averageOrder,
+            'ordersByStatus' => $ordersByStatus,
+            'monthlyRevenue' => $monthlyRevenue,
+            'topWines' => $topWines,
+            'lowStockWines' => $lowStockWines,
+            'outOfStockCount' => $outOfStockCount,
+            'totalStockValue' => $totalStockValue,
+            'popularTastings' => $popularTastings,
+            'upcomingReservations' => $upcomingReservations,
+            'pendingReviews' => $pendingReviews,
+            'pendingReservations' => $reservationRepo->count(['status' => ReservationStatus::PENDING]),
             'totalUsers' => $userRepo->count([]),
             'totalWines' => $wineRepo->count([]),
-            'lowStockWines' => $wineRepo->count([]),
-            'pendingReservations' => $reservationRepo->count(['status' => ReservationStatus::PENDING]),
-            'recentOrders' => $orderRepo->findBy([], ['createdAt' => 'DESC'], 5),
-            'recentReviews' => $reviewRepo->findBy(['isApproved' => false], ['createdAt' => 'DESC'], 5),
+            'recentOrders' => $recentOrders,
+            'recentReviews' => $recentReviews,
         ]);
     }
 
@@ -72,6 +159,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Dégustations');
         yield MenuItem::linkToCrud('Formules', 'fa fa-glass-cheers', Tasting::class);
+        yield MenuItem::linkToCrud('Créneaux', 'fa fa-clock', TastingSlot::class);
         yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar-check', Reservation::class);
 
         yield MenuItem::section('Utilisateurs');

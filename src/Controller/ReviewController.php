@@ -51,4 +51,24 @@ class ReviewController extends AbstractController
 
         return $this->redirectToRoute('app_wine_show', ['slug' => $wine->getSlug()]);
     }
+
+    #[Route('/avis/{id}/supprimer', name: 'app_review_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function delete(Review $review, Request $request): Response
+    {
+        if ($review->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->isCsrfTokenValid('delete-review-' . $review->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $slug = $review->getWine()->getSlug();
+        $this->reviewService->deleteReview($review);
+
+        $this->addFlash('success', 'Votre avis a bien été supprimé.');
+
+        return $this->redirectToRoute('app_wine_show', ['slug' => $slug]);
+    }
 }

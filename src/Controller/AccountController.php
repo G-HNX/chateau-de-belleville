@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Customer\Address;
+use App\Entity\User\User;
+use App\Form\AddressType;
 use App\Form\ChangePasswordType;
 use App\Form\ProfileType;
 use App\Repository\Booking\ReservationRepository;
+use App\Repository\Customer\AddressRepository;
 use App\Repository\Order\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +29,7 @@ class AccountController extends AbstractController
         OrderRepository $orderRepository,
         ReservationRepository $reservationRepository,
     ): Response {
+        /** @var User $user */
         $user = $this->getUser();
 
         return $this->render('account/index.html.twig', [
@@ -37,8 +42,11 @@ class AccountController extends AbstractController
     #[Route('/commandes', name: 'app_account_orders')]
     public function orders(OrderRepository $orderRepository): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
         return $this->render('account/orders.html.twig', [
-            'orders' => $orderRepository->findByCustomer($this->getUser()),
+            'orders' => $orderRepository->findByCustomer($user),
         ]);
     }
 
@@ -47,7 +55,10 @@ class AccountController extends AbstractController
     {
         $order = $orderRepository->findByReference($reference);
 
-        if (!$order || $order->getCustomer() !== $this->getUser()) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$order || $order->getCustomer() !== $user) {
             throw $this->createNotFoundException('Commande introuvable.');
         }
 
@@ -59,14 +70,107 @@ class AccountController extends AbstractController
     #[Route('/reservations', name: 'app_account_reservations')]
     public function reservations(ReservationRepository $reservationRepository): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
         return $this->render('account/reservations.html.twig', [
-            'reservations' => $reservationRepository->findByUser($this->getUser()),
+            'reservations' => $reservationRepository->findByUser($user),
         ]);
+    }
+
+    #[Route('/adresses', name: 'app_account_addresses')]
+    public function addresses(AddressRepository $addressRepository): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->render('account/addresses.html.twig', [
+            'addresses' => $addressRepository->findByUser($user),
+        ]);
+    }
+
+    #[Route('/adresses/ajouter', name: 'app_account_address_add', methods: ['GET', 'POST'])]
+    public function addAddress(Request $request, EntityManagerInterface $em): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $address = new Address();
+        $address->setUser($user);
+
+        $form = $this->createForm(AddressType::class, $address);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->handleDefaultFlags($address, $user);
+            $em->persist($address);
+            $em->flush();
+
+            $this->addFlash('success', 'Adresse ajoutée.');
+
+            return $this->redirectToRoute('app_account_addresses');
+        }
+
+        return $this->render('account/address_form.html.twig', [
+            'form' => $form,
+            'title' => 'Ajouter une adresse',
+        ]);
+    }
+
+    #[Route('/adresses/{id}/modifier', name: 'app_account_address_edit', methods: ['GET', 'POST'])]
+    public function editAddress(Address $address, Request $request, EntityManagerInterface $em): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($address->getUser() !== $user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(AddressType::class, $address);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->handleDefaultFlags($address, $user);
+            $em->flush();
+
+            $this->addFlash('success', 'Adresse modifiée.');
+
+            return $this->redirectToRoute('app_account_addresses');
+        }
+
+        return $this->render('account/address_form.html.twig', [
+            'form' => $form,
+            'title' => 'Modifier l\'adresse',
+        ]);
+    }
+
+    #[Route('/adresses/{id}/supprimer', name: 'app_account_address_delete', methods: ['POST'])]
+    public function deleteAddress(Address $address, Request $request, EntityManagerInterface $em): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($address->getUser() !== $user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->isCsrfTokenValid('delete-address-' . $address->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em->remove($address);
+        $em->flush();
+
+        $this->addFlash('success', 'Adresse supprimée.');
+
+        return $this->redirectToRoute('app_account_addresses');
     }
 
     #[Route('/profil', name: 'app_account_profile', methods: ['GET', 'POST'])]
     public function profile(Request $request, EntityManagerInterface $em): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(ProfileType::class, $user);
         $form->handleRequest($request);
@@ -91,6 +195,7 @@ class AccountController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em,
     ): Response {
+        /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(ChangePasswordType::class);
         $form->handleRequest($request);
@@ -116,5 +221,23 @@ class AccountController extends AbstractController
         return $this->render('account/password.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    private function handleDefaultFlags(Address $address, User $user): void
+    {
+        if ($address->isDefaultShipping()) {
+            foreach ($user->getAddresses() as $other) {
+                if ($other !== $address && $other->isDefaultShipping()) {
+                    $other->setIsDefaultShipping(false);
+                }
+            }
+        }
+        if ($address->isDefaultBilling()) {
+            foreach ($user->getAddresses() as $other) {
+                if ($other !== $address && $other->isDefaultBilling()) {
+                    $other->setIsDefaultBilling(false);
+                }
+            }
+        }
     }
 }

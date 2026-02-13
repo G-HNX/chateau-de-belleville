@@ -49,26 +49,26 @@
                     </div>
                 </div>
 
-                {# Available Slots #}
-                <div>
-                    <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Créneaux disponibles</h3>
+                {# Calendar #}
+                <div data-controller="tasting-calendar"
+                     data-tasting-calendar-slots-value="{{ slotsJson|e('html_attr') }}"
+                     data-tasting-calendar-tasting-slug-value="{{ tasting.slug }}">
+                    <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Choisir un créneau</h3>
                     {% if availableSlots|length > 0 %}
-                        <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            {% for slot in availableSlots %}
-                                <div class="slot-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.1); display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <div style="font-weight: 500; color: var(--color-primary); margin-bottom: 0.3rem;">
-                                            {{ slot.date|date('l d F Y') }}
-                                        </div>
-                                        <div style="font-size: 0.9rem; color: var(--color-secondary);">
-                                            {{ slot.startTime|date('H:i') }} - {{ slot.endTime|date('H:i') }}
-                                            — {{ slot.remainingSpots }} place{{ slot.remainingSpots > 1 ? 's' : '' }} restante{{ slot.remainingSpots > 1 ? 's' : '' }}
-                                        </div>
-                                    </div>
-                                    <a href="{{ path('app_tasting_reserve', {slug: tasting.slug, slotId: slot.id}) }}" class="btn btn-primary btn-sm">Réserver</a>
-                                </div>
-                            {% endfor %}
+                        {# Month navigation #}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <button type="button" data-tasting-calendar-target="prevBtn" data-action="click->tasting-calendar#prev"
+                                    style="background: none; border: 1px solid var(--color-beige); border-radius: 6px; padding: 0.4rem 0.8rem; color: var(--color-primary); cursor: pointer; font-family: var(--font-body);">&#8592;</button>
+                            <span data-tasting-calendar-target="monthLabel" style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);"></span>
+                            <button type="button" data-action="click->tasting-calendar#next"
+                                    style="background: none; border: 1px solid var(--color-beige); border-radius: 6px; padding: 0.4rem 0.8rem; color: var(--color-primary); cursor: pointer; font-family: var(--font-body);">&#8594;</button>
                         </div>
+
+                        {# Calendar grid #}
+                        <div data-tasting-calendar-target="calendar" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 1.5rem;"></div>
+
+                        {# Selected day slots #}
+                        <div data-tasting-calendar-target="slots"></div>
                     {% else %}
                         <div style="text-align: center; padding: 3rem; background: var(--color-cream); border-radius: 8px;">
                             <p style="color: var(--color-secondary);">Aucun créneau disponible pour le moment.</p>

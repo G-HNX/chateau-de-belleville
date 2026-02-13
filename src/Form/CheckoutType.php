@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -55,6 +58,12 @@ class CheckoutType extends AbstractType
             ->add('billingAddress', CheckoutAddressType::class, [
                 'label' => false,
             ])
+            ->add('sameAsBilling', CheckboxType::class, [
+                'label' => 'Utiliser la même adresse pour la livraison',
+                'mapped' => false,
+                'required' => false,
+                'data' => true,
+            ])
             ->add('shippingAddress', CheckoutAddressType::class, [
                 'label' => false,
             ])
@@ -64,6 +73,17 @@ class CheckoutType extends AbstractType
                 'required' => false,
                 'attr' => ['placeholder' => 'Instructions de livraison, message...'],
             ]);
+
+        // Quand "même adresse" est coché, copier la facturation dans la livraison
+        // avant la validation pour que les contraintes NotBlank passent
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+
+            if (!empty($data['sameAsBilling'])) {
+                $data['shippingAddress'] = $data['billingAddress'] ?? [];
+                $event->setData($data);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

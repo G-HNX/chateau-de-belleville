@@ -42,9 +42,18 @@ class TastingController extends AbstractController
 
         $availableSlots = $slotRepository->findAvailableForTasting($tasting);
 
+        $slotsJson = json_encode(array_map(fn($slot) => [
+            'id' => $slot->getId(),
+            'date' => $slot->getDate()->format('Y-m-d'),
+            'startTime' => $slot->getStartTime()->format('H:i'),
+            'endTime' => $slot->getEndTime()->format('H:i'),
+            'remainingSpots' => $slot->getRemainingSpots(),
+        ], $availableSlots));
+
         return $this->render('tasting/show.html.twig', [
             'tasting' => $tasting,
             'availableSlots' => $availableSlots,
+            'slotsJson' => $slotsJson,
         ]);
     }
 

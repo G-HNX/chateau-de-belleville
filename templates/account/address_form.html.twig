@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }} - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>{{ title }}</h1>
+        <p>{% if title starts with 'Ajouter' %}Enregistrez une nouvelle adresse.{% else %}Modifiez les informations de cette adresse.{% endif %}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {% include 'account/_sidebar.html.twig' %}
+
+                <div>
+                    <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">{{ title }}</h2>
+                    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); max-width: 600px;">
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    {{ form_label(form.label) }}
+                                    {{ form_widget(form.label) }}
+                                    {{ form_errors(form.label) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.firstName) }}
+                                    {{ form_widget(form.firstName) }}
+                                    {{ form_errors(form.firstName) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.lastName) }}
+                                    {{ form_widget(form.lastName) }}
+                                    {{ form_errors(form.lastName) }}
+                                </div>
+                                <div class="form-group full-width">
+                                    {{ form_label(form.street) }}
+                                    {{ form_widget(form.street) }}
+                                    {{ form_errors(form.street) }}
+                                </div>
+                                <div class="form-group full-width">
+                                    {{ form_label(form.complement) }}
+                                    {{ form_widget(form.complement) }}
+                                    {{ form_errors(form.complement) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.postalCode) }}
+                                    {{ form_widget(form.postalCode) }}
+                                    {{ form_errors(form.postalCode) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.city) }}
+                                    {{ form_widget(form.city) }}
+                                    {{ form_errors(form.city) }}
+                                </div>
+                                {{ form_widget(form.country) }}
+                                <div class="form-group full-width">
+                                    {{ form_label(form.phone) }}
+                                    {{ form_widget(form.phone) }}
+                                    {{ form_errors(form.phone) }}
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-beige); display: flex; flex-direction: column; gap: 0.75rem;">
+                                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: var(--color-primary);">
+                                    {{ form_widget(form.isDefaultShipping, {'attr': {'style': 'width: 18px; height: 18px; accent-color: var(--color-primary);'}}) }}
+                                    Adresse de livraison par défaut
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: var(--color-primary);">
+                                    {{ form_widget(form.isDefaultBilling, {'attr': {'style': 'width: 18px; height: 18px; accent-color: var(--color-primary);'}}) }}
+                                    Adresse de facturation par défaut
+                                </label>
+                            </div>
+
+                            <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                <a href="{{ path('app_account_addresses') }}" style="color: var(--color-secondary); text-decoration: none;">Annuler</a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

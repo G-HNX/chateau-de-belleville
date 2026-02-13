@@ -78,37 +78,46 @@
                             {{ form_widget(form.billingAddress.country) }}
                         </div>
 
-                        {# Shipping Address #}
-                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
-                            <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Adresse de livraison</h3>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    {{ form_label(form.shippingAddress.firstName) }}
-                                    {{ form_widget(form.shippingAddress.firstName) }}
-                                    {{ form_errors(form.shippingAddress.firstName) }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form_label(form.shippingAddress.lastName) }}
-                                    {{ form_widget(form.shippingAddress.lastName) }}
-                                    {{ form_errors(form.shippingAddress.lastName) }}
-                                </div>
-                                <div class="form-group full-width">
-                                    {{ form_label(form.shippingAddress.street) }}
-                                    {{ form_widget(form.shippingAddress.street) }}
-                                    {{ form_errors(form.shippingAddress.street) }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form_label(form.shippingAddress.zipCode) }}
-                                    {{ form_widget(form.shippingAddress.zipCode) }}
-                                    {{ form_errors(form.shippingAddress.zipCode) }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form_label(form.shippingAddress.city) }}
-                                    {{ form_widget(form.shippingAddress.city) }}
-                                    {{ form_errors(form.shippingAddress.city) }}
-                                </div>
+                        {# Same address checkbox + Shipping Address #}
+                        <div data-controller="same-address">
+                            <div style="background: white; padding: 1rem 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
+                                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500; color: var(--color-primary);">
+                                    {{ form_widget(form.sameAsBilling, {'attr': {'data-same-address-target': 'checkbox', 'data-action': 'same-address#toggle', 'style': 'width: 18px; height: 18px; accent-color: var(--color-primary);'}}) }}
+                                    Livrer à la même adresse que la facturation
+                                </label>
                             </div>
-                            {{ form_widget(form.shippingAddress.country) }}
+
+                            <div data-same-address-target="shippingBlock" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
+                                <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Adresse de livraison</h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        {{ form_label(form.shippingAddress.firstName) }}
+                                        {{ form_widget(form.shippingAddress.firstName) }}
+                                        {{ form_errors(form.shippingAddress.firstName) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.shippingAddress.lastName) }}
+                                        {{ form_widget(form.shippingAddress.lastName) }}
+                                        {{ form_errors(form.shippingAddress.lastName) }}
+                                    </div>
+                                    <div class="form-group full-width">
+                                        {{ form_label(form.shippingAddress.street) }}
+                                        {{ form_widget(form.shippingAddress.street) }}
+                                        {{ form_errors(form.shippingAddress.street) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.shippingAddress.zipCode) }}
+                                        {{ form_widget(form.shippingAddress.zipCode) }}
+                                        {{ form_errors(form.shippingAddress.zipCode) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.shippingAddress.city) }}
+                                        {{ form_widget(form.shippingAddress.city) }}
+                                        {{ form_errors(form.shippingAddress.city) }}
+                                    </div>
+                                </div>
+                                {{ form_widget(form.shippingAddress.country) }}
+                            </div>
                         </div>
 
                         {# Notes #}

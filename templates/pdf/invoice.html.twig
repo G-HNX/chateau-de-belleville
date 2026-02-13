@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 11px; color: #2C2420; line-height: 1.4; }
+
+        .header { display: table; width: 100%; margin-bottom: 30px; }
+        .header-left, .header-right { display: table-cell; vertical-align: top; }
+        .header-left { width: 50%; }
+        .header-right { width: 50%; text-align: right; }
+
+        .company-name { font-size: 22px; font-weight: bold; color: #5B4638; margin-bottom: 5px; }
+        .company-info { color: #8B7355; font-size: 10px; line-height: 1.6; }
+
+        .invoice-title { font-size: 28px; font-weight: bold; color: #5B4638; margin-bottom: 5px; }
+        .invoice-ref { font-size: 12px; color: #8B7355; }
+
+        .addresses { display: table; width: 100%; margin-bottom: 25px; }
+        .address-box { display: table-cell; width: 48%; vertical-align: top; }
+        .address-spacer { display: table-cell; width: 4%; }
+        .address-label { font-size: 9px; text-transform: uppercase; color: #8B7355; letter-spacing: 1px; margin-bottom: 5px; font-weight: bold; }
+        .address-content { background: #F5F2ED; padding: 12px; border-radius: 4px; font-size: 11px; }
+
+        .meta-table { width: 100%; margin-bottom: 25px; }
+        .meta-table td { padding: 6px 12px; font-size: 10px; }
+        .meta-table .label { color: #8B7355; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
+        .meta-table .value { font-weight: 500; }
+
+        table.items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table.items th { background: #5B4638; color: #fff; padding: 10px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; }
+        table.items th:last-child, table.items td:last-child { text-align: right; }
+        table.items th:nth-child(3), table.items td:nth-child(3) { text-align: center; }
+        table.items td { padding: 10px 12px; border-bottom: 1px solid #E8E3D9; }
+        table.items tr:last-child td { border-bottom: 2px solid #5B4638; }
+
+        .totals { width: 300px; margin-left: auto; margin-bottom: 30px; }
+        .totals table { width: 100%; }
+        .totals td { padding: 6px 0; }
+        .totals .total-label { color: #8B7355; }
+        .totals .total-value { text-align: right; }
+        .totals .grand-total { font-size: 16px; font-weight: bold; color: #5B4638; border-top: 2px solid #5B4638; padding-top: 10px; }
+        .totals .grand-total .total-value { color: #C9A87C; }
+
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 8px; color: #8B7355; padding: 15px 40px; border-top: 1px solid #E8E3D9; }
+        .legal { margin-top: 30px; padding: 15px; background: #F5F2ED; border-radius: 4px; font-size: 9px; color: #8B7355; }
+        .stamp { margin-top: 20px; text-align: right; color: #5B4638; font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="company-name">Château de Belleville</div>
+            <div class="company-info">
+                Vignoble d'Anjou<br>
+                36 rue de la Garde<br>
+                79100 Sainte-Verge (Thouars)<br>
+                Tél : 06 70 32 74 88<br>
+                chateaudebelleville@gmail.com<br><br>
+                SIRET : XXX XXX XXX XXXXX<br>
+                N° TVA : FR XX XXXXXXXXX
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="invoice-title">FACTURE</div>
+            <div class="invoice-ref">
+                N° {{ order.reference }}<br>
+                Date : {{ order.createdAt|date('d/m/Y') }}
+            </div>
+        </div>
+    </div>
+
+    <div class="addresses">
+        <div class="address-box">
+            <div class="address-label">Adresse de facturation</div>
+            <div class="address-content">
+                {{ order.billingAddress.firstName ?? '' }} {{ order.billingAddress.lastName ?? '' }}<br>
+                {{ order.billingAddress.street ?? '' }}<br>
+                {{ order.billingAddress.zipCode ?? '' }} {{ order.billingAddress.city ?? '' }}<br>
+                {{ order.billingAddress.country ?? 'France' }}
+            </div>
+        </div>
+        <div class="address-spacer"></div>
+        <div class="address-box">
+            <div class="address-label">Adresse de livraison</div>
+            <div class="address-content">
+                {{ order.shippingAddress.firstName ?? '' }} {{ order.shippingAddress.lastName ?? '' }}<br>
+                {{ order.shippingAddress.street ?? '' }}<br>
+                {{ order.shippingAddress.zipCode ?? '' }} {{ order.shippingAddress.city ?? '' }}<br>
+                {{ order.shippingAddress.country ?? 'France' }}
+            </div>
+        </div>
+    </div>
+
+    <table class="meta-table">
+        <tr>
+            <td class="label">Client</td>
+            <td class="value">{{ order.customerFirstName }} {{ order.customerLastName }}</td>
+            <td class="label">Email</td>
+            <td class="value">{{ order.customerEmail }}</td>
+        </tr>
+        <tr>
+            <td class="label">Statut</td>
+            <td class="value">{{ order.status.label }}</td>
+            <td class="label">{% if order.paidAt %}Payée le{% endif %}</td>
+            <td class="value">{% if order.paidAt %}{{ order.paidAt|date('d/m/Y') }}{% endif %}</td>
+        </tr>
+    </table>
+
+    <table class="items">
+        <thead>
+            <tr>
+                <th style="width: 45%;">Désignation</th>
+                <th style="width: 15%;">Prix unit. HT</th>
+                <th style="width: 10%;">Qté</th>
+                <th style="width: 15%;">Total HT</th>
+                <th style="width: 15%;">Total TTC</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items %}
+            <tr>
+                <td>
+                    <strong>{{ item.wineName }}</strong>
+                    {% if item.wineVintage %}<br><span style="color: #8B7355; font-size: 10px;">Millésime {{ item.wineVintage }}</span>{% endif %}
+                </td>
+                <td>{{ (item.unitPriceInCents / 100 / 1.20)|number_format(2, ',', ' ') }} €</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ (item.totalInCents / 100 / 1.20)|number_format(2, ',', ' ') }} €</td>
+                <td>{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <table>
+            <tr>
+                <td class="total-label">Sous-total HT</td>
+                <td class="total-value">{{ (order.subtotalInCents / 100 / 1.20)|number_format(2, ',', ' ') }} €</td>
+            </tr>
+            <tr>
+                <td class="total-label">TVA (20%)</td>
+                <td class="total-value">{{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</td>
+            </tr>
+            <tr>
+                <td class="total-label">Livraison</td>
+                <td class="total-value">{% if order.shippingCostInCents == 0 %}Offerte{% else %}{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €{% endif %}</td>
+            </tr>
+            <tr class="grand-total">
+                <td class="total-label">Total TTC</td>
+                <td class="total-value">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+            </tr>
+        </table>
+    </div>
+
+    {% if order.status.value == 'paid' or order.status.value == 'processing' or order.status.value == 'shipped' or order.status.value == 'delivered' %}
+    <div class="stamp">PAYÉE</div>
+    {% endif %}
+
+    <div class="legal">
+        <strong>Conditions de paiement :</strong> Paiement par carte bancaire via Stripe.<br>
+        <strong>Conditions de livraison :</strong> Livraison sous 2 à 5 jours ouvrés. Gratuite à partir de 150 € d'achat.<br>
+        <strong>Droit de rétractation :</strong> Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation ne peut être exercé pour les biens qui, par leur nature, ne peuvent être réexpédiés.<br><br>
+        Château de Belleville - SIRET : XXX XXX XXX XXXXX - N° TVA intracommunautaire : FR XX XXXXXXXXX
+    </div>
+
+    <div class="footer">
+        Château de Belleville - 36 rue de la Garde, 79100 Sainte-Verge - 06 70 32 74 88 - chateaudebelleville@gmail.com
+    </div>
+</body>
+</html>

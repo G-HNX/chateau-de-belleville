@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Adresses - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Mes Adresses</h1>
+        <p>Gérez vos adresses de livraison et de facturation.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {% include 'account/_sidebar.html.twig' %}
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin: 0;">Mes adresses</h2>
+                        {% if addresses|length > 0 %}
+                            <a href="{{ path('app_account_address_add') }}" class="btn btn-primary">+ Ajouter</a>
+                        {% endif %}
+                    </div>
+
+                    {% if addresses|length > 0 %}
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                            {% for address in addresses %}
+                                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); position: relative;">
+                                    {# Badges #}
+                                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                                        {% if address.label %}
+                                            <span style="background: var(--color-cream); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">{{ address.label }}</span>
+                                        {% endif %}
+                                        {% if address.defaultShipping %}
+                                            <span style="background: var(--color-gold); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500;">Livraison par défaut</span>
+                                        {% endif %}
+                                        {% if address.defaultBilling %}
+                                            <span style="background: var(--color-gold); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500;">Facturation par défaut</span>
+                                        {% endif %}
+                                    </div>
+
+                                    {# Address details #}
+                                    <div style="color: var(--color-primary); font-weight: 500; margin-bottom: 0.25rem;">{{ address.firstName }} {{ address.lastName }}</div>
+                                    <div style="color: var(--color-secondary); line-height: 1.6; font-size: 0.95rem;">
+                                        {{ address.street }}<br>
+                                        {% if address.complement %}{{ address.complement }}<br>{% endif %}
+                                        {{ address.postalCode }} {{ address.city }}
+                                        {% if address.phone %}<br>{{ address.phone }}{% endif %}
+                                    </div>
+
+                                    {# Actions #}
+                                    <div style="display: flex; gap: 1rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--color-beige);">
+                                        <a href="{{ path('app_account_address_edit', {id: address.id}) }}" style="color: var(--color-primary); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Modifier</a>
+                                        <form action="{{ path('app_account_address_delete', {id: address.id}) }}" method="post" style="display: inline;"
+                                              onsubmit="return confirm('Supprimer cette adresse ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-address-' ~ address.id) }}">
+                                            <button type="submit" style="background: none; border: none; color: var(--color-accent); cursor: pointer; font-size: 0.9rem; font-family: var(--font-body);">Supprimer</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 3rem; background: var(--color-cream); border-radius: 8px;">
+                            <p style="color: var(--color-secondary); margin-bottom: 1rem;">Vous n'avez pas encore enregistré d'adresse.</p>
+                            <a href="{{ path('app_account_address_add') }}" class="btn btn-primary">Ajouter une adresse</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

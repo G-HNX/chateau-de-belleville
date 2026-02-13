@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: 'Montserrat', Arial, sans-serif; color: #2C2420; background: #F5F2ED; margin: 0; padding: 0;">
+    <div style="background: #5B4638; padding: 30px; text-align: center;">
+        <h1 style="color: #C9A87C; font-family: Georgia, serif; margin: 0; font-size: 24px;">Château de Belleville</h1>
+        <p style="color: #E8E3D9; margin: 5px 0 0; font-size: 14px;">Vignoble d'Anjou</p>
+    </div>
+
+    <div style="background: #ffffff; padding: 30px; margin: 0 auto; max-width: 600px;">
+        <h2 style="color: #5B4638;">Paiement confirmé</h2>
+        <p>Bonjour {{ order.customerFirstName }},</p>
+        <p>Votre paiement pour la commande <strong>{{ order.reference }}</strong> a bien été reçu.</p>
+
+        <div style="background: #F5F2ED; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span style="color: #8B7355;">Montant payé</span>
+                <strong style="color: #C9A87C; font-size: 20px;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #8B7355;">Date de paiement</span>
+                <span>{{ order.paidAt|date('d/m/Y à H:i') }}</span>
+            </div>
+        </div>
+
+        <p>Votre commande est maintenant en préparation. Nous vous enverrons un email dès qu'elle sera expédiée.</p>
+
+        <p style="text-align: center; margin-top: 25px;">
+            <a href="{{ url('app_home') }}" style="display: inline-block; background: #5B4638; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 500;">Visiter notre site</a>
+        </p>
+    </div>
+
+    <div style="text-align: center; padding: 20px; color: #8B7355; font-size: 12px;">
+        <p>Château de Belleville - 36 rue de la Garde, 79100 Sainte-Verge</p>
+        <p>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+    </div>
+</body>
+</html>

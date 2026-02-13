@@ -198,6 +198,17 @@
                         {% if review.content %}
                             <p class="review-content">{{ review.content }}</p>
                         {% endif %}
+                        {% if app.user and app.user.id == review.user.id %}
+                            <div style="margin-top: 0.75rem; text-align: right;">
+                                <form action="{{ path('app_review_delete', {id: review.id}) }}" method="post" style="display: inline;"
+                                      onsubmit="return confirm('Supprimer votre avis ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-review-' ~ review.id) }}">
+                                    <button type="submit" style="background: none; border: none; color: var(--color-accent); cursor: pointer; font-size: 0.85rem; text-decoration: underline; font-family: var(--font-body);">
+                                        Supprimer mon avis
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             {% else %}

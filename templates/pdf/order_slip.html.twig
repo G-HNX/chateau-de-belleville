@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 11px; color: #2C2420; line-height: 1.4; }
+
+        .header { display: table; width: 100%; margin-bottom: 25px; border-bottom: 3px solid #5B4638; padding-bottom: 15px; }
+        .header-left, .header-right { display: table-cell; vertical-align: top; }
+        .header-left { width: 50%; }
+        .header-right { width: 50%; text-align: right; }
+
+        .company-name { font-size: 20px; font-weight: bold; color: #5B4638; }
+        .doc-title { font-size: 24px; font-weight: bold; color: #5B4638; }
+        .doc-ref { font-size: 12px; color: #8B7355; margin-top: 5px; }
+
+        .info-grid { display: table; width: 100%; margin-bottom: 20px; }
+        .info-cell { display: table-cell; width: 50%; vertical-align: top; padding-right: 15px; }
+        .info-block { background: #F5F2ED; padding: 12px; border-radius: 4px; margin-bottom: 10px; }
+        .info-label { font-size: 9px; text-transform: uppercase; color: #8B7355; letter-spacing: 1px; margin-bottom: 5px; font-weight: bold; }
+
+        table.items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table.items th { background: #5B4638; color: #fff; padding: 10px 12px; font-size: 10px; text-transform: uppercase; text-align: left; }
+        table.items td { padding: 12px; border-bottom: 1px solid #E8E3D9; font-size: 12px; }
+        table.items th:nth-child(2), table.items td:nth-child(2) { text-align: center; font-size: 16px; font-weight: bold; }
+        table.items .check-col { width: 40px; text-align: center; }
+
+        .notes { background: #F5F2ED; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .notes-label { font-weight: bold; color: #5B4638; margin-bottom: 5px; }
+
+        .signature-area { display: table; width: 100%; margin-top: 40px; }
+        .signature-box { display: table-cell; width: 48%; vertical-align: top; }
+        .signature-spacer { display: table-cell; width: 4%; }
+        .signature-line { border-bottom: 1px solid #2C2420; height: 60px; margin-top: 10px; }
+        .signature-label { font-size: 10px; color: #8B7355; margin-top: 5px; }
+
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 8px; color: #8B7355; padding: 15px 40px; border-top: 1px solid #E8E3D9; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="company-name">Château de Belleville</div>
+            <div style="color: #8B7355; font-size: 10px;">36 rue de la Garde, 79100 Sainte-Verge</div>
+        </div>
+        <div class="header-right">
+            <div class="doc-title">BON DE COMMANDE</div>
+            <div class="doc-ref">
+                N° {{ order.reference }}<br>
+                {{ order.createdAt|date('d/m/Y à H:i') }}
+            </div>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-cell">
+            <div class="info-label">Client</div>
+            <div class="info-block">
+                <strong>{{ order.customerFirstName }} {{ order.customerLastName }}</strong><br>
+                {{ order.customerEmail }}<br>
+                {% if order.customerPhone %}Tél : {{ order.customerPhone }}{% endif %}
+            </div>
+
+            <div class="info-label">Adresse de livraison</div>
+            <div class="info-block">
+                {{ order.shippingAddress.firstName ?? '' }} {{ order.shippingAddress.lastName ?? '' }}<br>
+                {{ order.shippingAddress.street ?? '' }}<br>
+                {{ order.shippingAddress.zipCode ?? '' }} {{ order.shippingAddress.city ?? '' }}
+            </div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">Informations commande</div>
+            <div class="info-block">
+                <strong>Référence :</strong> {{ order.reference }}<br>
+                <strong>Statut :</strong> {{ order.status.label }}<br>
+                <strong>Date :</strong> {{ order.createdAt|date('d/m/Y') }}<br>
+                <strong>Articles :</strong> {{ order.itemsCount }} bouteille{{ order.itemsCount > 1 ? 's' : '' }}<br>
+                <strong>Total :</strong> {{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €
+            </div>
+        </div>
+    </div>
+
+    <table class="items">
+        <thead>
+            <tr>
+                <th style="width: 50%;">Article</th>
+                <th style="width: 15%;">Quantité</th>
+                <th style="width: 20%;">Emplacement</th>
+                <th class="check-col">OK</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items %}
+            <tr>
+                <td>
+                    <strong>{{ item.wineName }}</strong>
+                    {% if item.wineVintage %} - {{ item.wineVintage }}{% endif %}
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td style="color: #8B7355;">___________</td>
+                <td class="check-col" style="font-size: 18px;">☐</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if order.customerNotes %}
+    <div class="notes">
+        <div class="notes-label">Notes du client :</div>
+        {{ order.customerNotes }}
+    </div>
+    {% endif %}
+
+    {% if order.adminNotes %}
+    <div class="notes">
+        <div class="notes-label">Notes internes :</div>
+        {{ order.adminNotes }}
+    </div>
+    {% endif %}
+
+    <div class="signature-area">
+        <div class="signature-box">
+            <strong>Préparé par :</strong>
+            <div class="signature-line"></div>
+            <div class="signature-label">Nom / Date / Signature</div>
+        </div>
+        <div class="signature-spacer"></div>
+        <div class="signature-box">
+            <strong>Vérifié par :</strong>
+            <div class="signature-line"></div>
+            <div class="signature-label">Nom / Date / Signature</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Château de Belleville - Document interne - Imprimé le {{ "now"|date('d/m/Y à H:i') }}
+    </div>
+</body>
+</html>

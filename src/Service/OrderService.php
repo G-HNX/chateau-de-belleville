@@ -14,6 +14,7 @@ class OrderService
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
+        private readonly EmailService $emailService,
     ) {}
 
     /**
@@ -29,6 +30,11 @@ class OrderService
         }
 
         return null;
+    }
+
+    public function save(Order $order): void
+    {
+        $this->em->flush();
     }
 
     /**
@@ -70,6 +76,8 @@ class OrderService
         $cart->clear();
 
         $this->em->flush();
+
+        $this->emailService->sendOrderConfirmation($order);
 
         return $order;
     }
