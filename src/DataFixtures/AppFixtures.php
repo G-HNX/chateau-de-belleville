@@ -13,7 +13,6 @@ use App\Entity\Catalog\WineCategory;
 use App\Entity\Catalog\WineImage;
 use App\Entity\Customer\Review;
 use App\Entity\User\User;
-use App\Enum\WineType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -180,7 +179,6 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Escapade',
                 'slug' => 'escapade',
-                'type' => WineType::WHITE,
                 'vintage' => 2023,
                 'priceInCents' => 1250,
                 'stock' => 150,
@@ -205,7 +203,6 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Estival',
                 'slug' => 'estival',
-                'type' => WineType::ROSE,
                 'vintage' => 2023,
                 'priceInCents' => 1100,
                 'stock' => 200,
@@ -230,7 +227,6 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Escale',
                 'slug' => 'escale',
-                'type' => WineType::ROSE,
                 'vintage' => 2023,
                 'priceInCents' => 1150,
                 'stock' => 180,
@@ -255,7 +251,6 @@ class AppFixtures extends Fixture
             [
                 'name' => 'L\'Invitée',
                 'slug' => 'l-invitee',
-                'type' => WineType::RED,
                 'vintage' => 2022,
                 'priceInCents' => 1450,
                 'stock' => 120,
@@ -280,7 +275,6 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Évasion',
                 'slug' => 'evasion',
-                'type' => WineType::RED,
                 'vintage' => 2022,
                 'priceInCents' => 1350,
                 'stock' => 100,
@@ -305,7 +299,6 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Les Festives',
                 'slug' => 'les-festives',
-                'type' => WineType::SPARKLING,
                 'vintage' => 2022,
                 'priceInCents' => 1650,
                 'stock' => 80,
@@ -334,7 +327,6 @@ class AppFixtures extends Fixture
             $wine = new Wine();
             $wine->setName($wineData['name']);
             $wine->setSlug($wineData['slug']);
-            $wine->setType($wineData['type']);
             $wine->setVintage($wineData['vintage']);
             $wine->setPriceInCents($wineData['priceInCents']);
             $wine->setStock($wineData['stock']);

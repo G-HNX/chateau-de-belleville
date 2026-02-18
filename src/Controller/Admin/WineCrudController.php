@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Catalog\Wine;
-use App\Enum\WineType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -13,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -46,7 +44,6 @@ class WineCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add('type')
             ->add('category')
             ->add('isActive')
             ->add('isFeatured');
@@ -58,11 +55,6 @@ class WineCrudController extends AbstractCrudController
         yield SlugField::new('slug', 'Slug')
             ->setTargetFieldName('name')
             ->hideOnIndex();
-        yield ChoiceField::new('type', 'Type')
-            ->setChoices(array_combine(
-                array_map(fn (WineType $t) => $t->label(), WineType::cases()),
-                WineType::cases(),
-            ));
         yield IntegerField::new('vintage', 'Millésime');
         yield MoneyField::new('priceInCents', 'Prix')
             ->setCurrency('EUR')

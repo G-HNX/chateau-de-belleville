@@ -10,6 +10,7 @@ use App\Repository\Order\OrderRepository;
 use App\Service\CartService;
 use App\Service\OrderService;
 use App\Service\StripeService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,7 @@ class CheckoutController extends AbstractController
         private readonly CartService $cartService,
         private readonly OrderService $orderService,
         private readonly StripeService $stripeService,
+        private readonly EntityManagerInterface $em,
     ) {}
 
     #[Route('', name: 'app_checkout_index', methods: ['GET', 'POST'])]
@@ -89,6 +91,7 @@ class CheckoutController extends AbstractController
 
         $form = $this->createForm(CheckoutType::class, $defaultData, [
             'is_guest' => $isGuest,
+            'birthDate' => $user?->getBirthDate(),
         ]);
         $form->handleRequest($request);
 
@@ -116,7 +119,25 @@ class CheckoutController extends AbstractController
                 $formData['phone'] = $form->get('phone')->getData();
             }
 
-            $order = $this->orderService->createOrderFromCart($cart, $user, $formData);
+            /** @var \DateTimeInterface $birthDate */
+            $birthDate = $form->get('birthDate')->getData();
+            $age = (new \DateTime())->diff($birthDate)->y;
+
+            if ($age < 18) {
+                $this->addFlash('error', 'Vous devez avoir 18 ans ou plus pour passer commande sur notre site.');
+
+                return $this->render('checkout/index.html.twig', [
+                    'cart' => $cart,
+                    'form' => $form,
+                ]);
+            }
+
+            if ($user && $user->getBirthDate() === null) {
+                $user->setBirthDate($birthDate);
+                $this->em->flush();
+            }
+
+            $order = $this->orderService->createOrderFromCart($cart, $user, $formData, $birthDate);
 
             return $this->redirectToRoute('app_checkout_payment', [
                 'reference' => $order->getReference(),
@@ -144,7 +165,16 @@ class CheckoutController extends AbstractController
             ]);
         }
 
-        $paymentIntent = $this->stripeService->createPaymentIntent($order);
+        try {
+            $paymentIntent = $this->stripeService->createPaymentIntent($order);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Le service de paiement est temporairement indisponible. Votre commande a bien été enregistrée.');
+
+            return $this->redirectToRoute('app_checkout_confirmation', [
+                'reference' => $order->getReference(),
+            ]);
+        }
+
         $order->setStripePaymentIntentId($paymentIntent->id);
         $this->orderService->save($order);
 

@@ -15,7 +15,7 @@
             {{ form_start(form, {'action': path('app_checkout_index')}) }}
                 <div class="grid-checkout">
                     {# Form #}
-                    <div>
+                    <div data-reveal="slide-left">
                         {# Contact Info (guest only) #}
                         {% if not app.user %}
                             <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
@@ -121,17 +121,35 @@
                         </div>
 
                         {# Notes #}
-                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08);">
+                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 2rem;">
                             <div class="form-group">
                                 {{ form_label(form.notes) }}
                                 {{ form_widget(form.notes) }}
                                 {{ form_errors(form.notes) }}
                             </div>
                         </div>
+
+                        {# Vérification d'âge #}
+                        <div style="background: #fefce8; border: 1px solid #fde68a; padding: 2rem; border-radius: 12px;">
+                            <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--color-primary); margin-bottom: 0.5rem;">Vérification de majorité</h3>
+                            <p style="font-size: 0.9rem; color: var(--color-secondary); margin-bottom: 1.5rem;">La vente d'alcool est strictement réservée aux personnes majeures (18 ans et plus). Cette information est conservée à des fins légales.</p>
+                            <div class="form-group" style="margin-bottom: 1.25rem;">
+                                {{ form_label(form.birthDate) }}
+                                {{ form_widget(form.birthDate) }}
+                                {{ form_errors(form.birthDate) }}
+                            </div>
+                            <div class="form-group">
+                                <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; font-size: 0.9rem; color: var(--color-dark); line-height: 1.4;">
+                                    {{ form_widget(form.ageVerification, {'attr': {'style': 'width: 18px; height: 18px; accent-color: var(--color-primary); flex-shrink: 0; margin-top: 2px;'}}) }}
+                                    Je certifie avoir 18 ans ou plus et accepte de recevoir des produits alcoolisés.
+                                </label>
+                                {{ form_errors(form.ageVerification) }}
+                            </div>
+                        </div>
                     </div>
 
                     {# Order Summary #}
-                    <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; position: sticky; top: 120px;">
+                    <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; position: sticky; top: 120px;" data-reveal="slide-right" data-reveal-delay="150">
                         <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Récapitulatif</h3>
                         {% for item in cart.items %}
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--color-beige);">

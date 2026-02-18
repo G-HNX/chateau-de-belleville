@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Livraison - Château de Belleville{% endblock %}
+{% block meta_description %}Informations de livraison du Château de Belleville. Délais, tarifs, zones de livraison et retrait au domaine.{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Livraison</h1>
+        <p>Tarifs, délais et informations d'expédition</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 900px;">
+            <nav class="legal-nav" aria-label="Sommaire">
+                <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Sommaire</h2>
+                <ul class="legal-nav-list">
+                    <li><a href="#zones">Zones de livraison</a></li>
+                    <li><a href="#tarifs">Tarifs</a></li>
+                    <li><a href="#delais">Délais</a></li>
+                    <li><a href="#preparation">Préparation des commandes</a></li>
+                    <li><a href="#reception">Réception de la commande</a></li>
+                    <li><a href="#retrait">Retrait au domaine</a></li>
+                    <li><a href="#problemes">Problèmes de livraison</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <section class="section section-cream">
+        <div class="container" style="max-width: 900px;">
+
+            <div class="legal-card" id="zones">
+                <h2>Zones de livraison</h2>
+                <p>Nous livrons actuellement dans les zones suivantes :</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">France métropolitaine</span>
+                        <span class="legal-value">Disponible — livraison standard et express</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Corse</span>
+                        <span class="legal-value">Disponible — délai et tarif spécifiques</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">DOM-TOM</span>
+                        <span class="legal-value">Sur devis — contactez-nous</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Belgique, Luxembourg, Suisse</span>
+                        <span class="legal-value">Sur devis — contactez-nous</span>
+                    </div>
+                </div>
+                <div class="legal-note">
+                    Pour toute livraison hors France métropolitaine, contactez-nous par email à chateaudebelleville@gmail.com avant de passer commande.
+                </div>
+            </div>
+
+            <div class="legal-card" id="tarifs">
+                <h2>Tarifs de livraison</h2>
+                <p>Les frais exacts sont calculés et affichés dans votre panier avant validation de la commande, en fonction du nombre de bouteilles, du poids et de la destination.</p>
+
+                <h3>France métropolitaine</h3>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Jusqu'à 6 bouteilles</span>
+                        <span class="legal-value">Frais affichés dans le panier</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">De 7 à 12 bouteilles</span>
+                        <span class="legal-value">Frais affichés dans le panier</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Au-delà de 12 bouteilles</span>
+                        <span class="legal-value">Frais affichés dans le panier</span>
+                    </div>
+                </div>
+
+                <div class="legal-success" style="margin-top: 1.5rem;">
+                    La livraison est offerte à partir de 150 € d'achat en France métropolitaine.
+                </div>
+            </div>
+
+            <div class="legal-card" id="delais">
+                <h2>Délais de livraison</h2>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">France métropolitaine — Standard</span>
+                        <span class="legal-value">3 à 5 jours ouvrés après expédition</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">France métropolitaine — Express</span>
+                        <span class="legal-value">1 à 2 jours ouvrés après expédition</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Corse</span>
+                        <span class="legal-value">5 à 7 jours ouvrés</span>
+                    </div>
+                </div>
+                <div class="legal-note" style="margin-top: 1rem;">
+                    Ces délais sont donnés à titre indicatif et courent à compter de l'expédition de la commande. Ils peuvent être allongés lors de périodes de forte activité (fêtes, vendanges) ou en cas de conditions météorologiques exceptionnelles.
+                </div>
+            </div>
+
+            <div class="legal-card" id="preparation">
+                <h2>Préparation des commandes</h2>
+                <p>Les commandes sont préparées et expédiées du lundi au vendredi, hors jours fériés. Les commandes validées avant 12h00 sont généralement traitées le jour même.</p>
+
+                <h3>Emballage</h3>
+                <p>Chaque commande est soigneusement emballée dans un carton spécifiquement conçu pour le transport de bouteilles de vin, avec calages individuels pour chaque bouteille. Cet emballage garantit la protection optimale de vos vins durant le transport.</p>
+
+                <h3>Sensibilité du vin aux températures</h3>
+                <p>Le vin est un produit vivant particulièrement sensible aux variations de température. Afin de préserver au mieux la qualité de vos bouteilles, nous prenons les précautions suivantes :</p>
+                <ul>
+                    <li>Les expéditions sont évitées par temps de gel (températures inférieures à 0 °C) ou de forte chaleur (supérieures à 30 °C)</li>
+                    <li>En période estivale (juillet–août), les expéditions peuvent être temporairement <strong>suspendues ou restreintes</strong> en cas de canicule, pour éviter tout endommagement des vins par la chaleur</li>
+                    <li>En cas de suspension, les commandes en attente sont traitées dès la reprise des expéditions ; le Client en est informé par email</li>
+                </ul>
+                <div class="legal-note">
+                    Pour toute commande urgente en période estivale, nous vous recommandons de nous contacter au préalable afin de définir ensemble les meilleures conditions d'expédition.
+                </div>
+
+                <h3>Suivi de commande</h3>
+                <p>Un email de confirmation d'expédition vous est envoyé avec le numéro de suivi de votre colis dès que la commande est prise en charge par le transporteur. Vous pouvez suivre l'acheminement de votre colis directement sur le site du transporteur.</p>
+            </div>
+
+            <div class="legal-card" id="reception">
+                <h2>Réception de la commande</h2>
+                <p>La livraison de boissons alcoolisées est soumise à des règles légales strictes :</p>
+                <ul>
+                    <li><strong>La signature d'un adulte majeur est obligatoire</strong> à la réception — le livreur est habilité à demander une pièce d'identité</li>
+                    <li>En cas d'absence, un avis de passage est déposé</li>
+                    <li>Le colis est disponible en point relais ou agence pendant <strong>15 jours calendaires</strong></li>
+                    <li>Passé ce délai, le colis est retourné au domaine et des frais de réexpédition peuvent s'appliquer</li>
+                </ul>
+
+                <h3>Vérification à la réception</h3>
+                <p>Il est recommandé de vérifier l'état du colis en présence du livreur. En cas de dommage apparent, nous vous invitons à :</p>
+                <ul>
+                    <li>Refuser le colis si l'état est clairement dégradé (bouteilles cassées, colis trempé)</li>
+                    <li>Émettre des réserves précises sur le bordereau de livraison</li>
+                    <li>Nous contacter sous <strong>48 heures</strong> avec photos à l'appui</li>
+                </ul>
+            </div>
+
+            <div class="legal-card" id="retrait">
+                <h2>Retrait au domaine</h2>
+                <p>Vous pouvez retirer votre commande directement au domaine, sans frais de livraison. Cette option est disponible lors de la finalisation de votre commande.</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Adresse</span>
+                        <span class="legal-value">36 rue de la Garde, 79100 Sainte-Verge (Thouars)</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Vendredi</span>
+                        <span class="legal-value">10h–12h / 15h–18h30</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Autres jours</span>
+                        <span class="legal-value">Sur rendez-vous — 06 70 32 74 88</span>
+                    </div>
+                </div>
+                <div class="legal-note" style="margin-top: 1rem;">
+                    La commande est disponible au retrait dans un délai de 2 jours ouvrés après validation. Un email de confirmation vous préviendra dès qu'elle est prête.
+                </div>
+            </div>
+
+            <div class="legal-card" id="problemes">
+                <h2>Problèmes de livraison</h2>
+
+                <h3>Colis non reçu</h3>
+                <p>Si votre colis n'est pas arrivé dans le délai prévu, commencez par vérifier le suivi sur le site du transporteur. Si le suivi ne donne aucune information ou indique une anomalie, contactez-nous à chateaudebelleville@gmail.com en indiquant votre numéro de commande.</p>
+
+                <h3>Colis endommagé</h3>
+                <p>En cas de dommages constatés à la livraison, contactez-nous sous 48 heures par email avec des photos du colis et des produits endommagés. Nous procéderons à l'envoi de produits de remplacement ou à un remboursement selon votre préférence.</p>
+
+                <h3>Erreur de commande</h3>
+                <p>Si vous avez reçu un produit différent de celui commandé, contactez-nous immédiatement. Nous prendrons en charge les frais de retour et vous ferons parvenir le produit correct dans les meilleurs délais.</p>
+
+                <div class="legal-success">
+                    Notre équipe s'engage à traiter toute réclamation dans un délai de 48 heures ouvrées.
+                    <br>Email : chateaudebelleville@gmail.com — Tél. : 06 70 32 74 88
+                </div>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

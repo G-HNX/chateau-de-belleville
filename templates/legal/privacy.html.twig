@@ -1,0 +1,270 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Confidentialité - Château de Belleville{% endblock %}
+{% block meta_description %}Politique de confidentialité du Château de Belleville. Comment nous collectons, utilisons et protégeons vos données personnelles conformément au RGPD.{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Politique de Confidentialité</h1>
+        <p>Protection de vos données personnelles — conformité RGPD</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 900px;">
+            <nav class="legal-nav" aria-label="Sommaire">
+                <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Sommaire</h2>
+                <ul class="legal-nav-list">
+                    <li><a href="#responsable">Responsable du traitement</a></li>
+                    <li><a href="#collecte">Données collectées</a></li>
+                    <li><a href="#finalites">Finalités et bases légales</a></li>
+                    <li><a href="#conservation">Durée de conservation</a></li>
+                    <li><a href="#partage">Partage des données</a></li>
+                    <li><a href="#droits">Vos droits</a></li>
+                    <li><a href="#securite">Sécurité</a></li>
+                    <li><a href="#cookies">Cookies</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <section class="section section-cream">
+        <div class="container" style="max-width: 900px;">
+
+            <div class="legal-card" id="responsable">
+                <h2>Responsable du traitement</h2>
+                <p>Le responsable du traitement des données personnelles collectées sur ce site est :</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Dénomination</span>
+                        <span class="legal-value">Château de Belleville</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Adresse</span>
+                        <span class="legal-value">36 rue de la Garde, 79100 Sainte-Verge</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Email</span>
+                        <span class="legal-value">chateaudebelleville@gmail.com</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Téléphone</span>
+                        <span class="legal-value">06 70 32 74 88</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">Cette politique est conforme au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée.</p>
+            </div>
+
+            <div class="legal-card" id="collecte">
+                <h2>Données collectées</h2>
+                <p>Nous collectons uniquement les données nécessaires à la fourniture de nos services :</p>
+
+                <h3>Création de compte</h3>
+                <ul>
+                    <li>Nom, prénom</li>
+                    <li>Adresse email</li>
+                    <li>Numéro de téléphone</li>
+                    <li>Mot de passe (stocké sous forme hashée, jamais en clair)</li>
+                </ul>
+
+                <h3>Commande</h3>
+                <ul>
+                    <li>Adresse de livraison et de facturation</li>
+                    <li>Historique des commandes et des produits achetés</li>
+                    <li>Date de naissance (vérification de majorité obligatoire — Loi Évin, art. L.3342-1 du Code de la santé publique)</li>
+                </ul>
+
+                <h3>Réservation de dégustation</h3>
+                <ul>
+                    <li>Nom, prénom, email, téléphone</li>
+                    <li>Nombre de participants, date et formule choisie</li>
+                </ul>
+
+                <h3>Formulaire de contact</h3>
+                <ul>
+                    <li>Nom, prénom, email, téléphone, message</li>
+                </ul>
+
+                <h3>Sommelier IA (chatbot)</h3>
+                <ul>
+                    <li>Les messages envoyés au sommelier IA sont transmis au service Mistral AI pour génération de la réponse</li>
+                    <li>Ces échanges ne sont pas associés à votre compte et ne sont pas conservés par nous au-delà de la session</li>
+                </ul>
+
+                <div class="legal-note">
+                    La date de naissance est une donnée à caractère personnel collectée uniquement pour satisfaire à l'obligation légale de vérification de majorité lors de la vente d'alcool (Loi Évin). Elle n'est utilisée à aucune autre fin.
+                </div>
+                <div class="legal-success">
+                    Nous ne collectons aucune donnée sensible (origine ethnique, opinions politiques, données de santé, etc.).
+                </div>
+            </div>
+
+            <div class="legal-card" id="finalites">
+                <h2>Finalités et bases légales</h2>
+                <div class="legal-rights-grid">
+                    <div class="legal-right">
+                        <strong>Gestion des commandes</strong>
+                        <span>Base légale : exécution du contrat (art. 6.1.b RGPD)</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Gestion des réservations</strong>
+                        <span>Base légale : exécution du contrat (art. 6.1.b RGPD)</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Comptabilité et facturation</strong>
+                        <span>Base légale : obligation légale (art. 6.1.c RGPD)</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Formulaire de contact</strong>
+                        <span>Base légale : intérêt légitime (art. 6.1.f RGPD)</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Amélioration du service</strong>
+                        <span>Base légale : intérêt légitime (art. 6.1.f RGPD)</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Newsletter (si applicable)</strong>
+                        <span>Base légale : consentement (art. 6.1.a RGPD)</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Vérification de majorité (Loi Évin)</strong>
+                        <span>Base légale : obligation légale (art. 6.1.c RGPD) — Loi n°91-32 du 10 janvier 1991 et art. L.3342-1 du Code de la santé publique</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">Vos données ne sont jamais utilisées à des fins publicitaires tierces ni cédées à des partenaires commerciaux.</p>
+            </div>
+
+            <div class="legal-card" id="conservation">
+                <h2>Durée de conservation</h2>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Données de compte</span>
+                        <span class="legal-value">Durée de vie du compte + 3 ans après la dernière activité</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Données de commande (dont date de naissance)</span>
+                        <span class="legal-value">10 ans (obligation comptable légale ; la date de naissance est conservée avec la commande à des fins de traçabilité légale — Loi Évin)</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Données de réservation</span>
+                        <span class="legal-value">3 ans à compter de la réservation</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Messages de contact</span>
+                        <span class="legal-value">3 ans à compter du dernier échange</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Logs serveur</span>
+                        <span class="legal-value">1 an (obligation légale)</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">À l'expiration de ces délais, vos données sont supprimées ou anonymisées définitivement.</p>
+            </div>
+
+            <div class="legal-card" id="partage">
+                <h2>Partage des données</h2>
+                <p>Nous ne vendons, ne louons ni ne partageons vos données personnelles avec des tiers à des fins commerciales. Vos données peuvent être transmises aux sous-traitants suivants, dans le strict cadre de leur mission :</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Stripe, Inc.</span>
+                        <span class="legal-value">Traitement sécurisé des paiements — siège aux États-Unis (transfert encadré par les Clauses Contractuelles Types de la Commission européenne)</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Mistral AI</span>
+                        <span class="legal-value">Service d'intelligence artificielle (sommelier IA) — société française, données traitées dans l'UE</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Google Fonts</span>
+                        <span class="legal-value">Chargement des polices de caractères — une requête vers les serveurs Google est effectuée à chaque visite (adresse IP transmise). Siège aux États-Unis (transfert encadré par les CCT)</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Hébergeur</span>
+                        <span class="legal-value">Stockage des données sur serveurs sécurisés en France ou UE</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Transporteur</span>
+                        <span class="legal-value">Nom, adresse de livraison, téléphone (pour la livraison uniquement)</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">Ces sous-traitants sont contractuellement tenus de respecter la confidentialité de vos données et le RGPD. Pour les transferts hors UE (Stripe, Google Fonts), des garanties appropriées au sens de l'article 46 du RGPD sont mises en place (Clauses Contractuelles Types).</p>
+                <div class="legal-note">
+                    En cas d'obligation légale (réquisition judiciaire, lutte contre la fraude), vos données peuvent être communiquées aux autorités compétentes.
+                </div>
+            </div>
+
+            <div class="legal-card" id="droits">
+                <h2>Vos droits</h2>
+                <p>Conformément au RGPD, vous disposez des droits suivants sur vos données personnelles :</p>
+                <div class="legal-rights-grid">
+                    <div class="legal-right">
+                        <strong>Droit d'accès</strong>
+                        <span>Obtenir une copie des données vous concernant</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Droit de rectification</strong>
+                        <span>Faire corriger des données inexactes ou incomplètes</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Droit à l'effacement</strong>
+                        <span>Demander la suppression de vos données (« droit à l'oubli ») — sous réserve des obligations légales de conservation (ex. : données de commande conservées 10 ans pour la comptabilité)</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Droit à la limitation</strong>
+                        <span>Suspendre temporairement le traitement de vos données</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Droit d'opposition</strong>
+                        <span>Vous opposer au traitement fondé sur l'intérêt légitime</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Droit à la portabilité</strong>
+                        <span>Recevoir vos données dans un format structuré et lisible par machine</span>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 1.5rem;">Comment exercer vos droits</h3>
+                <p>Envoyez votre demande par email à <strong>chateaudebelleville@gmail.com</strong> en précisant votre identité et la nature de votre demande. Nous vous répondrons dans un délai maximum d'un mois.</p>
+                <p>Vous disposez également du droit d'introduire une réclamation auprès de la <strong>CNIL</strong> : <a href="https://www.cnil.fr" target="_blank" rel="noopener" style="color: var(--color-gold);">www.cnil.fr</a> — 3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07.</p>
+            </div>
+
+            <div class="legal-card" id="securite">
+                <h2>Sécurité des données</h2>
+                <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, divulgation, altération ou destruction :</p>
+                <ul>
+                    <li>Communications chiffrées via HTTPS (TLS)</li>
+                    <li>Mots de passe hashés avec bcrypt/argon2 (jamais stockés en clair)</li>
+                    <li>Accès aux données restreint aux personnes habilitées</li>
+                    <li>Paiements traités exclusivement par Stripe (certifié PCI-DSS)</li>
+                    <li>Serveurs hébergés dans l'Union européenne</li>
+                </ul>
+                <p>En cas de violation de données susceptible d'engendrer un risque élevé pour vos droits, vous en serez informé dans les meilleurs délais conformément à l'article 34 du RGPD.</p>
+            </div>
+
+            <div class="legal-card" id="cookies">
+                <h2>Cookies</h2>
+                <h3>Cookie de session (obligatoire)</h3>
+                <p>Ce site utilise un unique cookie technique (<code>PHPSESSID</code>) strictement nécessaire au fonctionnement du site. Il permet de maintenir votre session de connexion, de conserver votre panier et d'assurer la sécurité des formulaires (protection CSRF).</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Nom</span>
+                        <span class="legal-value">PHPSESSID</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Durée</span>
+                        <span class="legal-value">Session (supprimé à la fermeture du navigateur) ou 7 jours avec « Se souvenir de moi »</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Finalité</span>
+                        <span class="legal-value">Technique — fonctionnement du site</span>
+                    </div>
+                </div>
+                <div class="legal-success" style="margin-top: 1rem;">
+                    Aucun cookie publicitaire, de tracking ou de réseaux sociaux n'est utilisé sur ce site.
+                </div>
+                <p style="margin-top: 1rem;">Ce cookie étant strictement nécessaire, il ne requiert pas votre consentement préalable (article 82 de la loi Informatique et Libertés).</p>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

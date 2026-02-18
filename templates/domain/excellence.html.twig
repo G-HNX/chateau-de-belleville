@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+{% from '_macros/carousel.html.twig' import domain_carousel %}
+
+{% block title %}Excellence - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Excellence</h1>
+        <p>De la vigne à la bouteille, chaque geste est guidé par la recherche du meilleur.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+
+    {# Intro #}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-2-col" style="gap: 4rem; align-items: center;">
+                <div data-reveal="slide-left">
+                    <div style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 1rem;">Notre démarche</div>
+                    <h2 style="font-family: var(--font-display); font-size: 2.2rem; color: var(--color-primary); margin-bottom: 1.5rem; line-height: 1.2;">L'excellence, ce n'est pas<br>un résultat — c'est un chemin</h2>
+                    <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Chaque bouteille du Château de Belleville est le fruit d'un soin constant,
+                        à chaque étape, de la parcelle à la mise en bouteille.
+                        Nous ne cherchons pas la perfection par la technique seule — mais par l'attention, la patience et l'écoute.
+                    </p>
+                    <p style="color: var(--color-secondary); line-height: 1.8;">
+                        Trois étapes clés définissent notre approche : une sélection rigoureuse à la vigne,
+                        une vinification parcellaire et un élevage adapté à chaque cépage.
+                    </p>
+                </div>
+                <div data-reveal="slide-right" data-reveal-delay="150">{{ domain_carousel(photosExcellence, [
+                    {icon: '🍾', label: 'La cave du château',      bg: 'linear-gradient(135deg, #e8dcc8, #d4c8b0)'},
+                    {icon: '🪣', label: 'Élevage en fûts de chêne', bg: 'linear-gradient(135deg, #d4c8b0, #c0b498)'},
+                    {icon: '⚗️', label: 'Vinification parcellaire', bg: 'linear-gradient(135deg, #c0b498, #aca080)'}
+                ], '420px', 5000) }}</div>
+            </div>
+        </div>
+    </section>
+
+    {# Étapes #}
+    <section class="section section-cream">
+        <div class="container">
+            <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); text-align: center; margin-bottom: 3rem;"
+                data-reveal="fade-up">De la Vigne à la Bouteille</h2>
+
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+                {# Étape 1 #}
+                <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(91,70,56,0.08); display: grid; grid-template-columns: auto 1fr; gap: 0;"
+                     data-reveal="slide-left" data-reveal-delay="0">
+                    <div style="background: linear-gradient(135deg, var(--color-primary), #3d2e24); width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 2rem 0;">
+                        <div style="font-size: 1.8rem;">🍇</div>
+                        <div style="font-family: var(--font-display); font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; writing-mode: vertical-lr; transform: rotate(180deg);">Vendanges</div>
+                    </div>
+                    <div style="padding: 2rem 2.5rem;">
+                        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.8rem; color: var(--color-gold); font-weight: 600; letter-spacing: 1px;">01</span>
+                            <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary);">Tri manuel à la vigne</h3>
+                        </div>
+                        <p style="color: var(--color-secondary); line-height: 1.7; margin-bottom: 1rem;">
+                            Les vendanges sont entièrement manuelles au Château de Belleville. Chaque grappe
+                            est sélectionnée à la main, parcelle par parcelle, selon le stade de maturité
+                            optimum défini par notre vigneron.
+                        </p>
+                        <p style="color: var(--color-secondary); line-height: 1.7; font-size: 0.9rem;">
+                            Seuls les raisins sains et parfaitement mûrs entrent en cave. Ce tri rigoureux
+                            est la première condition d'un grand vin.
+                        </p>
+                    </div>
+                </div>
+
+                {# Étape 2 #}
+                <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(91,70,56,0.08); display: grid; grid-template-columns: auto 1fr; gap: 0;"
+                     data-reveal="slide-left" data-reveal-delay="120">
+                    <div style="background: linear-gradient(135deg, #8B7355, #6d5a40); width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 2rem 0;">
+                        <div style="font-size: 1.8rem;">⚗️</div>
+                        <div style="font-family: var(--font-display); font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; writing-mode: vertical-lr; transform: rotate(180deg);">Vinification</div>
+                    </div>
+                    <div style="padding: 2rem 2.5rem;">
+                        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.8rem; color: var(--color-gold); font-weight: 600; letter-spacing: 1px;">02</span>
+                            <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary);">Vinification parcellaire</h3>
+                        </div>
+                        <p style="color: var(--color-secondary); line-height: 1.7; margin-bottom: 1rem;">
+                            Chaque parcelle est vinifiée séparément, en cave. Cette approche nous permet
+                            de préserver l'identité propre de chaque terroir — une expression unique
+                            qu'un assemblage précoce effacerait.
+                        </p>
+                        <p style="color: var(--color-secondary); line-height: 1.7; font-size: 0.9rem;">
+                            Ce n'est qu'après avoir compris chaque vin individuellement que nous décidons
+                            des assemblages finaux.
+                        </p>
+                    </div>
+                </div>
+
+                {# Étape 3 #}
+                <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(91,70,56,0.08); display: grid; grid-template-columns: auto 1fr; gap: 0;"
+                     data-reveal="slide-left" data-reveal-delay="240">
+                    <div style="background: linear-gradient(135deg, var(--color-gold), #b8942e); width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 2rem 0;">
+                        <div style="font-size: 1.8rem;">🪣</div>
+                        <div style="font-family: var(--font-display); font-size: 0.75rem; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; writing-mode: vertical-lr; transform: rotate(180deg);">Élevage</div>
+                    </div>
+                    <div style="padding: 2rem 2.5rem;">
+                        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.8rem; color: var(--color-gold); font-weight: 600; letter-spacing: 1px;">03</span>
+                            <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary);">Élevage soigné & adapté</h3>
+                        </div>
+                        <p style="color: var(--color-secondary); line-height: 1.7; margin-bottom: 1rem;">
+                            L'élevage est pensé pour chaque cépage. Le Chenin Blanc gagne en complexité
+                            sur lies fines en cuve inox, tandis que le Cabernet Franc s'épanouit en fût
+                            de chêne selon le millésime.
+                        </p>
+                        <p style="color: var(--color-secondary); line-height: 1.7; font-size: 0.9rem;">
+                            Pas de recette unique : chaque vin dicte sa propre temporalité.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    {# CTA vins #}
+    <section class="section section-white">
+        <div class="container" style="text-align: center; max-width: 680px;" data-reveal="fade-up">
+            <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Découvrez le résultat</h2>
+            <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 2rem;">
+                Ces exigences, vous les retrouverez dans chaque bouteille. Parcourez notre catalogue
+                et laissez-vous guider par nos cuvées.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <a href="{{ path('app_wine_index') }}" class="btn btn-primary">Explorer nos vins</a>
+                <a href="{{ path('app_domain') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-secondary); text-decoration: none; font-size: 0.9rem; padding: 0.75rem 1.5rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    Retour au Domaine
+                </a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

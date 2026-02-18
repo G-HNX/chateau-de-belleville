@@ -14,7 +14,7 @@
         <div class="container" style="max-width: 900px;">
             <div class="grid-checkout">
                 {# Stripe Payment Form #}
-                <div
+                <div data-reveal="slide-left"
                     data-controller="stripe-payment"
                     data-stripe-payment-public-key-value="{{ stripePublicKey }}"
                     data-stripe-payment-client-secret-value="{{ clientSecret }}"
@@ -47,7 +47,7 @@
                 </div>
 
                 {# Order Summary #}
-                <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; position: sticky; top: 120px;">
+                <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; position: sticky; top: 120px;" data-reveal="slide-right" data-reveal-delay="150">
                     <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Récapitulatif</h3>
 
                     <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.5rem;">Commande {{ order.reference }}</div>

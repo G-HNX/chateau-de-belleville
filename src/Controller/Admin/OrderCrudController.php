@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
@@ -119,6 +120,9 @@ class OrderCrudController extends AbstractCrudController
             ->onlyOnDetail();
         yield TextField::new('customerPhone', 'Téléphone')
             ->onlyOnDetail();
+        yield DateField::new('customerBirthDate', 'Date de naissance (majorité)')
+            ->onlyOnDetail()
+            ->setFormat('dd/MM/yyyy');
         yield MoneyField::new('totalInCents', 'Total TTC')
             ->setCurrency('EUR')
             ->setStoredAsCents(true)

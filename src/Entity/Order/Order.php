@@ -62,6 +62,9 @@ class Order
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $customerPhone = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $customerBirthDate = null;
+
     /**
      * Adresse de facturation (snapshot JSON).
      *
@@ -217,6 +220,18 @@ class Order
     public function setCustomerPhone(?string $customerPhone): static
     {
         $this->customerPhone = $customerPhone;
+
+        return $this;
+    }
+
+    public function getCustomerBirthDate(): ?\DateTimeInterface
+    {
+        return $this->customerBirthDate;
+    }
+
+    public function setCustomerBirthDate(?\DateTimeInterface $customerBirthDate): static
+    {
+        $this->customerBirthDate = $customerBirthDate;
 
         return $this;
     }

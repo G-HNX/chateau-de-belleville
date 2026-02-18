@@ -54,6 +54,20 @@
         </div>
     </div>
 
+    {# Vérification de majorité #}
+    {% if order.customerBirthDate %}
+    <div class="card mt-4 border-warning">
+        <div class="card-header bg-warning bg-opacity-10">
+            <h5 class="card-title mb-0"><i class="fa fa-id-card me-2"></i>Vérification de majorité</h5>
+        </div>
+        <div class="card-body">
+            <span class="text-success me-2"><i class="fa fa-check-circle"></i></span>
+            Majorité certifiée — Date de naissance : <strong>{{ order.customerBirthDate|date('d/m/Y') }}</strong>
+            <span class="text-muted ms-2">({{ (date()|date('Y') - order.customerBirthDate|date('Y')) }} ans)</span>
+        </div>
+    </div>
+    {% endif %}
+
     {# Adresses #}
     <div class="row mt-4">
         <div class="col-md-6">

@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+{% from '_macros/carousel.html.twig' import domain_carousel %}
+
+{% block title %}Respect de la Nature - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Respect de la Nature</h1>
+        <p>Une viticulture raisonnée et certifiée, en harmonie avec notre terroir d'Anjou.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+
+    {# Intro #}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-2-col" style="gap: 4rem; align-items: center;">
+                <div data-reveal="slide-left">
+                    <div style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 1rem;">Notre engagement</div>
+                    <h2 style="font-family: var(--font-display); font-size: 2.2rem; color: var(--color-primary); margin-bottom: 1.5rem; line-height: 1.2;">La vigne et la nature,<br>un équilibre fragile à préserver</h2>
+                    <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Au Château de Belleville, nous croyons que la qualité d'un vin commence dans les sols.
+                        Depuis 2020, notre démarche est certifiée par deux labels nationaux qui attestent
+                        de notre engagement profond pour une viticulture raisonnée.
+                    </p>
+                    <p style="color: var(--color-secondary); line-height: 1.8;">
+                        Pas de raccourcis chimiques, pas d'herbicides de synthèse — seulement du respect,
+                        de l'observation et du travail patient au rythme de la vigne.
+                    </p>
+                </div>
+                <div data-reveal="slide-right" data-reveal-delay="150">{{ domain_carousel(photosNature, [
+                    {icon: '🌿', label: 'Le vignoble au printemps',  bg: 'linear-gradient(135deg, #d4e8c2, #b8d4a0)'},
+                    {icon: '🚜', label: 'Travail mécanique du sol',  bg: 'linear-gradient(135deg, #b8d4a0, #9cc080)'},
+                    {icon: '🦋', label: 'Biodiversité du domaine',   bg: 'linear-gradient(135deg, #9cc080, #80a860)'}
+                ], '420px', 5000) }}</div>
+            </div>
+        </div>
+    </section>
+
+    {# Certifications #}
+    <section class="section section-cream">
+        <div class="container">
+            <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); text-align: center; margin-bottom: 0.75rem;"
+                data-reveal="fade-up">Nos Certifications</h2>
+            <p style="color: var(--color-secondary); text-align: center; max-width: 600px; margin: 0 auto 3rem; line-height: 1.7;">
+                Deux labels obtenus en 2020, qui traduisent des années d'efforts et une conviction profonde.
+            </p>
+            <div class="grid-2-col" style="gap: 2rem;">
+                <div style="background: white; border-radius: 16px; padding: 2.5rem; box-shadow: 0 8px 30px rgba(91,70,56,0.08);" data-reveal="fade-up">
+                    <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 1.5rem;">🌱</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 0.75rem;">Terra Vitis</h3>
+                    <p style="color: var(--color-secondary); line-height: 1.7; margin-bottom: 1.25rem;">
+                        Label national de viticulture durable, Terra Vitis certifie que nous respectons
+                        un cahier des charges strict sur la protection de l'environnement, la santé
+                        et la sécurité des personnes, ainsi que le développement économique local.
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem;">
+                        <li style="display: flex; gap: 0.6rem; align-items: center; font-size: 0.9rem; color: var(--color-secondary);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Réduction des intrants phytosanitaires
+                        </li>
+                        <li style="display: flex; gap: 0.6rem; align-items: center; font-size: 0.9rem; color: var(--color-secondary);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Maîtrise des risques environnementaux
+                        </li>
+                        <li style="display: flex; gap: 0.6rem; align-items: center; font-size: 0.9rem; color: var(--color-secondary);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Audit annuel indépendant
+                        </li>
+                    </ul>
+                </div>
+                <div style="background: white; border-radius: 16px; padding: 2.5rem; box-shadow: 0 8px 30px rgba(91,70,56,0.08);" data-reveal="fade-up" data-reveal-delay="150">
+                    <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 1.5rem;">🏆</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 0.75rem;">Haute Valeur Environnementale</h3>
+                    <p style="color: var(--color-secondary); line-height: 1.7; margin-bottom: 1.25rem;">
+                        La certification HVE (niveau 3) est la reconnaissance la plus exigeante du
+                        Ministère de l'Agriculture français en matière de respect de l'environnement.
+                        Elle mesure concrètement nos résultats sur la biodiversité et les ressources.
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem;">
+                        <li style="display: flex; gap: 0.6rem; align-items: center; font-size: 0.9rem; color: var(--color-secondary);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Biodiversité préservée et mesurée
+                        </li>
+                        <li style="display: flex; gap: 0.6rem; align-items: center; font-size: 0.9rem; color: var(--color-secondary);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Stratégie phytosanitaire raisonnée
+                        </li>
+                        <li style="display: flex; gap: 0.6rem; align-items: center; font-size: 0.9rem; color: var(--color-secondary);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Gestion économe des fertilisants
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Nos pratiques #}
+    <section class="section section-white">
+        <div class="container">
+            <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); text-align: center; margin-bottom: 3rem;" data-reveal="fade-up">Nos Pratiques au Quotidien</h2>
+            <div class="grid-3-col" style="gap: 2rem;">
+                <div style="text-align: center; padding: 2rem;" data-reveal="fade-up">
+                    <div style="width: 72px; height: 72px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.25rem;">🚜</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.75rem;">Travail mécanique du sol</h3>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.7;">Zéro herbicide de synthèse — le désherbage est entièrement mécanique, préservant la vie microbienne du sol.</p>
+                </div>
+                <div style="text-align: center; padding: 2rem;" data-reveal="fade-up" data-reveal-delay="120">
+                    <div style="width: 72px; height: 72px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.25rem;">🌸</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.75rem;">Enherbement naturel</h3>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.7;">Les inter-rangs sont enherbés naturellement, favorisant la faune auxiliaire et limitant l'érosion des sols.</p>
+                </div>
+                <div style="text-align: center; padding: 2rem;" data-reveal="fade-up" data-reveal-delay="240">
+                    <div style="width: 72px; height: 72px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.25rem;">🦋</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.75rem;">Biodiversité</h3>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.7;">Haies bocagères, bandes fleuries et nichoirs à oiseaux autour du vignoble, pour un écosystème riche et équilibré.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Image placeholder + retour #}
+    <section class="section section-cream">
+        <div class="container" style="text-align: center;">
+            <div style="margin-bottom: 3rem;" data-reveal="fade-up">
+                {{ domain_carousel(photosNatureBas, [
+                    {icon: '📷', label: 'Parcelles certifiées', bg: 'linear-gradient(135deg, var(--color-beige), var(--color-cream))'},
+                    {icon: '🌸', label: 'Enherbement naturel',  bg: 'linear-gradient(135deg, #d4e8c2, #c0d8a8)'},
+                    {icon: '🐝', label: 'Faune auxiliaire',     bg: 'linear-gradient(135deg, #c0d8a8, #adc890)'}
+                ], '280px', 4500) }}
+            </div>
+            <a href="{{ path('app_domain') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-secondary); text-decoration: none; font-size: 0.9rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Retour au Domaine
+            </a>
+        </div>
+    </section>
+
+{% endblock %}

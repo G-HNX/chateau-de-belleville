@@ -6,6 +6,7 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CheckoutType extends AbstractType
@@ -72,6 +74,28 @@ class CheckoutType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'attr' => ['placeholder' => 'Instructions de livraison, message...'],
+            ])
+            ->add('birthDate', DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Date de naissance *',
+                'mapped' => false,
+                'required' => true,
+                'data' => $options['birthDate'],
+                'attr' => [
+                    'max' => (new \DateTime('-18 years'))->format('Y-m-d'),
+                    'min' => '1900-01-01',
+                ],
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez indiquer votre date de naissance.'),
+                ],
+            ])
+            ->add('ageVerification', CheckboxType::class, [
+                'label' => 'Je certifie avoir 18 ans ou plus et accepte de recevoir des produits alcoolisés.',
+                'mapped' => false,
+                'required' => true,
+                'constraints' => [
+                    new IsTrue(message: 'Vous devez certifier être majeur(e) pour passer commande.'),
+                ],
             ]);
 
         // Quand "même adresse" est coché, copier la facturation dans la livraison
@@ -91,8 +115,10 @@ class CheckoutType extends AbstractType
         $resolver->setDefaults([
             'data_class' => null,
             'is_guest' => true,
+            'birthDate' => null,
         ]);
 
         $resolver->setAllowedTypes('is_guest', 'bool');
+        $resolver->setAllowedTypes('birthDate', ['null', \DateTimeInterface::class]);
     }
 }
