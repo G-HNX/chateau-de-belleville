@@ -6,7 +6,6 @@ namespace App\Controller;
 
 use App\Entity\Catalog\Wine;
 use App\Entity\Customer\Review;
-use App\Enum\WineType;
 use App\Form\ReviewType;
 use App\Repository\Catalog\WineCategoryRepository;
 use App\Repository\Catalog\WineRepository;
@@ -26,13 +25,6 @@ class WineController extends AbstractController
         WineCategoryRepository $categoryRepository,
     ): Response {
         $filters = [];
-
-        if ($type = $request->query->get('type')) {
-            $wineType = WineType::tryFrom($type);
-            if ($wineType) {
-                $filters['type'] = $wineType;
-            }
-        }
 
         if ($categoryId = $request->query->getInt('categorie')) {
             $category = $categoryRepository->find($categoryId);
@@ -55,7 +47,6 @@ class WineController extends AbstractController
         return $this->render('wine/index.html.twig', [
             'wines' => $wineRepository->findByFilters($filters, $sort, $page),
             'categories' => $categoryRepository->findAll(),
-            'wineTypes' => WineType::cases(),
             'currentFilters' => $filters,
             'currentSort' => $sort,
             'currentPage' => $page,

@@ -4,79 +4,160 @@
 
 {% block header %}
     <header class="page-header">
-        <h1>Mon Compte</h1>
-        <p>Bienvenue, {{ app.user.firstName }} !</p>
+        <h1>Mon Espace</h1>
+        <p>Bienvenue, {{ app.user.firstName }} — retrouvez toutes vos commandes et réservations.</p>
     </header>
 {% endblock %}
 
 {% block body %}
-    <section class="section section-white">
-        <div class="container">
-            <div class="grid-sidebar">
-                {# Sidebar #}
-                {% include 'account/_sidebar.html.twig' %}
+<section class="section section-white">
+    <div class="container">
+        <div class="grid-sidebar">
 
-                {# Dashboard #}
-                <div>
-                    <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Tableau de bord</h2>
+            {# Sidebar #}
+            {% include 'account/_sidebar.html.twig' %}
 
-                    {# Quick Stats #}
-                    <div class="grid-3-col" style="gap: 1.5rem; margin-bottom: 3rem;">
-                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                            <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); font-weight: 700;">{{ recentOrders|length }}</div>
-                            <div style="font-size: 0.85rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px;">Commandes</div>
-                        </div>
-                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                            <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); font-weight: 700;">{{ upcomingReservations|length }}</div>
-                            <div style="font-size: 0.85rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px;">Réservations</div>
-                        </div>
-                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                            <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); font-weight: 700;">{{ app.user.firstName|first }}</div>
-                            <div style="font-size: 0.85rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px;">{{ app.user.email }}</div>
+            {# Main content #}
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+                {# Bannière de bienvenue #}
+                <div style="background: linear-gradient(135deg, var(--color-primary) 0%, #3d2e24 100%); border-radius: 16px; padding: 2.5rem; color: white; position: relative; overflow: hidden;" data-reveal="fade-up">
+                    <div style="position: absolute; right: -2rem; top: -2rem; width: 180px; height: 180px; background: rgba(201, 168, 124, 0.12); border-radius: 50%;"></div>
+                    <div style="position: absolute; right: 3rem; bottom: -3rem; width: 120px; height: 120px; background: rgba(201, 168, 124, 0.08); border-radius: 50%;"></div>
+                    <div style="position: relative;">
+                        <div style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 0.5rem;">Membre du Château</div>
+                        <h2 style="font-family: var(--font-display); font-size: 2.2rem; margin-bottom: 0.5rem; font-weight: 400;">Bonjour, {{ app.user.firstName }} !</h2>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; max-width: 480px; line-height: 1.7;">
+                            Votre cave personnelle, vos réservations de dégustations, tout est ici.
+                        </p>
+                        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="{{ path('app_wine_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; background: var(--color-gold); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+                                Découvrir les vins
+                            </a>
+                            <a href="{{ path('app_tasting_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; background: rgba(255,255,255,0.12); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2);">
+                                Réserver une dégustation
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    {# Recent Orders #}
-                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Dernières commandes</h3>
-                    {% if recentOrders|length > 0 %}
-                        <div style="margin-bottom: 3rem;">
-                            {% for order in recentOrders|slice(0, 3) %}
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--color-beige);">
-                                    <div>
-                                        <span style="font-weight: 500; color: var(--color-primary);">{{ order.reference }}</span>
-                                        <span style="font-size: 0.85rem; color: var(--color-secondary); margin-left: 1rem;">{{ order.createdAt|date('d/m/Y') }}</span>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 1rem;">
-                                        <span style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; background: var(--color-cream); color: var(--color-secondary);">{{ order.status.label }}</span>
-                                        <span style="font-weight: 500;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
-                                        <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" style="color: var(--color-gold); text-decoration: none; font-size: 0.9rem;">Voir</a>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                            <a href="{{ path('app_account_orders') }}" style="display: inline-block; margin-top: 1rem; color: var(--color-gold); text-decoration: none; font-size: 0.9rem;">Voir toutes les commandes →</a>
+                {# Stats #}
+                <div class="grid-3-col" style="gap: 1.25rem;">
+                    <div style="background: white; border: 1px solid var(--color-beige); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem;" data-reveal="scale-in">
+                        <div style="width: 52px; height: 52px; background: linear-gradient(135deg, #f5f0e8, #ede5d5); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5B4638" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                         </div>
-                    {% else %}
-                        <p style="color: var(--color-secondary); margin-bottom: 3rem;">Aucune commande pour le moment.</p>
-                    {% endif %}
+                        <div>
+                            <div style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); line-height: 1;">{{ recentOrders|length }}</div>
+                            <div style="font-size: 0.8rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.2rem;">Commande{{ recentOrders|length > 1 ? 's' : '' }}</div>
+                        </div>
+                    </div>
+                    <div style="background: white; border: 1px solid var(--color-beige); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem;" data-reveal="scale-in" data-reveal-delay="120">
+                        <div style="width: 52px; height: 52px; background: linear-gradient(135deg, #f5f0e8, #ede5d5); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5B4638" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); line-height: 1;">{{ upcomingReservations|length }}</div>
+                            <div style="font-size: 0.8rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.2rem;">Réservation{{ upcomingReservations|length > 1 ? 's' : '' }}</div>
+                        </div>
+                    </div>
+                    <div style="background: white; border: 1px solid var(--color-beige); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem;" data-reveal="scale-in" data-reveal-delay="240">
+                        <div style="width: 52px; height: 52px; background: linear-gradient(135deg, var(--color-primary), #3d2e24); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-family: var(--font-display); font-size: 1.4rem;">
+                            {{ app.user.firstName|first|upper }}{{ app.user.lastName|first|upper }}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--color-primary); font-size: 0.95rem;">{{ app.user.fullName }}</div>
+                            <div style="font-size: 0.8rem; color: var(--color-secondary); margin-top: 0.2rem;">{{ app.user.email }}</div>
+                        </div>
+                    </div>
+                </div>
 
-                    {# Upcoming Reservations #}
-                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Prochaines réservations</h3>
-                    {% if upcomingReservations|length > 0 %}
-                        {% for reservation in upcomingReservations|slice(0, 3) %}
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--color-beige);">
-                                <div>
-                                    <span style="font-weight: 500; color: var(--color-primary);">{{ reservation.slot.tasting.name }}</span>
-                                    <span style="font-size: 0.85rem; color: var(--color-secondary); margin-left: 1rem;">{{ reservation.slot.date|date('d/m/Y') }} à {{ reservation.slot.startTime|date('H:i') }}</span>
+                {# Dernières commandes #}
+                <div style="background: white; border: 1px solid var(--color-beige); border-radius: 16px; overflow: hidden;" data-reveal="fade-up">
+                    <div style="padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--color-beige); display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--color-primary);">Dernières commandes</h3>
+                        {% if recentOrders|length > 0 %}
+                            <a href="{{ path('app_account_orders') }}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none; font-weight: 500;">Tout voir →</a>
+                        {% endif %}
+                    </div>
+
+                    {% if recentOrders|length > 0 %}
+                        {% for order in recentOrders|slice(0, 3) %}
+                            <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--color-beige); text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='var(--color-cream)'" onmouseout="this.style.background='transparent'">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 38px; height: 38px; background: var(--color-cream); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--color-primary); font-size: 0.9rem;">{{ order.reference }}</div>
+                                        <div style="font-size: 0.8rem; color: var(--color-secondary);">{{ order.createdAt|date('d/m/Y') }}</div>
+                                    </div>
                                 </div>
-                                <span style="font-size: 0.85rem; color: var(--color-secondary);">{{ reservation.numberOfParticipants }} pers.</span>
-                            </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    {% set statusColors = {
+                                        'pending':    {bg: '#FFF8E7', color: '#B8860B'},
+                                        'paid':       {bg: '#E8F5E9', color: '#2E7D32'},
+                                        'shipped':    {bg: '#E3F2FD', color: '#1565C0'},
+                                        'delivered':  {bg: '#E8F5E9', color: '#2E7D32'},
+                                        'cancelled':  {bg: '#FFEBEE', color: '#C62828'}
+                                    } %}
+                                    {% set sc = statusColors[order.status.value] ?? {bg: 'var(--color-cream)', color: 'var(--color-secondary)'} %}
+                                    <span style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500; background: {{ sc.bg }}; color: {{ sc.color }};">{{ order.status.label }}</span>
+                                    <span style="font-weight: 600; color: var(--color-primary); font-size: 0.95rem;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A08D7A" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                </div>
+                            </a>
                         {% endfor %}
-                        <a href="{{ path('app_account_reservations') }}" style="display: inline-block; margin-top: 1rem; color: var(--color-gold); text-decoration: none; font-size: 0.9rem;">Voir toutes les réservations →</a>
                     {% else %}
-                        <p style="color: var(--color-secondary);">Aucune réservation à venir.</p>
+                        <div style="padding: 3rem; text-align: center;">
+                            <div style="width: 64px; height: 64px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A08D7A" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                            </div>
+                            <p style="color: var(--color-secondary); margin-bottom: 1.25rem; font-size: 0.95rem;">Vous n'avez pas encore passé de commande.</p>
+                            <a href="{{ path('app_wine_index') }}" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.65rem 1.5rem;">Découvrir nos vins</a>
+                        </div>
                     {% endif %}
                 </div>
+
+                {# Prochaines réservations #}
+                <div style="background: white; border: 1px solid var(--color-beige); border-radius: 16px; overflow: hidden;" data-reveal="fade-up" data-reveal-delay="100">
+                    <div style="padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--color-beige); display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--color-primary);">Prochaines dégustations</h3>
+                        {% if upcomingReservations|length > 0 %}
+                            <a href="{{ path('app_account_reservations') }}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none; font-weight: 500;">Tout voir →</a>
+                        {% endif %}
+                    </div>
+
+                    {% if upcomingReservations|length > 0 %}
+                        {% for reservation in upcomingReservations|slice(0, 3) %}
+                            <div style="display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--color-beige);">
+                                <div style="text-align: center; background: var(--color-cream); border-radius: 10px; padding: 0.5rem 0.9rem; min-width: 56px; flex-shrink: 0;">
+                                    <div style="font-family: var(--font-display); font-size: 1.6rem; color: var(--color-primary); line-height: 1;">{{ reservation.slot.date|date('d') }}</div>
+                                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">{{ reservation.slot.date|date('M') }}</div>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--color-primary); font-size: 0.95rem;">{{ reservation.slot.tasting.name }}</div>
+                                    <div style="font-size: 0.82rem; color: var(--color-secondary); margin-top: 0.2rem;">
+                                        {{ reservation.slot.startTime|date('H:i') }} · {{ reservation.numberOfParticipants }} participant{{ reservation.numberOfParticipants > 1 ? 's' : '' }}
+                                    </div>
+                                </div>
+                                <div style="width: 8px; height: 8px; background: #2E7D32; border-radius: 50; flex-shrink: 0;" title="Confirmée"></div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="padding: 3rem; text-align: center;">
+                            <div style="width: 64px; height: 64px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A08D7A" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <p style="color: var(--color-secondary); margin-bottom: 1.25rem; font-size: 0.95rem;">Aucune dégustation à venir pour le moment.</p>
+                            <a href="{{ path('app_tasting_index') }}" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.65rem 1.5rem;">Réserver une dégustation</a>
+                        </div>
+                    {% endif %}
+                </div>
+
             </div>
         </div>
-    </section>
+    </div>
+</section>
 {% endblock %}

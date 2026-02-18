@@ -14,7 +14,7 @@
         <div class="container">
             <div class="grid-2-col" style="gap: 4rem; align-items: start;">
                 {# Description #}
-                <div>
+                <div data-reveal="slide-left">
                     <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">{{ tasting.name }}</h2>
 
                     <div style="font-family: var(--font-display); font-size: 2rem; color: var(--color-gold); margin-bottom: 2rem;">
@@ -50,7 +50,7 @@
                 </div>
 
                 {# Calendar #}
-                <div data-controller="tasting-calendar"
+                <div data-reveal="slide-right" data-reveal-delay="150" data-controller="tasting-calendar"
                      data-tasting-calendar-slots-value="{{ slotsJson|e('html_attr') }}"
                      data-tasting-calendar-tasting-slug-value="{{ tasting.slug }}">
                     <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Choisir un créneau</h3>

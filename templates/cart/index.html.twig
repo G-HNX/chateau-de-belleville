@@ -14,7 +14,7 @@
         <div class="container">
             {% if cart and not cart.empty %}
                 {# Cart Table #}
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto;" data-reveal="fade-in">
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
                         <thead>
                             <tr style="border-bottom: 2px solid var(--color-beige);">
@@ -82,7 +82,7 @@
                             <button type="submit" class="btn btn-outline" onclick="return confirm('Vider tout le panier ?')">Vider le panier</button>
                         </form>
                     </div>
-                    <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; min-width: min(350px, 100%);">
+                    <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; min-width: min(350px, 100%);" data-reveal="fade-up">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
                             <span style="color: var(--color-secondary);">Sous-total</span>
                             <span style="font-weight: 500;">{{ (cart.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>

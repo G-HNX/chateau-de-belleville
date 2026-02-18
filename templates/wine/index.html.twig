@@ -11,11 +11,11 @@
 
 {% block body %}
     {# Filters #}
-    <section style="padding: 2rem 5%; background: white; border-bottom: 1px solid var(--color-beige);">
+    <section style="padding: 2rem 5%; background: white; border-bottom: 1px solid var(--color-beige);" data-reveal="fade-in">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
             <a href="{{ path('app_wine_index') }}" class="filter-btn{% if currentFilters is empty %} active{% endif %}">Tous</a>
-            {% for type in wineTypes %}
-                <a href="{{ path('app_wine_index', {type: type.value}) }}" class="filter-btn{% if currentFilters.type is defined and currentFilters.type == type %} active{% endif %}">{{ type.label }}s</a>
+            {% for category in categories %}
+                <a href="{{ path('app_wine_index', {categorie: category.id}) }}" class="filter-btn{% if currentFilters.category is defined and currentFilters.category == category %} active{% endif %}">{{ category.name }}</a>
             {% endfor %}
         </div>
     </section>
@@ -24,10 +24,12 @@
     <section style="padding: 4rem 5%; background: white;">
         <div class="container-lg grid-product">
             {% for wine in wines %}
-                <div class="wine-card">
+                <div class="wine-card"
+                     data-reveal="fade-up"
+                     data-reveal-delay="{{ (loop.index0 % 3) * 100 }}">
                     <div class="wine-image">
-                        {% if wine.type %}
-                            <span class="wine-badge">{{ wine.type.label }}</span>
+                        {% if wine.category %}
+                            <span class="wine-badge">{{ wine.category.name }}</span>
                         {% endif %}
                         {% if wine.mainImage %}
                             <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}">

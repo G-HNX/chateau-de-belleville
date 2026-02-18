@@ -13,7 +13,7 @@
     <section class="section section-white">
         <div class="container" style="max-width: 800px;">
             {# Recap #}
-            <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;" data-reveal="fade-up">
                 <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Récapitulatif</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
@@ -40,7 +40,7 @@
             </div>
 
             {# Form #}
-            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);">
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);" data-reveal="fade-up" data-reveal-delay="150">
                 <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem; text-align: center;">Vos informations</h2>
                 {{ form_start(form, {'attr': {'class': 'form-grid'}}) }}
                     <div class="form-group">

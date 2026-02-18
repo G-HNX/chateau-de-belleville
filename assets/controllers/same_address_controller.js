@@ -8,6 +8,10 @@ export default class extends Controller {
     }
 
     toggle() {
-        this.shippingBlockTarget.style.display = this.checkboxTarget.checked ? 'none' : '';
+        const sameAsBilling = this.checkboxTarget.checked;
+        this.shippingBlockTarget.style.display = sameAsBilling ? 'none' : '';
+        this.shippingBlockTarget.querySelectorAll('input, select, textarea').forEach(input => {
+            input.disabled = sameAsBilling;
+        });
     }
 }

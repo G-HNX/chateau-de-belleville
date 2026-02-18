@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity\Catalog;
 
 use App\Entity\Customer\Review;
-use App\Enum\WineType;
 use App\Repository\Catalog\WineRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,7 +24,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'wine')]
 #[ORM\Index(columns: ['slug'], name: 'idx_wine_slug')]
 #[ORM\Index(columns: ['is_active', 'is_featured'], name: 'idx_wine_active_featured')]
-#[ORM\Index(columns: ['type'], name: 'idx_wine_type')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['slug'], message: 'Ce slug existe deja')]
 class Wine
@@ -41,9 +39,6 @@ class Wine
 
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
-
-    #[ORM\Column(type: Types::STRING, length: 20, enumType: WineType::class)]
-    private ?WineType $type = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     #[Assert\Range(min: 1900, max: 2100)]
@@ -170,18 +165,6 @@ class Wine
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getType(): ?WineType
-    {
-        return $this->type;
-    }
-
-    public function setType(WineType $type): static
-    {
-        $this->type = $type;
 
         return $this;
     }

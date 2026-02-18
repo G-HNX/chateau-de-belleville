@@ -3,35 +3,27 @@
 {% block title %}Château de Belleville - Vins d'Anjou{% endblock %}
 
 {% block header %}
-    <section class="hero">
-        <div class="container-lg grid-2-col" style="padding: 0 5%; gap: 4rem; align-items: center; position: relative; z-index: 1;">
-            <div class="hero-content">
-                <img src="{{ asset('images/logo.jpg') }}" alt="Logo Château de Belleville" style="width: 180px; height: auto; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 8px 30px rgba(91, 70, 56, 0.25);">
-                <div style="font-size: 0.95rem; font-weight: 500; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 1rem;">Vignoble Paysan</div>
-                <h1 class="hero-title">L'Excellence<br>des Vins d'Anjou</h1>
-                <p class="hero-description">
-                    Découvrez nos cuvées artisanales, fruit d'un savoir-faire traditionnel
-                    et d'une passion pour le terroir depuis plusieurs générations.
-                </p>
-                <div class="hero-buttons">
-                    <a href="{{ path('app_wine_index') }}" class="btn btn-primary">Découvrir nos vins</a>
-                    <a href="{{ path('app_tasting_index') }}" class="btn btn-secondary">Réserver une dégustation</a>
-                </div>
+    <section class="hero"
+             data-controller="parallax"
+             data-parallax-speed-value="0.3">
+        <div style="position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem 8%;">
+
+            <div style="font-size: 0.65rem; letter-spacing: 5px; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 1.25rem; animation: fadeInDown 0.9s ease both; animation-delay: 0.1s;">Vignoble Familial · Anjou</div>
+
+            <h1 style="font-family: var(--font-display); font-size: clamp(2.8rem, 7vw, 5.5rem); color: var(--color-primary); line-height: 1.05; font-weight: 600; margin-bottom: 1.25rem; animation: fadeInDown 0.9s ease both; animation-delay: 0.25s;">
+                Château de Belleville
+            </h1>
+
+            <p style="font-family: var(--font-display); font-size: clamp(1rem, 2vw, 1.35rem); color: var(--color-secondary); font-style: italic; max-width: 500px; line-height: 1.55; margin-bottom: 2rem; animation: fadeInDown 0.9s ease both; animation-delay: 0.45s;">
+                Des vins d'Anjou nés d'une terre héritée,<br>
+                cultivés avec patience depuis trois générations.
+            </p>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: fadeInDown 0.9s ease both; animation-delay: 0.65s;">
+                <a href="{{ path('app_wine_index') }}" class="btn btn-primary">Découvrir nos vins</a>
+                <a href="{{ path('app_tasting_index') }}" class="btn btn-secondary">Réserver une dégustation</a>
             </div>
-            <div class="hero-stats" style="display: flex; flex-direction: column; gap: 2rem; animation: slideInRight 1s ease-out;">
-                <div class="hero-stat" style="background: white; padding: 2rem 3rem; border-radius: 8px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.15); display: flex; align-items: center; gap: 1.5rem;">
-                    <div class="hero-stat-number" style="font-family: var(--font-display); font-size: 4rem; font-weight: 700; color: var(--color-gold); line-height: 1;">6</div>
-                    <div class="hero-stat-label" style="font-size: 1rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4;">Cuvées<br>d'exception</div>
-                </div>
-                <div class="hero-stat" style="background: white; padding: 2rem 3rem; border-radius: 8px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.15); display: flex; align-items: center; gap: 1.5rem;">
-                    <div class="hero-stat-number" style="font-family: var(--font-display); font-size: 4rem; font-weight: 700; color: var(--color-gold); line-height: 1;">15</div>
-                    <div class="hero-stat-label" style="font-size: 1rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4;">Hectares<br>de vignes</div>
-                </div>
-                <div class="hero-stat" style="background: white; padding: 2rem 3rem; border-radius: 8px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.15); display: flex; align-items: center; gap: 1.5rem;">
-                    <div class="hero-stat-number" style="font-family: var(--font-display); font-size: 4rem; font-weight: 700; color: var(--color-gold); line-height: 1;">3</div>
-                    <div class="hero-stat-label" style="font-size: 1rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4;">Générations<br>de passion</div>
-                </div>
-            </div>
+
         </div>
     </section>
 {% endblock %}
@@ -40,7 +32,7 @@
     {# Collection Section #}
     <section class="section section-white" style="position: relative;">
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--color-gold), transparent);"></div>
-        <div class="section-header">
+        <div class="section-header" data-reveal="fade-up">
             <div class="section-subtitle">Notre Gamme</div>
             <h2 class="section-title">Nos Cuvées d'Exception</h2>
             <p class="section-description">
@@ -50,15 +42,19 @@
         </div>
         <div class="container-lg grid-product" style="gap: 3rem;">
             {% for wine in featuredWines %}
-                <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="wine-card" style="text-decoration: none;">
+                <a href="{{ path('app_wine_show', {slug: wine.slug}) }}"
+                   class="wine-card"
+                   style="text-decoration: none;"
+                   data-reveal="fade-up"
+                   data-reveal-delay="{{ loop.index0 * 120 }}">
                     <div class="wine-image">
                         {% if wine.mainImage %}
                             <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}">
                         {% else %}
                             <div style="font-size: 6rem; opacity: 0.3;">🍷</div>
                         {% endif %}
-                        {% if wine.type %}
-                            <span class="wine-badge">{{ wine.type.label }}</span>
+                        {% if wine.category %}
+                            <span class="wine-badge">{{ wine.category.name }}</span>
                         {% endif %}
                     </div>
                     <div class="wine-content">
@@ -71,44 +67,54 @@
                 </a>
             {% endfor %}
         </div>
-        <div style="text-align: center; margin-top: 3rem;">
+        <div style="text-align: center; margin-top: 3rem;" data-reveal="fade-up" data-reveal-delay="200">
             <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">Voir tous nos vins</a>
         </div>
     </section>
 
-    {# Features Section #}
-    <section class="section section-dark section-padded">
-        <div class="section-header">
-            <div class="section-subtitle">Expérience Unique</div>
-            <h2 class="section-title">Un Site à Votre Service</h2>
-            <p class="section-description">
-                Découvrez toutes les fonctionnalités qui rendront votre expérience
-                simple, fluide et personnalisée.
+    {# Manifeste Section #}
+    <section class="section section-dark" style="padding: 4rem 8%;">
+        <div style="max-width: 680px; margin: 0 auto; text-align: center;">
+
+            <div data-reveal="fade-in"
+                 style="font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 1.5rem;">
+                Anjou · Depuis&nbsp;<span data-controller="counter"
+                                          data-counter-target-value="1970"
+                                          data-counter-duration-value="1400">1970</span>
+            </div>
+
+            <p data-reveal="fade-up" data-reveal-delay="100"
+               style="font-family: var(--font-display); font-size: clamp(1.4rem, 2.5vw, 2rem); color: var(--color-cream); line-height: 1.5; font-style: italic; margin-bottom: 1.5rem;">
+                On ne fait pas du vin.<br>
+                On accompagne la vigne.<br>
+                On écoute la terre.<br>
+                On respecte le temps.
             </p>
-        </div>
-        <div class="container-lg grid-3-col">
-            <div style="background: rgba(245, 242, 237, 0.05); padding: 3rem; border-radius: 4px; border: 1px solid rgba(245, 242, 237, 0.1);">
-                <div style="font-size: 3rem; margin-bottom: 1.5rem;">🛒</div>
-                <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-cream);">Boutique en Ligne</h3>
-                <p style="line-height: 1.8; color: var(--color-beige);">Commandez vos vins préférés en toute sécurité, avec suivi de commande et livraison à domicile.</p>
-            </div>
-            <div style="background: rgba(245, 242, 237, 0.05); padding: 3rem; border-radius: 4px; border: 1px solid rgba(245, 242, 237, 0.1);">
-                <div style="font-size: 3rem; margin-bottom: 1.5rem;">📅</div>
-                <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-cream);">Réservation en Ligne</h3>
-                <p style="line-height: 1.8; color: var(--color-beige);">Réservez votre dégustation en quelques clics avec confirmation automatique.</p>
-            </div>
-            <div style="background: rgba(245, 242, 237, 0.05); padding: 3rem; border-radius: 4px; border: 1px solid rgba(245, 242, 237, 0.1);">
-                <div style="font-size: 3rem; margin-bottom: 1.5rem;">👤</div>
-                <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-cream);">Espace Personnel</h3>
-                <p style="line-height: 1.8; color: var(--color-beige);">Accédez à votre historique d'achats et gérez vos réservations.</p>
-            </div>
+
+            <div data-reveal="scale-in" data-reveal-delay="200"
+                 style="width: 40px; height: 1px; background: var(--color-gold); margin: 0 auto 1.5rem;"></div>
+
+            <p data-reveal="fade-up" data-reveal-delay="250"
+               style="color: var(--color-beige); line-height: 1.8; font-size: 0.95rem; margin: 0 auto 1.75rem;">
+                Trois générations de la famille Baron ont appris ici, sur ces sols argilo-calcaires de Sainte-Verge,
+                que la vigne ne se force pas. Elle s'observe, elle se guide — et parfois, c'est elle qui nous guide.
+                Ce que vous trouverez dans chaque bouteille, c'est le résultat de cette écoute.
+            </p>
+
+            <a data-reveal="fade-up" data-reveal-delay="350"
+               href="{{ path('app_domain') }}"
+               style="display: inline-flex; align-items: center; gap: 0.6rem; color: var(--color-gold); text-decoration: none; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid rgba(201,168,124,0.3); padding-bottom: 0.25rem;">
+                Découvrir le domaine
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+
         </div>
     </section>
 
     {# Tastings Section #}
     {% if tastings|length > 0 %}
         <section class="section section-cream">
-            <div class="section-header">
+            <div class="section-header" data-reveal="fade-up">
                 <div class="section-subtitle">Vivez l'expérience</div>
                 <h2 class="section-title">Nos Dégustations</h2>
                 <p class="section-description">
@@ -117,7 +123,9 @@
             </div>
             <div class="container grid-3-col">
                 {% for tasting in tastings %}
-                    <div class="formule-card{% if loop.index == 2 %} featured{% endif %}">
+                    <div class="formule-card{% if loop.index == 2 %} featured{% endif %}"
+                         data-reveal="fade-up"
+                         data-reveal-delay="{{ loop.index0 * 150 }}">
                         <div class="formule-header">
                             {% if loop.index == 2 %}
                                 <span class="formule-badge">Populaire</span>

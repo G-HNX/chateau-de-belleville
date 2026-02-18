@@ -6,7 +6,6 @@ namespace App\Repository\Catalog;
 
 use App\Entity\Catalog\Wine;
 use App\Entity\Catalog\WineCategory;
-use App\Enum\WineType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -89,21 +88,6 @@ class WineRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @return Wine[]
-     */
-    public function findByType(WineType $type): array
-    {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.isActive = :active')
-            ->andWhere('w.type = :type')
-            ->setParameter('active', true)
-            ->setParameter('type', $type)
-            ->orderBy('w.name', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
     public function findBySlug(string $slug): ?Wine
     {
         return $this->findOneBy(['slug' => $slug]);
@@ -117,11 +101,6 @@ class WineRepository extends ServiceEntityRepository
         if (!empty($filters['category'])) {
             $qb->andWhere('w.category = :category')
                ->setParameter('category', $filters['category']);
-        }
-
-        if (!empty($filters['type'])) {
-            $qb->andWhere('w.type = :type')
-               ->setParameter('type', $filters['type']);
         }
 
         if (!empty($filters['priceMin'])) {

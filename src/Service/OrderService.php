@@ -44,6 +44,7 @@ class OrderService
         Cart $cart,
         ?User $user,
         array $formData,
+        ?\DateTimeInterface $birthDate = null,
     ): Order {
         $order = new Order();
 
@@ -63,6 +64,7 @@ class OrderService
         $order->setBillingAddress($formData['billingAddress']);
         $order->setShippingAddress($formData['shippingAddress']);
         $order->setCustomerNotes($formData['notes']);
+        $order->setCustomerBirthDate($birthDate);
 
         foreach ($cart->getItems() as $cartItem) {
             $order->addItem(OrderItem::createFromCartItem($cartItem));

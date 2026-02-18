@@ -13,7 +13,8 @@
     <section class="section section-white">
         <div class="container grid-2-col" style="gap: 4rem; align-items: start;">
             {# Image #}
-            <div class="wine-show-image" style="background: var(--color-cream); border-radius: 12px; padding: 2rem; text-align: center;">
+            <div class="wine-show-image" style="background: var(--color-cream); border-radius: 12px; padding: 2rem; text-align: center;"
+                 data-reveal="fade-up">
                 {% if wine.mainImage %}
                     <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}" style="max-height: 500px; width: auto; object-fit: contain;">
                 {% else %}
@@ -22,9 +23,9 @@
             </div>
 
             {# Details #}
-            <div class="wine-show-details">
-                {% if wine.type %}
-                    <span class="wine-badge" style="position: static; display: inline-block; margin-bottom: 1rem;">{{ wine.type.label }}</span>
+            <div class="wine-show-details" data-reveal="fade-up" data-reveal-delay="130">
+                {% if wine.category %}
+                    <span class="wine-badge" style="position: static; display: inline-block; margin-bottom: 1rem;">{{ wine.category.name }}</span>
                 {% endif %}
 
                 <h2 style="font-family: var(--font-display); font-size: 3rem; color: var(--color-primary); margin-bottom: 0.5rem;">{{ wine.name }}</h2>
@@ -99,7 +100,7 @@
     {# Description #}
     {% if wine.description or wine.tastingNotes or wine.foodPairings or wine.terroir %}
         <section class="section section-cream">
-            <div class="container">
+            <div class="container" data-reveal="fade-up">
                 {% if wine.description %}
                     <div style="margin-bottom: 3rem;">
                         <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Description</h3>
@@ -160,7 +161,8 @@
     {# Reviews #}
     <section class="section section-white" id="avis">
         <div class="container">
-            <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1.5rem;">Avis clients</h3>
+            <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1.5rem;"
+                data-reveal="fade-up">Avis clients</h3>
 
             {# Summary #}
             {% if reviews|length > 0 %}
@@ -177,7 +179,7 @@
                 </div>
 
                 {% for review in reviews %}
-                    <div class="review-card">
+                    <div class="review-card" data-reveal="fade-up" data-reveal-delay="{{ loop.index0 * 80 }}">
                         <div class="review-card-header">
                             <div>
                                 <span class="review-author">{{ review.user.firstName }} {{ review.user.lastName|slice(0, 1) }}.</span>
@@ -217,7 +219,7 @@
 
             {# Review form #}
             {% if reviewForm %}
-                <div class="review-form">
+                <div class="review-form" data-reveal="fade-up">
                     <h3>Laisser un avis</h3>
                     {{ form_start(reviewForm, {attr: {novalidate: 'novalidate'}}) }}
                         <div class="form-group">

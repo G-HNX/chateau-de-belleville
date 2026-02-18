@@ -41,7 +41,7 @@
                 </ul>
 
                 <div class="nav-actions">
-                    <a href="{{ path('app_wine_index') }}" class="nav-boutique-btn">Boutique</a>
+                    <a href="{{ path('app_shop_index') }}" class="nav-boutique-btn">Boutique</a>
                     {% if app.user %}
                         <a href="{{ path('app_account_index') }}" class="nav-action-link" title="Mon compte">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -85,7 +85,7 @@
                 <li><a href="{{ path('app_tasting_index') }}" {% if app.request.attributes.get('_route') starts with 'app_tasting' %}class="active"{% endif %}>Dégustations</a></li>
                 <li><a href="{{ path('app_contact') }}" {% if app.request.attributes.get('_route') == 'app_contact' %}class="active"{% endif %}>Contact</a></li>
             </ul>
-            <a href="{{ path('app_wine_index') }}" class="mobile-btn-boutique">Boutique</a>
+            <a href="{{ path('app_shop_index') }}" class="mobile-btn-boutique">Boutique</a>
             <div class="mobile-menu-actions">
                 {% if app.user %}
                     <a href="{{ path('app_account_index') }}" class="mobile-btn-primary">Mon compte</a>
@@ -113,6 +113,14 @@
         </div>
     {% endif %}
 
+    {# Bandeau email non vérifié #}
+    {% if app.user and not app.user.isVerified %}
+        <div style="background: #fef3c7; border-bottom: 1px solid #f59e0b; padding: 0.75rem 1.5rem; text-align: center; font-size: 0.875rem; color: #92400e;">
+            Votre adresse email n'est pas encore vérifiée. Consultez votre boîte de réception ou
+            <a href="{{ path('app_resend_verification') }}" style="color: #92400e; font-weight: 600; text-decoration: underline;">renvoyer l'email de confirmation</a>.
+        </div>
+    {% endif %}
+
     {% block header %}{% endblock %}
 
     <main id="main-content">
@@ -121,54 +129,77 @@
 
     {# Footer #}
     <footer class="site-footer">
-        <div class="footer-content">
+        <div class="footer-top-bar"></div>
+
+        <div class="footer-inner">
+            {# Colonne marque #}
             <div class="footer-brand">
-                <h3>Château de Belleville</h3>
-                <p>
+                <p class="footer-brand-name">Château de Belleville</p>
+                <p class="footer-brand-tagline">
                     Vignerons paysans passionnés, nous cultivons avec respect notre terroir
                     d'Anjou pour vous offrir des vins authentiques et de caractère.
                 </p>
-                <p>
-                    <strong>36 rue de la Garde</strong><br>
-                    79100 Sainte-Verge (Thouars)<br><br>
-                    06 70 32 74 88<br>
-                    chateaudebelleville@gmail.com
-                </p>
+                <ul class="footer-contact-list">
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span>36 rue de la Garde, 79100 Sainte-Verge</span>
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.79a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.5 16l.42.92z"/></svg>
+                        <span>06 70 32 74 88</span>
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <span>chateaudebelleville@gmail.com</span>
+                    </li>
+                </ul>
             </div>
+
+            {# Navigation #}
             <div class="footer-section">
-                <h4>Navigation</h4>
+                <h4 class="footer-heading">Navigation</h4>
                 <ul class="footer-links">
                     <li><a href="{{ path('app_domain') }}">Le Domaine</a></li>
                     <li><a href="{{ path('app_wine_index') }}">Nos Vins</a></li>
+                    <li><a href="{{ path('app_shop_index') }}">Boutique</a></li>
                     <li><a href="{{ path('app_tasting_index') }}">Dégustations</a></li>
                     <li><a href="{{ path('app_contact') }}">Contact</a></li>
                 </ul>
             </div>
+
+            {# Informations #}
             <div class="footer-section">
-                <h4>Informations</h4>
+                <h4 class="footer-heading">Informations</h4>
                 <ul class="footer-links">
                     <li><a href="{{ path('app_legal') }}">Mentions légales</a></li>
-                    <li><a href="#">CGV</a></li>
-                    <li><a href="#">Politique de confidentialité</a></li>
-                    <li><a href="#">Livraison</a></li>
+                    <li><a href="{{ path('app_cgv') }}">CGV</a></li>
+                    <li><a href="{{ path('app_privacy') }}">Politique de confidentialité</a></li>
+                    <li><a href="{{ path('app_shipping') }}">Livraison</a></li>
                 </ul>
             </div>
+
+            {# Horaires & certifications #}
             <div class="footer-section">
-                <h4>Horaires</h4>
-                <p style="line-height: 1.8;">
-                    <strong>Vendredi</strong><br>
-                    10h-12h / 15h-18h30<br><br>
-                    Autres jours sur rendez-vous
-                </p>
-                <p style="margin-top: 1rem;">
-                    Terra Vitis<br>
-                    Haute Valeur Environnementale
-                </p>
+                <h4 class="footer-heading">Horaires</h4>
+                <div class="footer-hours">
+                    <div class="footer-hours-row">
+                        <span class="footer-hours-day">Vendredi</span>
+                        <span>10h – 12h &nbsp;/&nbsp; 15h – 18h30</span>
+                    </div>
+                    <div class="footer-hours-row">
+                        <span class="footer-hours-note">Autres jours sur rendez-vous</span>
+                    </div>
+                </div>
+                <div class="footer-certif">
+                    <span class="footer-certif-badge">Terra Vitis</span>
+                    <span class="footer-certif-badge">HVE</span>
+                </div>
             </div>
         </div>
+
         <div class="footer-bottom">
-            <p>&copy; {{ "now"|date("Y") }} Château de Belleville - Tous droits réservés</p>
-            <p style="margin-top: 0.5rem; font-size: 0.85rem;">L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+            <p class="footer-bottom-copy">&copy; {{ "now"|date("Y") }} Château de Belleville — Tous droits réservés</p>
+            <p class="footer-bottom-alcohol">L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
         </div>
     </footer>
 
