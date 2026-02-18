@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Vérifiez vos emails</h1>
+        <p>Un lien de réinitialisation vous a été envoyé.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 500px;">
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1); text-align: center;" data-reveal="fade-up">
+
+                <div style="width: 64px; height: 64px; background: var(--color-cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--color-gold)" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                </div>
+
+                <p style="color: var(--color-dark); font-size: 1rem; line-height: 1.7; margin-bottom: 1rem;">
+                    Si un compte existe avec cette adresse email, un lien de réinitialisation vient d'être envoyé.
+                    Ce lien expirera dans <strong>{{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}</strong>.
+                </p>
+
+                <p style="color: var(--color-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem;">
+                    Si vous ne recevez pas d'email, vérifiez vos spams ou
+                    <a href="{{ path('app_forgot_password_request') }}" style="color: var(--color-gold); text-decoration: none; font-weight: 500;">réessayez</a>.
+                </p>
+
+                <a href="{{ path('app_login') }}" class="btn btn-outline" style="display: inline-block;">
+                    Retour à la connexion
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

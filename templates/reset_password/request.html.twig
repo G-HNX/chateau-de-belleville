@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Mot de passe oublié</h1>
+        <p>Réinitialisez votre mot de passe en quelques secondes.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 500px;">
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);" data-reveal="fade-up">
+
+                {% for flash_error in app.flashes('reset_password_error') %}
+                    <div class="flash-message flash-error" style="position: static; margin-bottom: 1.5rem;">
+                        {{ flash_error }}
+                    </div>
+                {% endfor %}
+
+                <p style="color: var(--color-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6;">
+                    Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                </p>
+
+                {{ form_start(requestForm, {attr: {novalidate: 'novalidate'}}) }}
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        {{ form_label(requestForm.email, 'Adresse email') }}
+                        {{ form_widget(requestForm.email, {attr: {placeholder: 'votre@email.fr', autofocus: true}}) }}
+                        {{ form_errors(requestForm.email) }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">
+                        Envoyer le lien de réinitialisation
+                    </button>
+                {{ form_end(requestForm) }}
+
+                <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-beige);">
+                    <p style="color: var(--color-secondary); font-size: 0.9rem;">
+                        Vous vous souvenez de votre mot de passe ?
+                        <a href="{{ path('app_login') }}" style="color: var(--color-gold); text-decoration: none; font-weight: 500;">Se connecter</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

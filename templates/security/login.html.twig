@@ -12,7 +12,7 @@
 {% block body %}
     <section class="section section-white">
         <div class="container" style="max-width: 500px;">
-            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);">
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);" data-reveal="fade-up">
                 {% if error %}
                     <div class="flash-message flash-error" style="position: static; margin-bottom: 1.5rem;">
                         {{ error.messageKey|trans(error.messageData, 'security') }}
@@ -24,13 +24,16 @@
                         <label for="username">Email</label>
                         <input type="email" id="username" name="_username" value="{{ last_username }}" required autofocus>
                     </div>
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 1.5rem;" data-controller="password">
                         <label for="password">Mot de passe</label>
                         <input type="password" id="password" name="_password" required>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
-                        <input type="checkbox" id="remember_me" name="_remember_me">
-                        <label for="remember_me" style="font-size: 0.9rem; color: var(--color-secondary); margin-bottom: 0;">Se souvenir de moi</label>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="remember_me" name="_remember_me">
+                            <label for="remember_me" style="font-size: 0.9rem; color: var(--color-secondary); margin-bottom: 0;">Se souvenir de moi</label>
+                        </div>
+                        <a href="{{ path('app_forgot_password_request') }}" style="font-size: 0.9rem; color: var(--color-gold); text-decoration: none;">Mot de passe oublié ?</a>
                     </div>
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                     <button type="submit" class="btn btn-primary btn-full">Se connecter</button>

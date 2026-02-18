@@ -6,16 +6,24 @@ namespace App\Controller;
 
 use App\Entity\User\User;
 use App\Form\RegistrationType;
+use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(private EmailVerifier $emailVerifier)
+    {
+    }
+
     #[Route('/connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -32,7 +40,6 @@ class SecurityController extends AbstractController
     #[Route('/deconnexion', name: 'app_logout')]
     public function logout(): never
     {
-        // Intercepte par le firewall Symfony
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
@@ -57,7 +64,18 @@ class SecurityController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', 'Votre compte a été créé. Vous pouvez vous connecter.');
+            $this->emailVerifier->sendEmailConfirmation(
+                'app_verify_email',
+                $user,
+                (new TemplatedEmail())
+                    ->from(new Address('noreply@chateau-belleville.fr', 'Château de Belleville'))
+                    ->to((string) $user->getEmail())
+                    ->subject('Confirmez votre adresse email')
+                    ->htmlTemplate('security/verification_email.html.twig')
+                    ->context(['user' => $user])
+            );
+
+            $this->addFlash('success', 'Votre compte a été créé. Vérifiez votre boîte email pour activer votre compte.');
 
             return $this->redirectToRoute('app_login');
         }
@@ -65,5 +83,54 @@ class SecurityController extends AbstractController
         return $this->render('security/register.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    #[Route('/renvoyer-verification', name: 'app_resend_verification')]
+    public function resendVerification(): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($user->isVerified()) {
+            return $this->redirectToRoute('app_account_index');
+        }
+
+        $this->emailVerifier->sendEmailConfirmation(
+            'app_verify_email',
+            $user,
+            (new TemplatedEmail())
+                ->from(new Address('noreply@chateau-belleville.fr', 'Château de Belleville'))
+                ->to((string) $user->getEmail())
+                ->subject('Confirmez votre adresse email')
+                ->htmlTemplate('security/verification_email.html.twig')
+                ->context(['user' => $user])
+        );
+
+        $this->addFlash('success', 'Email de vérification renvoyé. Consultez votre boîte de réception.');
+
+        return $this->redirectToRoute('app_home');
+    }
+
+    #[Route('/verifier-email', name: 'app_verify_email')]
+    public function verifyUserEmail(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        try {
+            $this->emailVerifier->handleEmailConfirmation($request, $user);
+        } catch (VerifyEmailExceptionInterface $exception) {
+            $this->addFlash('error', 'Le lien de vérification est invalide ou a expiré. '.$exception->getReason());
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        $this->addFlash('success', 'Votre adresse email a été vérifiée. Bienvenue !');
+
+        return $this->redirectToRoute('app_account_index');
     }
 }

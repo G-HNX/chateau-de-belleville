@@ -1,0 +1,12 @@
+Bonjour {{ user.firstName }},
+
+Merci de vous être inscrit au Château de Belleville.
+
+Cliquez sur le lien ci-dessous pour confirmer votre adresse email :
+{{ signedUrl }}
+
+Ce lien expirera dans {{ expiresAtMessageKey|trans(expiresAtMessageData) }}.
+
+Si vous n'êtes pas à l'origine de cette inscription, ignorez simplement cet email.
+
+L'équipe du Château de Belleville
