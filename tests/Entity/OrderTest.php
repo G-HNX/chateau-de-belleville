@@ -15,11 +15,11 @@ class OrderTest extends TestCase
     {
         $order = new Order();
 
-        $item1 = $this->createMock(OrderItem::class);
+        $item1 = $this->createStub(OrderItem::class);
         $item1->method('getTotalInCents')->willReturn(1250); // 12.50€
         $order->addItem($item1);
 
-        $item2 = $this->createMock(OrderItem::class);
+        $item2 = $this->createStub(OrderItem::class);
         $item2->method('getTotalInCents')->willReturn(2900); // 29.00€
         $order->addItem($item2);
 
@@ -34,7 +34,7 @@ class OrderTest extends TestCase
     {
         $order = new Order();
 
-        $item = $this->createMock(OrderItem::class);
+        $item = $this->createStub(OrderItem::class);
         $item->method('getTotalInCents')->willReturn(16000); // 160€
         $order->addItem($item);
 
@@ -92,7 +92,7 @@ class OrderTest extends TestCase
     {
         $order = new Order();
 
-        $item = $this->createMock(OrderItem::class);
+        $item = $this->createStub(OrderItem::class);
         $item->method('getTotalInCents')->willReturn(4290);
         $order->addItem($item);
 

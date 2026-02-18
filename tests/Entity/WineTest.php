@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Entity;
 
 use App\Entity\Catalog\Wine;
-use App\Enum\WineType;
 use PHPUnit\Framework\TestCase;
 
 class WineTest extends TestCase
