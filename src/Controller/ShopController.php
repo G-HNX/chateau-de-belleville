@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\Catalog\AppellationRepository;
 use App\Repository\Catalog\WineCategoryRepository;
 use App\Repository\Catalog\WineRepository;
 use App\Service\CartService;
@@ -21,6 +22,7 @@ class ShopController extends AbstractController
         Request $request,
         WineRepository $wineRepository,
         WineCategoryRepository $categoryRepository,
+        AppellationRepository $appellationRepository,
         CartService $cartService,
     ): Response {
         $filters = [];
@@ -30,6 +32,17 @@ class ShopController extends AbstractController
             if ($category) {
                 $filters['category'] = $category;
             }
+        }
+
+        if ($appellationId = $request->query->getInt('appellation')) {
+            $appellation = $appellationRepository->find($appellationId);
+            if ($appellation) {
+                $filters['appellation'] = $appellation;
+            }
+        }
+
+        if ($vintage = $request->query->getInt('millesime')) {
+            $filters['vintage'] = $vintage;
         }
 
         if ($priceMin = $request->query->get('prix_min')) {
@@ -56,6 +69,8 @@ class ShopController extends AbstractController
         return $this->render('shop/index.html.twig', [
             'wines'                   => $wines,
             'categories'              => $categoryRepository->findAll(),
+            'appellations'            => $appellationRepository->findBy([], ['name' => 'ASC']),
+            'vintages'                => $wineRepository->findDistinctVintages(),
             'cart'                    => $cart,
             'cartTotalCents'          => $cartTotalCents,
             'freeShippingThreshold'   => self::FREE_SHIPPING_THRESHOLD,

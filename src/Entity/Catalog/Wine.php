@@ -6,6 +6,7 @@ namespace App\Entity\Catalog;
 
 use App\Entity\Customer\Review;
 use App\Repository\Catalog\WineRepository;
+use App\Entity\Catalog\FoodPairing;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -70,22 +71,13 @@ class Wine
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $agingPotential = null;
 
-    /**
-     * Accords mets-vins suggeres.
-     *
-     * @var array<int, string>|null
-     */
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $foodPairings = null;
+    /** @var Collection<int, FoodPairing> */
+    #[ORM\ManyToMany(targetEntity: FoodPairing::class, inversedBy: 'wines')]
+    #[ORM\JoinTable(name: 'wine_food_pairing')]
+    private Collection $foodPairings;
 
-    /**
-     * Notes de degustation structurees.
-     * Format: ['nose' => '...', 'palate' => '...', 'visual' => '...']
-     *
-     * @var array<string, string>|null
-     */
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $tastingNotes = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $tastingNotes = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $terroir = null;
@@ -132,6 +124,7 @@ class Wine
     public function __construct()
     {
         $this->grapeVarieties = new ArrayCollection();
+        $this->foodPairings = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->createdAt = new \DateTime();
@@ -306,28 +299,41 @@ class Wine
         return $this;
     }
 
-    /** @return array<int, string>|null */
-    public function getFoodPairings(): ?array
+    /** @return Collection<int, FoodPairing> */
+    public function getFoodPairings(): Collection
     {
         return $this->foodPairings;
     }
 
-    /** @param array<int, string>|null $foodPairings */
-    public function setFoodPairings(?array $foodPairings): static
+    public function addFoodPairing(FoodPairing $foodPairing): static
     {
-        $this->foodPairings = $foodPairings;
+        if (!$this->foodPairings->contains($foodPairing)) {
+            $this->foodPairings->add($foodPairing);
+        }
 
         return $this;
     }
 
-    /** @return array<string, string>|null */
-    public function getTastingNotes(): ?array
+    public function removeFoodPairing(FoodPairing $foodPairing): static
+    {
+        $this->foodPairings->removeElement($foodPairing);
+
+        return $this;
+    }
+
+    public function getFoodPairingsAsString(): string
+    {
+        return implode(', ', $this->foodPairings->map(
+            fn (FoodPairing $fp) => $fp->getName()
+        )->toArray());
+    }
+
+    public function getTastingNotes(): ?string
     {
         return $this->tastingNotes;
     }
 
-    /** @param array<string, string>|null $tastingNotes */
-    public function setTastingNotes(?array $tastingNotes): static
+    public function setTastingNotes(?string $tastingNotes): static
     {
         $this->tastingNotes = $tastingNotes;
 

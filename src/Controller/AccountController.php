@@ -12,6 +12,7 @@ use App\Form\ProfileType;
 use App\Repository\Booking\ReservationRepository;
 use App\Repository\Customer\AddressRepository;
 use App\Repository\Order\OrderRepository;
+use App\Service\PdfService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,6 +65,26 @@ class AccountController extends AbstractController
 
         return $this->render('account/order_show.html.twig', [
             'order' => $order,
+        ]);
+    }
+
+    #[Route('/commandes/{reference}/facture', name: 'app_account_order_invoice', methods: ['GET'])]
+    public function orderInvoice(string $reference, OrderRepository $orderRepository, PdfService $pdfService): Response
+    {
+        $order = $orderRepository->findByReference($reference);
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$order || $order->getCustomer() !== $user) {
+            throw $this->createNotFoundException('Commande introuvable.');
+        }
+
+        $pdf = $pdfService->generateInvoice($order);
+
+        return new Response($pdf, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="facture-' . $order->getReference() . '.pdf"',
         ]);
     }
 
@@ -186,6 +207,17 @@ class AccountController extends AbstractController
         return $this->render('account/profile.html.twig', [
             'user' => $user,
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/mes-vins', name: 'app_account_favorites')]
+    public function favorites(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->render('account/favorites.html.twig', [
+            'favorites' => $user->getFavoriteWines(),
         ]);
     }
 

@@ -96,11 +96,53 @@ class WineRepository extends ServiceEntityRepository
     /**
      * @param array<string, mixed> $filters
      */
+    public function countByFilters(array $filters): int
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->select('COUNT(w.id)')
+            ->andWhere('w.isActive = :active')
+            ->setParameter('active', true);
+
+        $this->applyFilters($qb, $filters);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return int[]
+     */
+    public function findDistinctVintages(): array
+    {
+        $result = $this->createQueryBuilder('w')
+            ->select('DISTINCT w.vintage')
+            ->andWhere('w.isActive = :active')
+            ->andWhere('w.vintage IS NOT NULL')
+            ->setParameter('active', true)
+            ->orderBy('w.vintage', 'DESC')
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        return array_filter($result, fn ($v) => $v !== null);
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+     */
     private function applyFilters(QueryBuilder $qb, array $filters): void
     {
         if (!empty($filters['category'])) {
             $qb->andWhere('w.category = :category')
                ->setParameter('category', $filters['category']);
+        }
+
+        if (!empty($filters['appellation'])) {
+            $qb->andWhere('w.appellation = :appellation')
+               ->setParameter('appellation', $filters['appellation']);
+        }
+
+        if (!empty($filters['vintage'])) {
+            $qb->andWhere('w.vintage = :vintage')
+               ->setParameter('vintage', $filters['vintage']);
         }
 
         if (!empty($filters['priceMin'])) {

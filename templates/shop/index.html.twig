@@ -43,12 +43,20 @@
 {% endif %}
 
 {# ── Tri + compteur ───────────────────────────────────────────────── #}
+{% set sortParams = {tri: '__TRI__'} %}
+{% if currentFilters.category is defined %}{% set sortParams = sortParams|merge({categorie: currentFilters.category.id}) %}{% endif %}
+{% if currentFilters.appellation is defined %}{% set sortParams = sortParams|merge({appellation: currentFilters.appellation.id}) %}{% endif %}
+{% if currentFilters.vintage is defined %}{% set sortParams = sortParams|merge({millesime: currentFilters.vintage}) %}{% endif %}
+{% if currentFilters.priceMin is defined %}{% set sortParams = sortParams|merge({prix_min: currentFilters.priceMin}) %}{% endif %}
+{% if currentFilters.priceMax is defined %}{% set sortParams = sortParams|merge({prix_max: currentFilters.priceMax}) %}{% endif %}
+{% if currentFilters.inStock is defined %}{% set sortParams = sortParams|merge({en_stock: 1}) %}{% endif %}
+{% set sortBase = path('app_shop_index', sortParams) %}
+
 <div class="shop-sort-header">
     <span class="shop-sort-count">{{ wines|length }} vin{{ wines|length > 1 ? 's' : '' }}</span>
     <div class="shop-sort-bar">
         <label class="shop-sort-label">Trier par</label>
         <select class="shop-sort-select" onchange="window.location = this.value">
-            {% set sortBase = path('app_shop_index', currentFilters|merge({tri: '__TRI__'})) %}
             <option value="{{ sortBase|replace({'__TRI__': 'newest'}) }}"  {% if currentSort == 'newest'     %}selected{% endif %}>Nouveautés</option>
             <option value="{{ sortBase|replace({'__TRI__': 'price_asc'}) }}" {% if currentSort == 'price_asc' %}selected{% endif %}>Prix croissant</option>
             <option value="{{ sortBase|replace({'__TRI__': 'price_desc'}) }}" {% if currentSort == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
@@ -84,7 +92,33 @@
             {% endif %}
             <input type="hidden" name="tri" value="{{ currentSort }}">
 
-            <div class="shop-filter-title">Prix</div>
+            {# Appellation #}
+            {% if appellations|length > 0 %}
+                <div class="shop-filter-title" style="margin-top: 1rem;">Appellation</div>
+                <select name="appellation" class="shop-filter-select">
+                    <option value="">Toutes les appellations</option>
+                    {% for appellation in appellations %}
+                        <option value="{{ appellation.id }}"{% if currentFilters.appellation is defined and currentFilters.appellation == appellation %} selected{% endif %}>
+                            {{ appellation.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+
+            {# Millésime #}
+            {% if vintages|length > 0 %}
+                <div class="shop-filter-title" style="margin-top: 1rem;">Millésime</div>
+                <select name="millesime" class="shop-filter-select">
+                    <option value="">Tous les millésimes</option>
+                    {% for vintage in vintages %}
+                        <option value="{{ vintage }}"{% if currentFilters.vintage is defined and currentFilters.vintage == vintage %} selected{% endif %}>
+                            {{ vintage }}
+                        </option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+
+            <div class="shop-filter-title" style="margin-top: 1rem;">Prix</div>
             <div class="shop-price-inputs">
                 <div class="shop-price-field">
                     <label>Min</label>
@@ -161,7 +195,22 @@
                     {# Corps #}
                     <div class="shop-card-body">
 
-                        <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="shop-card-name">{{ wine.name }}</a>
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;">
+                            <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="shop-card-name" style="flex: 1;">{{ wine.name }}</a>
+                            {% if app.user %}
+                                <button
+                                    data-controller="favorite-toggle"
+                                    data-favorite-toggle-wine-id-value="{{ wine.id }}"
+                                    data-favorite-toggle-active-value="{{ app.user.isFavoriteWine(wine) ? '1' : '0' }}"
+                                    data-favorite-toggle-token-value="{{ csrf_token('favorite_' ~ wine.id) }}"
+                                    data-action="click->favorite-toggle#toggle"
+                                    title="{{ app.user.isFavoriteWine(wine) ? 'Retirer de mes vins' : 'Ajouter à mes vins' }}"
+                                    style="padding: 0.25rem; border: none; background: transparent; cursor: pointer; color: var(--color-primary); font-size: 1.1rem; line-height: 1; flex-shrink: 0; margin-top: 0.1rem;">
+                                    <span data-heart-full style="display: {{ app.user.isFavoriteWine(wine) ? 'block' : 'none' }};">♥</span>
+                                    <span data-heart-empty style="display: {{ app.user.isFavoriteWine(wine) ? 'none' : 'block' }};">♡</span>
+                                </button>
+                            {% endif %}
+                        </div>
 
                         <div class="shop-card-meta">
                             {% if wine.appellation %}{{ wine.appellation }}{% endif %}

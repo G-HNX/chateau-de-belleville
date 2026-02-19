@@ -34,8 +34,23 @@
                     <div style="font-size: 1rem; color: var(--color-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">{{ wine.appellation }}</div>
                 {% endif %}
 
-                <div class="wine-show-price" style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold); margin-bottom: 2rem;">
-                    {{ wine.formattedPrice }}
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                    <div class="wine-show-price" style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold);">
+                        {{ wine.formattedPrice }}
+                    </div>
+                    {% if app.user %}
+                        <button
+                            data-controller="favorite-toggle"
+                            data-favorite-toggle-wine-id-value="{{ wine.id }}"
+                            data-favorite-toggle-active-value="{{ app.user.isFavoriteWine(wine) ? '1' : '0' }}"
+                            data-favorite-toggle-token-value="{{ csrf_token('favorite_' ~ wine.id) }}"
+                            data-action="click->favorite-toggle#toggle"
+                            title="{{ app.user.isFavoriteWine(wine) ? 'Retirer de mes vins' : 'Ajouter à mes vins' }}"
+                            style="padding: 0.4rem 0.8rem; border: 1px solid var(--color-beige); background: white; border-radius: 6px; cursor: pointer; color: var(--color-primary); font-size: 1.3rem; line-height: 1;">
+                            <span data-heart-full style="display: {{ app.user.isFavoriteWine(wine) ? 'block' : 'none' }};">♥</span>
+                            <span data-heart-empty style="display: {{ app.user.isFavoriteWine(wine) ? 'none' : 'block' }};">♡</span>
+                        </button>
+                    {% endif %}
                 </div>
 
                 {% if wine.shortDescription %}
@@ -98,7 +113,7 @@
     </section>
 
     {# Description #}
-    {% if wine.description or wine.tastingNotes or wine.foodPairings or wine.terroir %}
+    {% if wine.description or wine.tastingNotes or wine.foodPairings is not empty or wine.terroir %}
         <section class="section section-cream">
             <div class="container" data-reveal="fade-up">
                 {% if wine.description %}
@@ -111,38 +126,16 @@
                 {% if wine.tastingNotes %}
                     <div style="margin-bottom: 3rem;">
                         <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Notes de dégustation</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-                            {% if wine.tastingNotes.visual is defined %}
-                                <div class="value-card">
-                                    <div class="value-icon">👁️</div>
-                                    <h4 class="value-title">Visuel</h4>
-                                    <p class="value-text">{{ wine.tastingNotes.visual }}</p>
-                                </div>
-                            {% endif %}
-                            {% if wine.tastingNotes.nose is defined %}
-                                <div class="value-card">
-                                    <div class="value-icon">👃</div>
-                                    <h4 class="value-title">Nez</h4>
-                                    <p class="value-text">{{ wine.tastingNotes.nose }}</p>
-                                </div>
-                            {% endif %}
-                            {% if wine.tastingNotes.palate is defined %}
-                                <div class="value-card">
-                                    <div class="value-icon">👅</div>
-                                    <h4 class="value-title">Bouche</h4>
-                                    <p class="value-text">{{ wine.tastingNotes.palate }}</p>
-                                </div>
-                            {% endif %}
-                        </div>
+                        <p style="color: var(--color-secondary); line-height: 1.8; white-space: pre-line;">{{ wine.tastingNotes }}</p>
                     </div>
                 {% endif %}
 
-                {% if wine.foodPairings %}
+                {% if wine.foodPairings is not empty %}
                     <div style="margin-bottom: 3rem;">
                         <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Accords mets-vins</h3>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
                             {% for pairing in wine.foodPairings %}
-                                <span style="background: white; padding: 0.5rem 1.2rem; border-radius: 20px; color: var(--color-secondary); font-size: 0.9rem; box-shadow: 0 2px 10px rgba(91, 70, 56, 0.1);">{{ pairing }}</span>
+                                <span style="background: white; padding: 0.5rem 1.2rem; border-radius: 20px; color: var(--color-secondary); font-size: 0.9rem; box-shadow: 0 2px 10px rgba(91, 70, 56, 0.1);">{{ pairing.name }}</span>
                             {% endfor %}
                         </div>
                     </div>

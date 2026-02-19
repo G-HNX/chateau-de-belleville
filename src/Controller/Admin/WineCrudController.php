@@ -64,6 +64,8 @@ class WineCrudController extends AbstractCrudController
         yield AssociationField::new('appellation', 'Appellation');
         yield AssociationField::new('grapeVarieties', 'Cépages')
             ->hideOnIndex();
+        yield AssociationField::new('foodPairings', 'Accords mets-vins')
+            ->hideOnIndex();
         yield NumberField::new('alcoholDegree', 'Degré')
             ->hideOnIndex();
         yield TextField::new('servingTemperature', 'Température')
@@ -75,6 +77,8 @@ class WineCrudController extends AbstractCrudController
         yield TextareaField::new('shortDescription', 'Description courte')
             ->hideOnIndex();
         yield TextareaField::new('description', 'Description')
+            ->hideOnIndex();
+        yield TextareaField::new('tastingNotes', 'Notes de dégustation')
             ->hideOnIndex();
         yield TextareaField::new('terroir', 'Terroir')
             ->hideOnIndex();

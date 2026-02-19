@@ -33,23 +33,10 @@ class WineController extends AbstractController
             }
         }
 
-        if ($priceMin = $request->query->get('prix_min')) {
-            $filters['priceMin'] = (float) $priceMin;
-        }
-
-        if ($priceMax = $request->query->get('prix_max')) {
-            $filters['priceMax'] = (float) $priceMax;
-        }
-
-        $sort = $request->query->get('tri', 'newest');
-        $page = max(1, $request->query->getInt('page', 1));
-
         return $this->render('wine/index.html.twig', [
-            'wines' => $wineRepository->findByFilters($filters, $sort, $page),
-            'categories' => $categoryRepository->findAll(),
+            'wines' => $wineRepository->findByFilters($filters),
+            'categories' => $categoryRepository->findAllActive(),
             'currentFilters' => $filters,
-            'currentSort' => $sort,
-            'currentPage' => $page,
         ]);
     }
 

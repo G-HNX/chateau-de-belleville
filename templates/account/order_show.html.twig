@@ -94,8 +94,12 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 2rem;">
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                         <a href="{{ path('app_account_orders') }}" class="btn btn-secondary">← Retour aux commandes</a>
+                        <a href="{{ path('app_account_order_invoice', {reference: order.reference}) }}"
+                           class="btn btn-primary" download>
+                            ↓ Télécharger la facture
+                        </a>
                     </div>
                 </div>
             </div>

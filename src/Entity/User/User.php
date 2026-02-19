@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
+use App\Entity\Catalog\Wine;
 use App\Entity\Customer\Address;
 use App\Entity\Order\Cart;
 use App\Entity\Order\Order;
@@ -77,10 +78,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(targetEntity: Cart::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Cart $cart = null;
 
+    /** @var Collection<int, Wine> */
+    #[ORM\ManyToMany(targetEntity: Wine::class)]
+    #[ORM\JoinTable(name: 'user_favorite_wines')]
+    private Collection $favoriteWines;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->favoriteWines = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -313,6 +320,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTime();
+    }
+
+    /** @return Collection<int, Wine> */
+    public function getFavoriteWines(): Collection
+    {
+        return $this->favoriteWines;
+    }
+
+    public function addFavoriteWine(Wine $wine): static
+    {
+        if (!$this->favoriteWines->contains($wine)) {
+            $this->favoriteWines->add($wine);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteWine(Wine $wine): static
+    {
+        $this->favoriteWines->removeElement($wine);
+
+        return $this;
+    }
+
+    public function isFavoriteWine(Wine $wine): bool
+    {
+        return $this->favoriteWines->contains($wine);
     }
 
     public function isAdmin(): bool

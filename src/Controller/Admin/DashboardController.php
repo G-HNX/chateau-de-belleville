@@ -8,6 +8,8 @@ use App\Entity\Booking\Reservation;
 use App\Entity\Booking\Tasting;
 use App\Entity\Booking\TastingSlot;
 use App\Entity\Catalog\Appellation;
+use App\Entity\Catalog\FoodPairing;
+use App\Entity\Catalog\GrapeVariety;
 use App\Entity\Catalog\Wine;
 use App\Entity\Catalog\WineCategory;
 use App\Entity\Catalog\WineImage;
@@ -159,6 +161,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Images', 'fa fa-image', WineImage::class);
         yield MenuItem::linkToCrud('Catégories', 'fa fa-tags', WineCategory::class);
         yield MenuItem::linkToCrud('Appellations', 'fa fa-map-marker', Appellation::class);
+        yield MenuItem::linkToCrud('Cépages', 'fa fa-leaf', GrapeVariety::class);
+        yield MenuItem::linkToCrud('Accords mets-vins', 'fa fa-utensils', FoodPairing::class);
 
         yield MenuItem::section('Dégustations');
         yield MenuItem::linkToCrud('Formules', 'fa fa-glass-cheers', Tasting::class);

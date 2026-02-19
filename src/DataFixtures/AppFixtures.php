@@ -7,6 +7,7 @@ namespace App\DataFixtures;
 use App\Entity\Booking\Tasting;
 use App\Entity\Booking\TastingSlot;
 use App\Entity\Catalog\Appellation;
+use App\Entity\Catalog\FoodPairing;
 use App\Entity\Catalog\GrapeVariety;
 use App\Entity\Catalog\Wine;
 use App\Entity\Catalog\WineCategory;
@@ -29,6 +30,9 @@ class AppFixtures extends Fixture
         // === GRAPE VARIETIES ===
         $grapeVarieties = $this->createGrapeVarieties($manager);
 
+        // === FOOD PAIRINGS ===
+        $foodPairings = $this->createFoodPairings($manager);
+
         // === APPELLATIONS ===
         $appellations = $this->createAppellations($manager);
 
@@ -36,7 +40,7 @@ class AppFixtures extends Fixture
         $categories = $this->createCategories($manager);
 
         // === WINES ===
-        $wines = $this->createWines($manager, $categories, $appellations, $grapeVarieties);
+        $wines = $this->createWines($manager, $categories, $appellations, $grapeVarieties, $foodPairings);
 
         // === TASTINGS ===
         $this->createTastings($manager);
@@ -46,6 +50,9 @@ class AppFixtures extends Fixture
 
         // === REVIEWS ===
         $this->createReviews($manager, $wines, $users);
+
+        // === FAVORITES ===
+        $this->createFavorites($wines, $users);
 
         $manager->flush();
     }
@@ -82,6 +89,43 @@ class AppFixtures extends Fixture
             $variety->setDescription($data['description']);
             $manager->persist($variety);
             $entities[$slug] = $variety;
+        }
+
+        return $entities;
+    }
+
+    /**
+     * @return array<string, FoodPairing>
+     */
+    private function createFoodPairings(ObjectManager $manager): array
+    {
+        $pairings = [
+            'aperitif'               => ['name' => 'Apéritif',               'icon' => '🥂'],
+            'fruits-de-mer'          => ['name' => 'Fruits de mer',           'icon' => '🦐'],
+            'poissons-grilles'       => ['name' => 'Poissons grillés',        'icon' => '🐟'],
+            'fromages-de-chevre'     => ['name' => 'Fromages de chèvre',      'icon' => '🧀'],
+            'salades-composees'      => ['name' => 'Salades composées',       'icon' => '🥗'],
+            'grillades'              => ['name' => 'Grillades',               'icon' => '🥩'],
+            'cuisine-mediterraneenne'=> ['name' => 'Cuisine méditerranéenne', 'icon' => '🌿'],
+            'desserts-fruites'       => ['name' => 'Desserts fruités',        'icon' => '🍓'],
+            'cuisine-exotique'       => ['name' => 'Cuisine exotique',        'icon' => '🌶️'],
+            'viandes-rouges'         => ['name' => 'Viandes rouges',          'icon' => '🥩'],
+            'gibier'                 => ['name' => 'Gibier',                  'icon' => '🦌'],
+            'fromages-affines'       => ['name' => 'Fromages affinés',        'icon' => '🧀'],
+            'charcuterie'            => ['name' => 'Charcuterie',             'icon' => '🥓'],
+            'volailles-roties'       => ['name' => 'Volailles rôties',        'icon' => '🍗'],
+            'legumes-grilles'        => ['name' => 'Légumes grillés',         'icon' => '🥦'],
+            'desserts'               => ['name' => 'Desserts',                'icon' => '🍰'],
+        ];
+
+        $entities = [];
+        foreach ($pairings as $slug => $data) {
+            $pairing = new FoodPairing();
+            $pairing->setName($data['name']);
+            $pairing->setSlug($slug);
+            $pairing->setIcon($data['icon']);
+            $manager->persist($pairing);
+            $entities[$slug] = $pairing;
         }
 
         return $entities;
@@ -165,8 +209,7 @@ class AppFixtures extends Fixture
      * @param array<string, WineCategory> $categories
      * @param array<string, Appellation> $appellations
      * @param array<string, GrapeVariety> $grapeVarieties
-     */
-    /**
+     * @param array<string, FoodPairing> $foodPairings
      * @return array<string, Wine>
      */
     private function createWines(
@@ -174,6 +217,7 @@ class AppFixtures extends Fixture
         array $categories,
         array $appellations,
         array $grapeVarieties,
+        array $foodPairings,
     ): array {
         $wines = [
             [
@@ -190,12 +234,8 @@ class AppFixtures extends Fixture
                 'appellation' => 'anjou-blanc',
                 'grapes' => ['chenin-blanc'],
                 'terroir' => 'Sols argilo-calcaires exposés sud-ouest',
-                'foodPairings' => ['Fruits de mer', 'Poissons grillés', 'Fromages de chèvre'],
-                'tastingNotes' => [
-                    'robe' => 'Or pâle aux reflets verts',
-                    'nez' => 'Agrumes, fleurs blanches, notes minérales',
-                    'bouche' => 'Fraîche et vive, belle longueur',
-                ],
+                'foodPairings' => ['fruits-de-mer', 'poissons-grilles', 'fromages-de-chevre'],
+                'tastingNotes' => "Robe : Or pâle aux reflets verts.\nNez : Agrumes, fleurs blanches, notes minérales.\nBouche : Fraîche et vive, belle longueur.",
                 'description' => 'Un blanc sec et élégant, parfait pour l\'apéritif.',
                 'isFeatured' => true,
                 'image' => 'escapade.jpg',
@@ -214,12 +254,8 @@ class AppFixtures extends Fixture
                 'appellation' => 'rose-de-loire',
                 'grapes' => ['grolleau', 'cabernet-franc'],
                 'terroir' => 'Sols schisteux et sablonneux',
-                'foodPairings' => ['Salades composées', 'Grillades', 'Cuisine méditerranéenne'],
-                'tastingNotes' => [
-                    'robe' => 'Rose pâle, reflets saumonés',
-                    'nez' => 'Fruits rouges frais, agrumes',
-                    'bouche' => 'Légère et désaltérante',
-                ],
+                'foodPairings' => ['salades-composees', 'grillades', 'cuisine-mediterraneenne'],
+                'tastingNotes' => "Robe : Rose pâle, reflets saumonés.\nNez : Fruits rouges frais, agrumes.\nBouche : Légère et désaltérante.",
                 'description' => 'Le rosé parfait pour les journées ensoleillées.',
                 'isFeatured' => true,
                 'image' => 'estival.jpg',
@@ -238,12 +274,8 @@ class AppFixtures extends Fixture
                 'appellation' => 'cabernet-anjou',
                 'grapes' => ['cabernet-franc', 'cabernet-sauvignon'],
                 'terroir' => 'Coteaux argilo-calcaires',
-                'foodPairings' => ['Apéritif', 'Desserts fruités', 'Cuisine exotique'],
-                'tastingNotes' => [
-                    'robe' => 'Rose soutenu aux reflets framboise',
-                    'nez' => 'Fruits rouges mûrs, bonbon anglais',
-                    'bouche' => 'Ronde et gourmande, finale fraîche',
-                ],
+                'foodPairings' => ['aperitif', 'desserts-fruites', 'cuisine-exotique'],
+                'tastingNotes' => "Robe : Rose soutenu aux reflets framboise.\nNez : Fruits rouges mûrs, bonbon anglais.\nBouche : Ronde et gourmande, finale fraîche.",
                 'description' => 'Un rosé demi-sec gourmand et convivial.',
                 'isFeatured' => false,
                 'image' => 'escale.jpg',
@@ -262,12 +294,8 @@ class AppFixtures extends Fixture
                 'appellation' => 'anjou-rouge',
                 'grapes' => ['cabernet-franc'],
                 'terroir' => 'Sols de schistes et grès',
-                'foodPairings' => ['Viandes rouges', 'Gibier', 'Fromages affinés'],
-                'tastingNotes' => [
-                    'robe' => 'Rubis profond aux reflets violacés',
-                    'nez' => 'Fruits noirs, épices douces, violette',
-                    'bouche' => 'Élégante et structurée, tanins soyeux',
-                ],
+                'foodPairings' => ['viandes-rouges', 'gibier', 'fromages-affines'],
+                'tastingNotes' => "Robe : Rubis profond aux reflets violacés.\nNez : Fruits noirs, épices douces, violette.\nBouche : Élégante et structurée, tanins soyeux.",
                 'description' => 'Un rouge de caractère pour les grandes occasions.',
                 'isFeatured' => true,
                 'image' => 'invitee.jpg',
@@ -286,12 +314,8 @@ class AppFixtures extends Fixture
                 'appellation' => 'anjou-rouge',
                 'grapes' => ['cabernet-franc', 'cabernet-sauvignon'],
                 'terroir' => 'Argiles à silex sur socle schisteux',
-                'foodPairings' => ['Charcuterie', 'Volailles rôties', 'Légumes grillés'],
-                'tastingNotes' => [
-                    'robe' => 'Grenat brillant',
-                    'nez' => 'Fruits rouges, poivre, sous-bois léger',
-                    'bouche' => 'Souple et fruitée, accessible',
-                ],
+                'foodPairings' => ['charcuterie', 'volailles-roties', 'legumes-grilles'],
+                'tastingNotes' => "Robe : Grenat brillant.\nNez : Fruits rouges, poivre, sous-bois léger.\nBouche : Souple et fruitée, accessible.",
                 'description' => 'Un rouge gourmand pour tous les jours.',
                 'isFeatured' => false,
                 'image' => 'evasion.jpg',
@@ -310,12 +334,8 @@ class AppFixtures extends Fixture
                 'appellation' => 'cremant-de-loire',
                 'grapes' => ['chenin-blanc'],
                 'terroir' => 'Tuffeau et calcaire',
-                'foodPairings' => ['Apéritif', 'Fruits de mer', 'Desserts'],
-                'tastingNotes' => [
-                    'robe' => 'Or pâle, fines bulles persistantes',
-                    'nez' => 'Brioche, pomme verte, fleurs blanches',
-                    'bouche' => 'Crémeuse et fraîche, finale citronnée',
-                ],
+                'foodPairings' => ['aperitif', 'fruits-de-mer', 'desserts'],
+                'tastingNotes' => "Robe : Or pâle, fines bulles persistantes.\nNez : Brioche, pomme verte, fleurs blanches.\nBouche : Crémeuse et fraîche, finale citronnée.",
                 'description' => 'Des bulles fines pour célébrer chaque instant.',
                 'isFeatured' => true,
                 'image' => 'festives.jpg',
@@ -335,7 +355,6 @@ class AppFixtures extends Fixture
             $wine->setAgingPotential($wineData['agingPotential']);
             $wine->setVolumeCl($wineData['volumeCl']);
             $wine->setTerroir($wineData['terroir']);
-            $wine->setFoodPairings($wineData['foodPairings']);
             $wine->setTastingNotes($wineData['tastingNotes']);
             $wine->setDescription($wineData['description']);
             $wine->setIsActive(true);
@@ -345,6 +364,10 @@ class AppFixtures extends Fixture
 
             foreach ($wineData['grapes'] as $grapeSlug) {
                 $wine->addGrapeVariety($grapeVarieties[$grapeSlug]);
+            }
+
+            foreach ($wineData['foodPairings'] as $pairingSlug) {
+                $wine->addFoodPairing($foodPairings[$pairingSlug]);
             }
 
             // Create wine image
@@ -578,5 +601,16 @@ class AppFixtures extends Fixture
             $review->setIsApproved($data['isApproved']);
             $manager->persist($review);
         }
+    }
+
+    /**
+     * @param array<string, Wine> $wines
+     * @param array<string, User> $users
+     */
+    private function createFavorites(array $wines, array $users): void
+    {
+        $users['client']->addFavoriteWine($wines['escapade']);
+        $users['client']->addFavoriteWine($wines['l-invitee']);
+        $users['client']->addFavoriteWine($wines['les-festives']);
     }
 }
