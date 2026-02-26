@@ -52,4 +52,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Retourne les clients (non-admin) avec leur nombre de commandes et total dépensé,
+     * en excluant les commandes annulées et remboursées.
+     *
+     * @return array<int, array{0: User, orderCount: string, totalSpent: string}>
+     */
+    public function findForExport(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->addSelect('COUNT(o.id) AS orderCount, COALESCE(SUM(o.totalInCents), 0) AS totalSpent')
+            ->leftJoin('u.orders', 'o', 'WITH', 'o.status NOT IN (:excluded)')
+            ->setParameter('excluded', ['cancelled', 'refunded'])
+            ->andWhere('u.roles NOT LIKE :adminRole')
+            ->setParameter('adminRole', '%ROLE_ADMIN%')
+            ->groupBy('u.id')
+            ->orderBy('u.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

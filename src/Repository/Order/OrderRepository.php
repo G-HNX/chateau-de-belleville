@@ -152,4 +152,46 @@ class OrderRepository extends ServiceEntityRepository
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * Retourne toutes les commandes pour l'export CSV, avec les items eager-loadés.
+     *
+     * @return Order[]
+     */
+    public function findForExport(?\DateTime $from, ?\DateTime $to, ?OrderStatus $status): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->leftJoin('o.items', 'i')
+            ->addSelect('i')
+            ->orderBy('o.createdAt', 'DESC');
+
+        if ($from) {
+            $qb->andWhere('o.createdAt >= :from')->setParameter('from', $from);
+        }
+
+        if ($to) {
+            $qb->andWhere('o.createdAt <= :to')->setParameter('to', $to);
+        }
+
+        if ($status) {
+            $qb->andWhere('o.status = :status')->setParameter('status', $status->value);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Retourne les commandes dont la date de naissance client doit être anonymisée (RGPD).
+     *
+     * @return Order[]
+     */
+    public function findOrdersWithBirthDateBefore(\DateTimeInterface $cutoff): array
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.customerBirthDate IS NOT NULL')
+            ->andWhere('o.createdAt < :cutoff')
+            ->setParameter('cutoff', $cutoff)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /panier/
+Disallow: /commande/
+Disallow: /mon-compte/
+Disallow: /webhook/
+
+# Sitemap: https://votre-domaine.fr/sitemap.xml

@@ -154,6 +154,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Boutique');
         yield MenuItem::linkToCrud('Commandes', 'fa fa-shopping-cart', Order::class);
+        yield MenuItem::linkToUrl('Export CSV', 'fa fa-download', '/admin/orders/export.csv');
         yield MenuItem::linkToCrud('Avis clients', 'fa fa-star', Review::class);
 
         yield MenuItem::section('Catalogue');
@@ -174,6 +175,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Utilisateurs');
         yield MenuItem::linkToCrud('Clients', 'fa fa-users', User::class);
+        yield MenuItem::linkToUrl('Export CSV', 'fa fa-download', '/admin/customers/export.csv');
 
         yield MenuItem::section('');
         yield MenuItem::linkToUrl('Voir le site', 'fa fa-external-link-alt', '/');
