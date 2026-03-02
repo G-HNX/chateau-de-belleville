@@ -1,0 +1,15 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            app.article_content:
+                allow_safe_elements: true
+                allow_attributes:
+                    style: '*'
+                    class: '*'
+                    href: 'a'
+                    src: 'img'
+                    alt: 'img'
+                    target: 'a'
+                    rel: 'a'
+                    width: 'img'
+                    height: 'img'

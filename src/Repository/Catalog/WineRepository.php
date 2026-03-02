@@ -26,6 +26,8 @@ class WineRepository extends ServiceEntityRepository
     public function findAllActive(): array
     {
         return $this->createQueryBuilder('w')
+            ->leftJoin('w.images', 'wi')
+            ->addSelect('wi')
             ->andWhere('w.isActive = :active')
             ->setParameter('active', true)
             ->orderBy('w.name', 'ASC')
@@ -39,6 +41,8 @@ class WineRepository extends ServiceEntityRepository
     public function findFeatured(int $limit = 6): array
     {
         return $this->createQueryBuilder('w')
+            ->leftJoin('w.images', 'wi')
+            ->addSelect('wi')
             ->andWhere('w.isActive = :active')
             ->andWhere('w.isFeatured = :featured')
             ->setParameter('active', true)
@@ -55,6 +59,8 @@ class WineRepository extends ServiceEntityRepository
     public function findByFilters(array $filters, string $sort = 'newest', int $page = 1, int $limit = 12): array
     {
         $qb = $this->createQueryBuilder('w')
+            ->leftJoin('w.images', 'wi')
+            ->addSelect('wi')
             ->andWhere('w.isActive = :active')
             ->setParameter('active', true);
 
@@ -74,6 +80,8 @@ class WineRepository extends ServiceEntityRepository
     public function findByCategory(WineCategory $category, string $sort = 'newest', int $page = 1, int $limit = 12): array
     {
         $qb = $this->createQueryBuilder('w')
+            ->leftJoin('w.images', 'wi')
+            ->addSelect('wi')
             ->andWhere('w.isActive = :active')
             ->andWhere('w.category = :category')
             ->setParameter('active', true)

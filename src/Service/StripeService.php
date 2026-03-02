@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Order\Order;
+use Stripe\Exception\ApiErrorException;
+use Stripe\Exception\SignatureVerificationException;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 use Stripe\Webhook;
@@ -18,6 +20,9 @@ class StripeService
         Stripe::setApiKey($this->stripeSecretKey);
     }
 
+    /**
+     * @throws ApiErrorException
+     */
     public function createPaymentIntent(Order $order): PaymentIntent
     {
         return PaymentIntent::create([
@@ -31,6 +36,9 @@ class StripeService
         ]);
     }
 
+    /**
+     * @throws SignatureVerificationException
+     */
     public function constructWebhookEvent(string $payload, string $sigHeader): \Stripe\Event
     {
         return Webhook::constructEvent($payload, $sigHeader, $this->stripeWebhookSecret);

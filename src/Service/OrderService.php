@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Catalog\Wine;
 use App\Entity\Order\Cart;
 use App\Entity\Order\Order;
 use App\Entity\Order\OrderItem;
 use App\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\LockMode;
 
 class OrderService
 {
@@ -39,6 +41,8 @@ class OrderService
 
     /**
      * Cree une commande a partir du panier et des donnees du formulaire.
+     *
+     * @throws \RuntimeException si un vin est en rupture de stock au moment du checkout
      */
     public function createOrderFromCart(
         Cart $cart,
@@ -66,19 +70,27 @@ class OrderService
         $order->setCustomerNotes($formData['notes']);
         $order->setCustomerBirthDate($birthDate);
 
-        foreach ($cart->getItems() as $cartItem) {
-            $order->addItem(OrderItem::createFromCartItem($cartItem));
-            $cartItem->getWine()->decrementStock($cartItem->getQuantity());
-        }
+        $this->em->wrapInTransaction(function () use ($cart, $order): void {
+            foreach ($cart->getItems() as $cartItem) {
+                // Lock pessimiste : empêche une double-vente si deux commandes sont simultanées
+                $wine = $this->em->find(Wine::class, $cartItem->getWine()->getId(), LockMode::PESSIMISTIC_WRITE);
+                if ($wine === null || !$wine->hasEnoughStock($cartItem->getQuantity())) {
+                    throw new \RuntimeException(sprintf(
+                        'Stock insuffisant pour "%s". Veuillez mettre à jour votre panier.',
+                        $cartItem->getWine()->getName()
+                    ));
+                }
+                $order->addItem(OrderItem::createFromCartItem($cartItem));
+                $wine->decrementStock($cartItem->getQuantity());
+            }
 
-        $order->calculateTotals();
+            $order->calculateTotals();
+            $this->em->persist($order);
+            $cart->clear();
+        });
 
-        $this->em->persist($order);
-
-        $cart->clear();
-
-        $this->em->flush();
-
+        // L'email est envoyé après la transaction : si l'envoi échoue,
+        // la commande est déjà persistée (EmailService logue l'erreur sans exception).
         $this->emailService->sendOrderConfirmation($order);
 
         return $order;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\User;
 
 use App\Entity\User\User;
+use App\Enum\OrderStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -57,6 +58,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * Retourne les clients (non-admin) avec leur nombre de commandes et total dépensé,
      * en excluant les commandes annulées et remboursées.
      *
+     * @return string[]
+     */
+    public function findNewsletterOptInEmails(): array
+    {
+        $result = $this->createQueryBuilder('u')
+            ->select('u.email')
+            ->andWhere('u.newsletterOptIn = true')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($result, 'email');
+    }
+
+    /**
      * @return array<int, array{0: User, orderCount: string, totalSpent: string}>
      */
     public function findForExport(): array
@@ -64,7 +79,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->createQueryBuilder('u')
             ->addSelect('COUNT(o.id) AS orderCount, COALESCE(SUM(o.totalInCents), 0) AS totalSpent')
             ->leftJoin('u.orders', 'o', 'WITH', 'o.status NOT IN (:excluded)')
-            ->setParameter('excluded', ['cancelled', 'refunded'])
+            ->setParameter('excluded', [OrderStatus::CANCELLED->value, OrderStatus::REFUNDED->value])
             ->andWhere('u.roles NOT LIKE :adminRole')
             ->setParameter('adminRole', '%ROLE_ADMIN%')
             ->groupBy('u.id')

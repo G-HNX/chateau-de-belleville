@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Château de Belleville{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Domaine viticole familial en Val de Loire. Découvrez nos vins d'exception et réservez une dégustation.{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ app.request ? app.request.schemeAndHttpHost ~ app.request.requestUri : '' }}{% endblock %}">
+
+    {# Open Graph #}
+    <meta property="og:site_name" content="Château de Belleville">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ block('title') }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ block('meta_description') }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ app.request ? app.request.schemeAndHttpHost ~ asset('images/og-default.jpg') : '' }}{% endblock %}">
+    <meta property="og:url" content="{{ app.request ? app.request.schemeAndHttpHost ~ app.request.requestUri : '' }}">
+    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="icon" href="{{ asset('images/logo.jpg') }}">
 
     {% block stylesheets %}
@@ -12,6 +23,80 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     {% endblock %}
+    <style>
+        /* Dropdown "Le Domaine"
+           align-self: stretch hérité de .nav-links { align-items: stretch } dans app.css */
+        .nav-has-dropdown {
+            position: relative;
+        }
+        .nav-dropdown-trigger {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.2em;
+            /* hérite du style .nav-links a */
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--color-secondary, #8B7355);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: color 0.3s ease;
+            user-select: none;
+        }
+        .nav-has-dropdown:hover .nav-dropdown-trigger,
+        .nav-has-dropdown.active .nav-dropdown-trigger { color: var(--color-primary, #5B4638); }
+        .nav-dropdown-trigger::after {
+            content: '▾';
+            font-size: 0.7em;
+            opacity: 0.6;
+            transition: transform 0.2s, opacity 0.2s;
+            margin-left: 0.1em;
+        }
+        .nav-has-dropdown:hover .nav-dropdown-trigger::after { opacity: 1; transform: rotate(-180deg); }
+        .nav-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;          /* collé au bas du <li> qui fait 80px → collé à la nav */
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border-top: 2px solid #C9A87C;
+            box-shadow: 0 8px 28px rgba(44,36,32,0.13);
+            min-width: 210px;
+            z-index: 1100;      /* au-dessus de site-nav (z-index:1000) */
+            list-style: none;
+            padding: 0.4rem 0;
+            margin: 0;
+            border-radius: 0 0 4px 4px;
+        }
+        .nav-has-dropdown:hover .nav-dropdown { display: block; }
+        .nav-dropdown li a {
+            display: block;
+            padding: 0.6rem 1.25rem;
+            color: #2C2420;
+            font-size: 0.78rem;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-weight: 400;
+            text-decoration: none;
+            transition: color 0.18s, background 0.18s;
+            white-space: nowrap;
+            text-align: center;
+        }
+        .nav-links .nav-dropdown li {
+            display: block; /* spécificité (0,2,1) > .nav-links li (0,1,1) dans app.css */
+        }
+        .nav-dropdown li a:hover,
+        .nav-dropdown li a.active { color: #5B4638; background: #F5F2ED; font-weight: 500; }
+        /* Mobile sub-items */
+        .mobile-menu-group-label { font-weight: 500; color: #2C2420; }
+        .mobile-menu-sub-item a {
+            padding-left: 2rem !important;
+            font-size: 0.875rem !important;
+            opacity: 0.8;
+        }
+    </style>
 
     {% block javascripts %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
@@ -31,7 +116,17 @@
                 </a>
 
                 <ul class="nav-links">
-                    <li><a href="{{ path('app_domain') }}" {% if app.request.attributes.get('_route') == 'app_domain' %}class="active"{% endif %}>Le Domaine</a></li>
+                    {% set domainActive = app.request.attributes.get('_route') starts with 'app_domain' or app.request.attributes.get('_route') starts with 'app_news' %}
+                    <li class="nav-has-dropdown {% if domainActive %}active{% endif %}">
+                        <span class="nav-dropdown-trigger">Le Domaine</span>
+                        <ul class="nav-dropdown">
+                            <li><a href="{{ path('app_domain') }}" {% if app.request.attributes.get('_route') == 'app_domain' %}class="active"{% endif %}>Le Domaine</a></li>
+                            <li><a href="{{ path('app_domain_excellence') }}" {% if app.request.attributes.get('_route') == 'app_domain_excellence' %}class="active"{% endif %}>Notre Excellence</a></li>
+                            <li><a href="{{ path('app_domain_nature') }}" {% if app.request.attributes.get('_route') == 'app_domain_nature' %}class="active"{% endif %}>Nature &amp; Durabilité</a></li>
+                            <li><a href="{{ path('app_domain_transmission') }}" {% if app.request.attributes.get('_route') == 'app_domain_transmission' %}class="active"{% endif %}>Transmission</a></li>
+                            <li><a href="{{ path('app_news_index') }}" {% if app.request.attributes.get('_route') starts with 'app_news' %}class="active"{% endif %}>Actualités</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-separator" aria-hidden="true"></li>
                     <li><a href="{{ path('app_wine_index') }}" {% if app.request.attributes.get('_route') starts with 'app_wine' %}class="active"{% endif %}>Nos Vins</a></li>
                     <li class="nav-separator" aria-hidden="true"></li>
@@ -59,7 +154,7 @@
                     <a href="{{ path('app_cart_index') }}" class="nav-cart-link" title="Panier">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                         {% set count = cart_count() %}
-                        <span id="cart-badge" class="cart-badge"{% if count == 0 %} style="display: none;"{% endif %}>{{ count }}</span>
+                        <span id="cart-badge" class="cart-badge" aria-live="polite" aria-atomic="true" aria-label="{{ count }} article{{ count != 1 ? 's' : '' }} dans le panier"{% if count == 0 %} style="display: none;"{% endif %}>{{ count }}</span>
                     </a>
                 </div>
 
@@ -80,7 +175,11 @@
             <button class="mobile-menu-close" data-action="mobile-menu#close" aria-label="Fermer le menu">✕</button>
             <ul class="mobile-menu-links">
                 <li><a href="{{ path('app_home') }}" {% if app.request.attributes.get('_route') == 'app_home' %}class="active"{% endif %}>Accueil</a></li>
-                <li><a href="{{ path('app_domain') }}" {% if app.request.attributes.get('_route') == 'app_domain' %}class="active"{% endif %}>Le Domaine</a></li>
+                <li class="mobile-menu-group-label"><a href="{{ path('app_domain') }}" {% if app.request.attributes.get('_route') == 'app_domain' %}class="active"{% endif %}>Le Domaine</a></li>
+                <li class="mobile-menu-sub-item"><a href="{{ path('app_domain_excellence') }}" {% if app.request.attributes.get('_route') == 'app_domain_excellence' %}class="active"{% endif %}>Notre Excellence</a></li>
+                <li class="mobile-menu-sub-item"><a href="{{ path('app_domain_nature') }}" {% if app.request.attributes.get('_route') == 'app_domain_nature' %}class="active"{% endif %}>Nature &amp; Durabilité</a></li>
+                <li class="mobile-menu-sub-item"><a href="{{ path('app_domain_transmission') }}" {% if app.request.attributes.get('_route') == 'app_domain_transmission' %}class="active"{% endif %}>Transmission</a></li>
+                <li class="mobile-menu-sub-item"><a href="{{ path('app_news_index') }}" {% if app.request.attributes.get('_route') starts with 'app_news' %}class="active"{% endif %}>Actualités</a></li>
                 <li><a href="{{ path('app_wine_index') }}" {% if app.request.attributes.get('_route') starts with 'app_wine' %}class="active"{% endif %}>Nos Vins</a></li>
                 <li><a href="{{ path('app_tasting_index') }}" {% if app.request.attributes.get('_route') starts with 'app_tasting' %}class="active"{% endif %}>Dégustations</a></li>
                 <li><a href="{{ path('app_contact') }}" {% if app.request.attributes.get('_route') == 'app_contact' %}class="active"{% endif %}>Contact</a></li>
@@ -163,6 +262,7 @@
                     <li><a href="{{ path('app_wine_index') }}">Nos Vins</a></li>
                     <li><a href="{{ path('app_shop_index') }}">Boutique</a></li>
                     <li><a href="{{ path('app_tasting_index') }}">Dégustations</a></li>
+                    <li><a href="{{ path('app_news_index') }}">Actualités</a></li>
                     <li><a href="{{ path('app_contact') }}">Contact</a></li>
                 </ul>
             </div>
@@ -191,8 +291,9 @@
                     </div>
                 </div>
                 <div class="footer-certif">
-                    <span class="footer-certif-badge">Terra Vitis</span>
-                    <span class="footer-certif-badge">HVE</span>
+                    <div style="display: inline-block; background: white; border-radius: 8px; padding: 6px 10px;">
+                        <img src="{{ asset('images/terra-vitis.png') }}" alt="Certification Terra Vitis – Viticulture durable" style="height: 40px; width: auto; display: block;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -205,5 +306,98 @@
 
     {# Sommelier IA Widget #}
     {% include '_sommelier.html.twig' %}
+
+    {# Bannière consentement cookies + vérification âge (RGPD) #}
+    <div data-controller="cookie-consent">
+        <div data-cookie-consent-target="banner"
+             hidden
+             style="
+                position: fixed; inset: 0; z-index: 9999;
+                display: flex; align-items: center; justify-content: center;
+                background: rgba(44, 36, 32, 0.82);
+                backdrop-filter: blur(3px);
+                padding: 1rem;
+             ">
+            <div style="
+                background: #F5F2ED;
+                border-top: 3px solid #C9A87C;
+                border-radius: 4px;
+                box-shadow: 0 16px 48px rgba(44, 36, 32, 0.3);
+                max-width: 560px;
+                width: 100%;
+                padding: 2.5rem 2rem;
+                text-align: center;
+                font-family: 'Montserrat', sans-serif;
+            ">
+                <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; color: #2C2420; margin: 0 0 0.5rem;">
+                    Château de Belleville
+                </p>
+                <p style="font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: #8B7355; margin: 0 0 1.5rem;">
+                    Vignoble d'Anjou
+                </p>
+
+                <p style="font-size: 0.9rem; color: #2C2420; margin: 0 0 0.75rem; line-height: 1.6;">
+                    Ce site présente et vend des <strong>vins et alcools</strong>.<br>
+                    Vous devez avoir <strong>au moins 18 ans</strong> pour y accéder.
+                </p>
+                <p style="font-size: 0.8rem; color: #5B4638; margin: 0 0 0.5rem; line-height: 1.6;">
+                    Nous utilisons des <strong>cookies techniques</strong> (session, sécurité) indispensables au fonctionnement du site,
+                    et des <strong>cookies fonctionnels</strong> optionnels (mémorisation de connexion).
+                </p>
+                <p style="font-size: 0.78rem; color: #8B7355; margin: 0 0 1.75rem; line-height: 1.5;">
+                    <a href="{{ path('app_privacy') }}" target="_blank" style="color: #C9A87C; text-decoration: underline;">
+                        Consulter notre politique de confidentialité &amp; cookies
+                    </a>
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                    <button data-action="cookie-consent#acceptAll"
+                            style="
+                                background: #5B4638; color: #F5F2ED;
+                                border: none; border-radius: 2px;
+                                padding: 0.875rem 1.5rem;
+                                font-family: 'Montserrat', sans-serif;
+                                font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+                                font-weight: 500; cursor: pointer;
+                                transition: background 0.2s;
+                            "
+                            onmouseover="this.style.background='#8B7355'"
+                            onmouseout="this.style.background='#5B4638'">
+                        J'ai 18 ans — Accepter tous les cookies
+                    </button>
+                    <button data-action="cookie-consent#acceptNecessary"
+                            style="
+                                background: transparent; color: #5B4638;
+                                border: 1px solid #A08D7A; border-radius: 2px;
+                                padding: 0.75rem 1.5rem;
+                                font-family: 'Montserrat', sans-serif;
+                                font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+                                cursor: pointer;
+                                transition: background 0.2s, border-color 0.2s;
+                            "
+                            onmouseover="this.style.background='rgba(91,70,56,0.06)'"
+                            onmouseout="this.style.background='transparent'">
+                        J'ai 18 ans — Cookies nécessaires uniquement
+                    </button>
+                    <button data-action="cookie-consent#decline"
+                            style="
+                                background: transparent; color: #A08D7A;
+                                border: none;
+                                padding: 0.5rem 1rem;
+                                font-family: 'Montserrat', sans-serif;
+                                font-size: 0.72rem; letter-spacing: 0.06em;
+                                cursor: pointer;
+                                text-decoration: underline;
+                            ">
+                        Quitter le site (je n'ai pas 18 ans)
+                    </button>
+                </div>
+
+                <p style="margin: 1.5rem 0 0; font-size: 0.7rem; color: #A08D7A;">
+                    L'abus d'alcool est dangereux pour la santé, à consommer avec modération.
+                </p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

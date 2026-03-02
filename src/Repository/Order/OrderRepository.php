@@ -31,6 +31,8 @@ class OrderRepository extends ServiceEntityRepository
     public function findByCustomer(User $customer): array
     {
         return $this->createQueryBuilder('o')
+            ->leftJoin('o.items', 'i')
+            ->addSelect('i')
             ->andWhere('o.customer = :customer')
             ->setParameter('customer', $customer)
             ->orderBy('o.createdAt', 'DESC')

@@ -6,7 +6,9 @@ namespace App\Service;
 
 use App\Entity\Booking\Reservation;
 use App\Entity\Order\Order;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
@@ -17,6 +19,7 @@ class EmailService
 
     public function __construct(
         private readonly MailerInterface $mailer,
+        private readonly LoggerInterface $logger,
     ) {}
 
     public function sendOrderConfirmation(Order $order): void
@@ -28,7 +31,14 @@ class EmailService
             ->htmlTemplate('email/order_confirmation.html.twig')
             ->context(['order' => $order]);
 
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Échec envoi email confirmation commande', [
+                'order' => $order->getReference(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function sendPaymentConfirmation(Order $order): void
@@ -40,7 +50,14 @@ class EmailService
             ->htmlTemplate('email/payment_confirmation.html.twig')
             ->context(['order' => $order]);
 
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Échec envoi email confirmation paiement', [
+                'order' => $order->getReference(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function sendOrderShipped(Order $order): void
@@ -52,7 +69,14 @@ class EmailService
             ->htmlTemplate('email/order_shipped.html.twig')
             ->context(['order' => $order]);
 
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Échec envoi email expédition commande', [
+                'order' => $order->getReference(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function sendReservationConfirmation(Reservation $reservation): void
@@ -64,6 +88,13 @@ class EmailService
             ->htmlTemplate('email/reservation_confirmation.html.twig')
             ->context(['reservation' => $reservation]);
 
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Échec envoi email confirmation réservation', [
+                'reservation' => $reservation->getId(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

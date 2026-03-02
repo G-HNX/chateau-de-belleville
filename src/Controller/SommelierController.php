@@ -14,8 +14,13 @@ use Symfony\Component\Routing\Attribute\Route;
 class SommelierController extends AbstractController
 {
     #[Route('/api/sommelier', name: 'app_sommelier_chat', methods: ['POST'])]
-    public function chat(Request $request, SommelierService $sommelierService): JsonResponse
+    public function chat(Request $request, SommelierService $sommelierService, RateLimiterFactory $sommelierApiLimiter): JsonResponse
     {
+        $limiter = $sommelierApiLimiter->create($request->getClientIp());
+        if (!$limiter->consume(1)->isAccepted()) {
+            return $this->json(['error' => 'Trop de requêtes. Veuillez patienter avant de réessayer.'], 429);
+        }
+
         $data = json_decode($request->getContent(), true);
 
         $message = trim($data['message'] ?? '');
