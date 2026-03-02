@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Actualités - Château de Belleville{% endblock %}
+{% block meta_description %}Suivez toute l'actualité du Château de Belleville : vendanges, nouveaux millésimes, événements et moments de vie du domaine.{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Actualités</h1>
+        <p>La vie du domaine au fil des saisons.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-cream">
+        <div class="container">
+
+            {% if articles is empty %}
+                <div style="text-align: center; padding: 4rem 0; color: var(--color-secondary);">
+                    <p style="font-size: 1.125rem;">Aucune actualité pour le moment.</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.95rem;">Revenez bientôt pour suivre la vie du domaine.</p>
+                </div>
+            {% else %}
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem;">
+                    {% for article in articles %}
+                        <article class="card" style="display: flex; flex-direction: column; overflow: hidden;" data-reveal="fade-up" data-reveal-delay="{{ loop.index0 * 80 }}">
+
+                            {# Image de couverture #}
+                            {% if article.coverImagePath %}
+                                <a href="{{ path('app_news_show', {slug: article.slug}) }}" style="display: block; overflow: hidden; aspect-ratio: 16/9;">
+                                    <img src="{{ article.coverImagePath }}"
+                                         alt="{{ article.title }}"
+                                         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
+                                         onmouseover="this.style.transform='scale(1.04)'"
+                                         onmouseout="this.style.transform='scale(1)'">
+                                </a>
+                            {% else %}
+                                <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--color-beige), var(--color-accent)); display: flex; align-items: center; justify-content: center;">
+                                    <span style="font-size: 3rem; opacity: 0.4;">📰</span>
+                                </div>
+                            {% endif %}
+
+                            {# Contenu #}
+                            <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+                                {% if article.publishedAt %}
+                                    <time datetime="{{ article.publishedAt|date('Y-m-d') }}"
+                                          style="font-size: 0.8rem; color: var(--color-gold); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; font-family: var(--font-body); font-weight: 500;">
+                                        {{ article.publishedAt|date('d/m/Y') }}
+                                    </time>
+                                {% endif %}
+
+                                <h2 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--color-primary); margin-bottom: 0.75rem; line-height: 1.3;">
+                                    <a href="{{ path('app_news_show', {slug: article.slug}) }}"
+                                       style="text-decoration: none; color: inherit;">
+                                        {{ article.title }}
+                                    </a>
+                                </h2>
+
+                                {% if article.excerpt %}
+                                    <p style="color: var(--color-secondary); line-height: 1.7; font-size: 0.95rem; flex: 1; margin-bottom: 1.25rem;">
+                                        {{ article.excerpt }}
+                                    </p>
+                                {% endif %}
+
+                                <a href="{{ path('app_news_show', {slug: article.slug}) }}"
+                                   style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; color: var(--color-gold); font-weight: 500; text-decoration: none; margin-top: auto;">
+                                    Lire l'article
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+    </section>
+{% endblock %}

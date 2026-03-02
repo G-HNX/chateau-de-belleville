@@ -98,7 +98,7 @@ body {
 
 .nav-links {
     display: flex;
-    align-items: center;
+    align-items: stretch; /* les <li> remplissent toute la hauteur (80px) */
     gap: 0;
     list-style: none;
     margin: 0;
@@ -107,7 +107,12 @@ body {
 
 .nav-links li {
     display: flex;
-    align-items: center;
+    align-items: center; /* contenu centré verticalement dans le <li> */
+}
+
+/* Curseur pointer sur toute la hauteur (hors séparateur) */
+.nav-links li:not(.nav-separator) {
+    cursor: pointer;
 }
 
 .nav-separator {
@@ -117,6 +122,7 @@ body {
     border-radius: 50%;
     margin: 0 1.75rem;
     opacity: 0.5;
+    align-self: center; /* le point reste centré même si le <li> est étiré */
 }
 
 .nav-links a {
@@ -143,12 +149,13 @@ body {
     transform: translateX(-50%);
 }
 
-.nav-links a:hover,
+/* Hover déclenché depuis le <li> (toute la hauteur), pas seulement depuis le <a> */
+.nav-links li:hover > a,
 .nav-links a.active {
     color: var(--color-primary);
 }
 
-.nav-links a:hover::after,
+.nav-links li:hover > a::after,
 .nav-links a.active::after {
     width: 100%;
 }

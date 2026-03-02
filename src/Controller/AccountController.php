@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Customer\Address;
+use App\Entity\NewsletterSubscriber;
 use App\Entity\User\User;
 use App\Form\AddressType;
 use App\Form\ChangePasswordType;
 use App\Form\ProfileType;
 use App\Repository\Booking\ReservationRepository;
 use App\Repository\Customer\AddressRepository;
+use App\Repository\NewsletterSubscriberRepository;
 use App\Repository\Order\OrderRepository;
 use App\Service\PdfService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -186,6 +188,38 @@ class AccountController extends AbstractController
         $this->addFlash('success', 'Adresse supprimée.');
 
         return $this->redirectToRoute('app_account_addresses');
+    }
+
+    #[Route('/newsletter', name: 'app_account_newsletter_toggle', methods: ['POST'])]
+    public function toggleNewsletter(
+        Request $request,
+        EntityManagerInterface $em,
+        NewsletterSubscriberRepository $subscriberRepo,
+    ): Response {
+        if (!$this->isCsrfTokenValid('newsletter_toggle', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $newOptIn = !$user->isNewsletterOptIn();
+        $user->setNewsletterOptIn($newOptIn);
+
+        $existing = $subscriberRepo->findOneBy(['email' => $user->getEmail()]);
+        if ($newOptIn && $existing === null) {
+            $em->persist((new NewsletterSubscriber())->setEmail($user->getEmail()));
+        } elseif (!$newOptIn && $existing !== null) {
+            $em->remove($existing);
+        }
+
+        $em->flush();
+
+        $this->addFlash('success', $newOptIn
+            ? 'Vous êtes inscrit(e) à la newsletter.'
+            : 'Vous avez été désinscrit(e) de la newsletter.'
+        );
+
+        return $this->redirectToRoute('app_account_profile');
     }
 
     #[Route('/profil', name: 'app_account_profile', methods: ['GET', 'POST'])]

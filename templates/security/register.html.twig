@@ -48,6 +48,13 @@
                         {{ form_errors(form.plainPassword.second) }}
                     </div>
                     {{ form_errors(form.plainPassword) }}
+                    <div class="form-group full-width" style="margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: flex-start; gap: 0.625rem; cursor: pointer; font-size: 0.85rem; color: var(--color-secondary);">
+                            {{ form_widget(form.newsletterOptIn, {'attr': {'style': 'width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; accent-color: var(--color-primary);'}}) }}
+                            <span>{{ form_label(form.newsletterOptIn, null, {'label_attr': {'style': 'margin: 0; font-weight: 400; cursor: pointer;'}}) }}</span>
+                        </label>
+                        {{ form_errors(form.newsletterOptIn) }}
+                    </div>
                     <button type="submit" class="btn-submit">Créer mon compte</button>
                 {{ form_end(form) }}
 

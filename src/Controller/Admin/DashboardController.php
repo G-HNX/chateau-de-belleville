@@ -15,6 +15,8 @@ use App\Entity\Catalog\WineCategory;
 use App\Entity\Catalog\WineImage;
 use App\Entity\Customer\Review;
 use App\Entity\Domain\DomainPhoto;
+use App\Entity\News\NewsArticle;
+use App\Entity\Newsletter;
 use App\Entity\Order\Order;
 use App\Entity\Order\OrderItem;
 use App\Entity\User\User;
@@ -171,7 +173,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar-check', Reservation::class);
 
         yield MenuItem::section('Contenu du site');
+        yield MenuItem::linkToCrud('Actualités', 'fa fa-newspaper', NewsArticle::class);
         yield MenuItem::linkToCrud('Photos du domaine', 'fa fa-camera', DomainPhoto::class);
+        yield MenuItem::linkToCrud('Newsletters', 'fa fa-envelope-open-text', Newsletter::class);
 
         yield MenuItem::section('Utilisateurs');
         yield MenuItem::linkToCrud('Clients', 'fa fa-users', User::class);

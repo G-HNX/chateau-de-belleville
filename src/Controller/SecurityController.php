@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\NewsletterSubscriber;
 use App\Entity\User\User;
 use App\Form\RegistrationType;
 use App\Security\EmailVerifier;
@@ -62,6 +63,9 @@ class SecurityController extends AbstractController
             $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
 
             $em->persist($user);
+            if ($user->isNewsletterOptIn()) {
+                $em->persist((new NewsletterSubscriber())->setEmail($user->getEmail()));
+            }
             $em->flush();
 
             $this->emailVerifier->sendEmailConfirmation(
