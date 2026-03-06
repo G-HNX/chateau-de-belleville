@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\NewsletterSubscriber;
 use App\Entity\User\User;
 use App\Form\RegistrationType;
+use App\Repository\NewsletterSubscriberRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
@@ -49,6 +51,8 @@ class SecurityController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em,
+        NewsletterSubscriberRepository $subscriberRepo,
+        RateLimiterFactory $registrationLimiter,
     ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -59,12 +63,22 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $limiter = $registrationLimiter->create($request->getClientIp());
+            if (!$limiter->consume(1)->isAccepted()) {
+                $this->addFlash('error', 'Trop de tentatives d\'inscription. Veuillez patienter avant de réessayer.');
+
+                return $this->redirectToRoute('app_register');
+            }
             $plainPassword = $form->get('plainPassword')->getData();
             $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
 
             $em->persist($user);
             if ($user->isNewsletterOptIn()) {
-                $em->persist((new NewsletterSubscriber())->setEmail($user->getEmail()));
+                // Supprimer l'éventuel abonné anonyme existant pour éviter une violation de contrainte unique
+                $existing = $subscriberRepo->findOneBy(['email' => $user->getEmail()]);
+                if ($existing === null) {
+                    $em->persist((new NewsletterSubscriber())->setEmail($user->getEmail()));
+                }
             }
             $em->flush();
 

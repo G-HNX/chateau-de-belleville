@@ -11,6 +11,21 @@
 
 {% block body %}
 
+{# ── Fil d'Ariane ─────────────────────────────────────────────── #}
+<nav class="breadcrumb" aria-label="Fil d'Ariane">
+    <div class="container">
+        <a href="{{ path('app_home') }}">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        {% if currentFilters.category is defined %}
+            <a href="{{ path('app_shop_index') }}">Boutique</a>
+            <span class="breadcrumb-sep">›</span>
+            <span>{{ currentFilters.category.name }}</span>
+        {% else %}
+            <span>Boutique</span>
+        {% endif %}
+    </div>
+</nav>
+
 {# ── Barre livraison gratuite ────────────────────────────────────── #}
 <div class="shop-shipping-bar">
     {% if remainingCents <= 0 %}
@@ -51,6 +66,43 @@
 {% if currentFilters.priceMax is defined %}{% set sortParams = sortParams|merge({prix_max: currentFilters.priceMax}) %}{% endif %}
 {% if currentFilters.inStock is defined %}{% set sortParams = sortParams|merge({en_stock: 1}) %}{% endif %}
 {% set sortBase = path('app_shop_index', sortParams) %}
+
+{# ── Tags filtres actifs ─────────────────────────────────────────── #}
+{% if currentFilters|length > 0 %}
+<div class="shop-active-filters">
+    {% if currentFilters.category is defined %}
+        <span class="shop-filter-tag">
+            {{ currentFilters.category.name }}
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.appellation is defined %}
+        <span class="shop-filter-tag">
+            {{ currentFilters.appellation.name }}
+            <a href="{{ path('app_shop_index', {tri: currentSort, categorie: currentFilters.category is defined ? currentFilters.category.id : ''}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.vintage is defined %}
+        <span class="shop-filter-tag">
+            Millésime {{ currentFilters.vintage }}
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.priceMin is defined or currentFilters.priceMax is defined %}
+        <span class="shop-filter-tag">
+            {% if currentFilters.priceMin is defined %}{{ currentFilters.priceMin }} €{% else %}0 €{% endif %} – {% if currentFilters.priceMax is defined %}{{ currentFilters.priceMax }} €{% else %}∞{% endif %}
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.inStock is defined %}
+        <span class="shop-filter-tag">
+            En stock uniquement
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    <a href="{{ path('app_shop_index') }}" class="shop-filter-clear-all">Effacer tous les filtres</a>
+</div>
+{% endif %}
 
 <div class="shop-sort-header">
     <span class="shop-sort-count">{{ wines|length }} vin{{ wines|length > 1 ? 's' : '' }}</span>
@@ -233,6 +285,7 @@
                         {% endif %}
 
                         <div class="shop-card-price">{{ wine.formattedPrice }}</div>
+                        <div style="font-size: 0.75rem; color: var(--color-secondary);">dont TVA 20% : {{ (wine.priceInCents / 600)|number_format(2, ',', ' ') }} €</div>
 
                         {% if wine.available %}
                             <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post"

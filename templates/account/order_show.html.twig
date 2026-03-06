@@ -21,8 +21,8 @@
                     {% set currentStep = stepMap[order.status.value] ?? -1 %}
 
                     {% if currentStep >= 0 %}
-                        <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--color-cream); border-radius: 8px;">
-                            <div style="position: relative; display: flex;">
+                        <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--color-cream); border-radius: 8px; overflow-x: auto;">
+                            <div style="position: relative; display: flex; min-width: 460px;">
                                 {# Ligne de fond (grise) #}
                                 <div style="position: absolute; top: 19px; left: 10%; right: 10%; height: 2px; background: var(--color-beige);"></div>
                                 {# Ligne de progression (dorée) #}
@@ -92,7 +92,8 @@
 
                     {# Order Items #}
                     <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Articles</h3>
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
+                    <div style="overflow-x: auto; margin-bottom: 2rem;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 480px;">
                         <thead>
                             <tr style="border-bottom: 2px solid var(--color-beige);">
                                 <th style="padding: 0.75rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Produit</th>
@@ -122,26 +123,24 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    </div>
 
                     {# Totals #}
-                    <div style="max-width: 350px; margin-left: auto;">
+                    <div class="order-totals-block">
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                            <span style="color: var(--color-secondary);">Sous-total HT</span>
+                            <span style="color: var(--color-secondary);">Sous-total</span>
                             <span>{{ (order.subtotalInCents / 100)|number_format(2, ',', ' ') }} €</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                            <span style="color: var(--color-secondary);">TVA (20%)</span>
-                            <span>{{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
                             <span style="color: var(--color-secondary);">Livraison</span>
-                            <span>{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                            <span>{% if order.shippingCostInCents == 0 %}Offerte{% else %}{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €{% endif %}</span>
                         </div>
                         <div style="height: 1px; background: var(--color-beige); margin: 0.5rem 0;"></div>
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 0.5rem 0; margin-bottom: 0.2rem;">
                             <span style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary);">Total TTC</span>
                             <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-gold); font-weight: 600;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
                         </div>
+                        <div style="text-align: right; font-size: 0.8rem; color: var(--color-secondary);">dont TVA 20% : {{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</div>
                     </div>
 
                     <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">

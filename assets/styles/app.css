@@ -23,6 +23,10 @@
 /* ============================================
    Base
    ============================================ */
+html {
+    overflow-x: hidden;
+}
+
 body {
     font-family: var(--font-body);
     color: var(--color-dark);
@@ -1356,7 +1360,7 @@ body {
 
 .grid-product {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
     gap: 2rem;
 }
 
@@ -1422,19 +1426,20 @@ body {
 .mobile-menu {
     position: fixed;
     top: 0;
-    right: -320px;
+    right: 0;
     width: 300px;
     height: 100%;
     background: var(--color-cream);
     z-index: 1001;
     padding: 5rem 2rem 2rem;
     box-shadow: -5px 0 30px rgba(91, 70, 56, 0.2);
-    transition: right 0.3s ease;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
     overflow-y: auto;
 }
 
 .mobile-menu.open {
-    right: 0;
+    transform: translateX(0);
 }
 
 .mobile-menu-close {
@@ -2325,6 +2330,9 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* Sidebar compte : désactiver le sticky pour éviter la superposition sur mobile */
+    .account-sidebar { position: static !important; }
+
     .page-header h1 { font-size: 2.5rem; }
     .page-header { padding: 8rem 5% 3rem; }
     .section { padding: 3rem 5%; }
@@ -2441,6 +2449,9 @@ body {
         width: auto;
     }
 
+    /* Reservation card: collapse 3-col grid on mobile */
+    .reservation-card { grid-template-columns: 1fr !important; gap: 0.5rem !important; }
+
     /* Legal page responsive */
     .legal-nav { padding: 1.5rem; }
     .legal-info-grid { grid-template-columns: 1fr; }
@@ -2483,6 +2494,14 @@ body {
 [data-reveal].revealed {
     opacity: 1;
     transform: none;
+}
+
+/* Sur mobile : remplacer les translateX par translateY pour éviter l'overflow horizontal */
+@media (max-width: 768px) {
+    [data-reveal="slide-left"],
+    [data-reveal="slide-right"] {
+        transform: translateY(24px);
+    }
 }
 
 /* Accessibilité : désactiver les animations si l'utilisateur le préfère */
@@ -2941,7 +2960,7 @@ body {
 }
 .shop-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
     gap: 1.5rem;
 }
 
@@ -3157,4 +3176,312 @@ body {
     .shop-sidebar { flex-direction: column; }
     .shop-header-inner { flex-direction: column; align-items: flex-start; }
     .shop-cart-bar-btn { margin-left: 0; }
+}
+
+/* ============================================
+   Fil d'Ariane (Breadcrumb)
+   ============================================ */
+.breadcrumb {
+    background: var(--color-cream);
+    border-bottom: 1px solid var(--color-beige);
+    padding: 0.65rem 0;
+    font-size: 0.8rem;
+}
+.breadcrumb .container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    color: var(--color-secondary);
+}
+.breadcrumb a {
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.breadcrumb a:hover { color: var(--color-primary); }
+.breadcrumb span:last-child { color: var(--color-primary); font-weight: 500; }
+.breadcrumb-sep { color: var(--color-accent); margin: 0 0.1rem; }
+
+/* ============================================
+   Tags filtres actifs (boutique)
+   ============================================ */
+.shop-active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 5%;
+    background: var(--color-cream);
+    border-bottom: 1px solid var(--color-beige);
+}
+.shop-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: white;
+    border: 1px solid var(--color-beige);
+    border-radius: 20px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    color: var(--color-primary);
+}
+.shop-filter-tag a {
+    color: var(--color-secondary);
+    text-decoration: none;
+    font-size: 1rem;
+    line-height: 1;
+    transition: color 0.15s;
+}
+.shop-filter-tag a:hover { color: var(--color-accent); }
+.shop-filter-clear-all {
+    font-size: 0.8rem;
+    color: var(--color-secondary);
+    text-decoration: underline;
+    margin-left: 0.25rem;
+    cursor: pointer;
+}
+.shop-filter-clear-all:hover { color: var(--color-primary); }
+
+/* ============================================
+   Indicateur d'étapes checkout
+   ============================================ */
+.checkout-steps {
+    background: white;
+    border-bottom: 1px solid var(--color-beige);
+    padding: 1.25rem 0;
+}
+.checkout-steps-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto;
+}
+.checkout-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+.checkout-step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--color-beige);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-beige);
+    transition: all 0.2s;
+}
+.checkout-step-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+.checkout-step.active .checkout-step-num {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+.checkout-step.active .checkout-step-label { color: var(--color-primary); }
+.checkout-step.done .checkout-step-num {
+    background: var(--color-gold);
+    color: white;
+    border-color: var(--color-gold);
+}
+.checkout-step.done .checkout-step-label { color: var(--color-gold); }
+.checkout-step-sep {
+    flex: 1;
+    height: 2px;
+    background: var(--color-beige);
+    min-width: 40px;
+    max-width: 80px;
+    margin: 0 0.5rem;
+    margin-bottom: 1.1rem;
+    transition: background 0.2s;
+}
+.checkout-step-sep.done { background: var(--color-gold); }
+@media (max-width: 480px) {
+    .checkout-step-label { display: none; }
+    .checkout-step-sep { min-width: 24px; }
+}
+
+/* ============================================
+   Sticky CTA mobile (fiche vin)
+   ============================================ */
+.sticky-cta-mobile {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    background: white;
+    border-top: 1px solid var(--color-beige);
+    padding: 0.75rem 1rem;
+    box-shadow: 0 -4px 20px rgba(44, 36, 32, 0.12);
+    align-items: center;
+    gap: 1rem;
+}
+.sticky-cta-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+.sticky-cta-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sticky-cta-price {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--color-gold);
+    font-weight: 700;
+}
+@media (max-width: 768px) {
+    .sticky-cta-mobile { display: flex; }
+    /* Padding bottom sur le body pour ne pas cacher le contenu */
+    .wine-show-details { padding-bottom: 5rem; }
+}
+
+/* ============================================
+   Vins similaires
+   ============================================ */
+.similar-wines-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+@media (max-width: 768px) {
+    .similar-wines-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+    .similar-wines-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   Page Compte — classes utilitaires mobile
+   ============================================ */
+.account-order-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid var(--color-beige);
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.account-order-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+@media (max-width: 600px) {
+    .account-order-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+    }
+    .account-order-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+    /* Masquer la flèche sur mobile */
+    .account-order-meta > svg:last-child { display: none; }
+}
+
+/* ============================================================
+   Tables scrollables
+   ============================================================ */
+.responsive-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   Order show – totals block
+   ============================================================ */
+.order-totals-block {
+    max-width: 350px;
+    margin-left: auto;
+}
+
+/* ============================================================
+   Checkout – récapitulatif latéral
+   ============================================================ */
+.checkout-order-summary {
+    background: var(--color-cream);
+    padding: 2rem;
+    border-radius: 12px;
+    position: sticky;
+    top: 120px;
+}
+
+/* ============================================================
+   Confirmation – grille détails 2 colonnes
+   ============================================================ */
+.conf-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .order-totals-block {
+        max-width: 100%;
+        margin-left: 0;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--color-beige);
+    }
+    .checkout-order-summary {
+        position: static;
+    }
+    .conf-details-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* ============================================================
+   Page Transmission – timeline 3 générations
+   ============================================================ */
+.transmission-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 0;
+    align-items: start;
+}
+
+@media (max-width: 600px) {
+    .transmission-row {
+        grid-template-columns: 1fr;
+    }
+    /* Masquer le connecteur de timeline (colonne centrale) sur mobile */
+    .transmission-row > div:nth-child(2) {
+        display: none;
+    }
+    /* Supprimer le text-align: right sur mobile (les deux ont text-align: left) */
+    .transmission-row > div:first-child,
+    .transmission-row > div:last-child {
+        text-align: left !important;
+        padding: 1.5rem 1rem;
+    }
 }

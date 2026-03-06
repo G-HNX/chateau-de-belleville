@@ -48,7 +48,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.roles NOT LIKE :adminRole')
-            ->setParameter('adminRole', '%ROLE_ADMIN%')
+            ->setParameter('adminRole', '%"ROLE_ADMIN"%')
             ->orderBy('u.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -81,7 +81,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('u.orders', 'o', 'WITH', 'o.status NOT IN (:excluded)')
             ->setParameter('excluded', [OrderStatus::CANCELLED->value, OrderStatus::REFUNDED->value])
             ->andWhere('u.roles NOT LIKE :adminRole')
-            ->setParameter('adminRole', '%ROLE_ADMIN%')
+            ->setParameter('adminRole', '%"ROLE_ADMIN"%')
             ->groupBy('u.id')
             ->orderBy('u.createdAt', 'DESC')
             ->getQuery()

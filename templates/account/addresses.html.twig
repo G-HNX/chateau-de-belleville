@@ -24,7 +24,7 @@
                     </div>
 
                     {% if addresses|length > 0 %}
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 1.5rem;">
                             {% for address in addresses %}
                                 <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); position: relative;">
                                     {# Badges #}

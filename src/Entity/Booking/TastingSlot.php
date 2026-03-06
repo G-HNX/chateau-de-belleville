@@ -182,7 +182,9 @@ class TastingSlot
     public function getEndTime(): \DateTimeInterface
     {
         $endTime = clone $this->startTime;
-        $endTime->modify('+' . $this->tasting->getDurationMinutes() . ' minutes');
+        if ($this->tasting !== null) {
+            $endTime->modify('+' . $this->tasting->getDurationMinutes() . ' minutes');
+        }
 
         return $endTime;
     }

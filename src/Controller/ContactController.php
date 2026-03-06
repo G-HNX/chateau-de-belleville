@@ -8,8 +8,10 @@ use App\Form\ContactType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ContactController extends AbstractController
@@ -23,29 +25,27 @@ class ContactController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $email = (new Email())
-                ->from('noreply@chateau-belleville.fr')
+            $email = (new TemplatedEmail())
+                ->from(new Address('noreply@chateau-belleville.fr', 'Château de Belleville'))
                 ->to('chateaudebelleville@gmail.com')
                 ->replyTo($data['email'])
                 ->subject(sprintf('[Contact] %s - %s %s', $data['sujet'], $data['prenom'], $data['nom']))
-                ->text(sprintf(
-                    "Nouveau message de contact\n\n"
-                    . "Nom : %s %s\n"
-                    . "Email : %s\n"
-                    . "Téléphone : %s\n"
-                    . "Sujet : %s\n\n"
-                    . "Message :\n%s",
-                    $data['prenom'],
-                    $data['nom'],
-                    $data['email'],
-                    $data['telephone'] ?? 'Non renseigné',
-                    $data['sujet'],
-                    $data['message'],
-                ));
+                ->htmlTemplate('email/contact.html.twig')
+                ->context([
+                    'prenom'    => $data['prenom'],
+                    'nom'       => $data['nom'],
+                    'senderEmail' => $data['email'],
+                    'telephone' => $data['telephone'] ?? null,
+                    'sujet'     => $data['sujet'],
+                    'message'   => $data['message'],
+                ]);
 
-            $mailer->send($email);
-
-            $this->addFlash('success', 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.');
+            try {
+                $mailer->send($email);
+                $this->addFlash('success', 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.');
+            } catch (TransportExceptionInterface) {
+                $this->addFlash('error', 'Une erreur est survenue lors de l\'envoi. Veuillez réessayer ou nous contacter par téléphone.');
+            }
 
             return $this->redirectToRoute('app_contact');
         }

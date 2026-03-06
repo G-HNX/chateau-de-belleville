@@ -113,7 +113,8 @@ class OrderCrudController extends AbstractCrudController
                 OrderStatus::DELIVERED->value => 'success',
                 OrderStatus::CANCELLED->value => 'danger',
                 OrderStatus::REFUNDED->value => 'secondary',
-            ]);
+            ])
+            ->setFormTypeOption('disabled', true);
         yield TextField::new('customerFullName', 'Client')
             ->hideOnForm();
         yield EmailField::new('customerEmail', 'Email')
@@ -160,6 +161,15 @@ class OrderCrudController extends AbstractCrudController
     {
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
+        if ($order->getStatus() !== OrderStatus::PAID) {
+            $this->addFlash('danger', 'Seule une commande payée peut être mise en préparation.');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
         $order->setStatus(OrderStatus::PROCESSING);
         $this->em->flush();
 
@@ -176,6 +186,28 @@ class OrderCrudController extends AbstractCrudController
     {
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
+        if ($order->getStatus() !== OrderStatus::PROCESSING) {
+            $this->addFlash('danger', 'Seule une commande en préparation peut être marquée expédiée.');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+        if (!$order->getTrackingNumber()) {
+            $this->addFlash('warning', sprintf(
+                'Commande %s : aucun numéro de suivi défini. Renseignez-le via "Modifier" avant de marquer la commande comme expédiée.',
+                $order->getReference()
+            ));
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+
         $order->markAsShipped($order->getTrackingNumber(), $order->getCarrier());
         $this->em->flush();
 
@@ -194,6 +226,15 @@ class OrderCrudController extends AbstractCrudController
     {
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
+        if ($order->getStatus() !== OrderStatus::SHIPPED) {
+            $this->addFlash('danger', 'Seule une commande expédiée peut être marquée livrée.');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
         $order->markAsDelivered();
         $this->em->flush();
 
@@ -210,6 +251,23 @@ class OrderCrudController extends AbstractCrudController
     {
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
+        if (!$order->canBeCancelled()) {
+            $this->addFlash('danger', 'Cette commande ne peut pas être annulée (déjà expédiée ou livrée).');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+
+        foreach ($order->getItems() as $item) {
+            $wine = $item->getWine();
+            if ($wine !== null) {
+                $wine->incrementStock($item->getQuantity());
+            }
+        }
+
         $order->setStatus(OrderStatus::CANCELLED);
         $this->em->flush();
 

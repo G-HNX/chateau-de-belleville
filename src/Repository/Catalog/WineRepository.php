@@ -96,6 +96,50 @@ class WineRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Wine[]
+     */
+    /**
+     * @return Wine[]
+     */
+    public function findSimilar(Wine $wine, int $limit = 3): array
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->leftJoin('w.images', 'wi')
+            ->addSelect('wi')
+            ->andWhere('w.isActive = :active')
+            ->andWhere('w.id != :id')
+            ->setParameter('active', true)
+            ->setParameter('id', $wine->getId());
+
+        if ($wine->getCategory()) {
+            $qb->andWhere('w.category = :category')
+               ->setParameter('category', $wine->getCategory());
+        }
+
+        $results = $qb->getQuery()->getResult();
+        shuffle($results);
+        $results = array_slice($results, 0, $limit);
+
+        // Si pas assez de vins dans la même catégorie, compléter avec d'autres vins
+        if (count($results) < $limit) {
+            $ids = array_merge([$wine->getId()], array_map(fn ($w) => $w->getId(), $results));
+            $extra = $this->createQueryBuilder('w')
+                ->leftJoin('w.images', 'wi')
+                ->addSelect('wi')
+                ->andWhere('w.isActive = :active')
+                ->andWhere('w.id NOT IN (:ids)')
+                ->setParameter('active', true)
+                ->setParameter('ids', $ids)
+                ->getQuery()
+                ->getResult();
+            shuffle($extra);
+            $results = array_merge($results, array_slice($extra, 0, $limit - count($results)));
+        }
+
+        return $results;
+    }
+
     public function findBySlug(string $slug): ?Wine
     {
         return $this->findOneBy(['slug' => $slug]);

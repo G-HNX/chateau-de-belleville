@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Acces refuse - Chateau de Belleville{% endblock %}
+{% block title %}Accès refusé - Château de Belleville{% endblock %}
 
 {% block header %}{% endblock %}
 
@@ -9,13 +9,13 @@
         <div style="text-align: center; max-width: 560px;">
             <div style="font-size: 5rem; margin-bottom: 1.5rem;">🔒</div>
             <h1 style="font-family: var(--font-display); font-size: 3.5rem; color: var(--color-primary); margin-bottom: 0.5rem;">403</h1>
-            <h2 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Acces refuse</h2>
+            <h2 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Accès refusé</h2>
             <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 2.5rem;">
-                Vous n'avez pas l'autorisation d'acceder a cette page.
-                <br>Connectez-vous ou retournez a l'accueil.
+                Vous n'avez pas l'autorisation d'accéder à cette page.
+                <br>Connectez-vous ou retournez à l'accueil.
             </p>
             <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <a href="{{ path('app_home') }}" class="btn btn-primary">Retour a l'accueil</a>
+                <a href="{{ path('app_home') }}" class="btn btn-primary">Retour à l'accueil</a>
                 <a href="{{ path('app_login') }}" class="btn btn-secondary">Se connecter</a>
             </div>
         </div>

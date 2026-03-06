@@ -60,7 +60,10 @@ class UserCrudController extends AbstractCrudController
                 'Administrateur' => 'ROLE_ADMIN',
             ])
             ->allowMultipleChoices()
-            ->renderExpanded();
+            ->renderExpanded()
+            ->setFormTypeOption('disabled', true)
+            ->setHelp('Les rôles ne sont pas modifiables via ce formulaire. Utilisez la commande <code>php bin/console app:grant-admin &lt;email&gt;</code>.')
+            ->hideOnIndex();
         yield BooleanField::new('isVerified', 'Vérifié');
         yield BooleanField::new('newsletterOptIn', 'Newsletter')
             ->hideOnIndex();

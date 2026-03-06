@@ -19,7 +19,7 @@
                     <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Mes vins favoris</h2>
 
                     {% if favorites|length > 0 %}
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 1.5rem;">
                             {% for wine in favorites %}
                                 <div data-favorite-card style="background: white; border: 1px solid var(--color-beige); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;">
                                     {# Image #}

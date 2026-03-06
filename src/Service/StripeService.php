@@ -28,12 +28,21 @@ class StripeService
         return PaymentIntent::create([
             'amount' => $order->getTotalInCents(),
             'currency' => 'eur',
+            'payment_method_types' => ['card'],
             'metadata' => [
                 'order_reference' => $order->getReference(),
                 'order_id' => $order->getId(),
             ],
             'description' => sprintf('Commande %s - Château de Belleville', $order->getReference()),
         ]);
+    }
+
+    /**
+     * @throws ApiErrorException
+     */
+    public function retrievePaymentIntent(string $paymentIntentId): PaymentIntent
+    {
+        return PaymentIntent::retrieve($paymentIntentId);
     }
 
     /**

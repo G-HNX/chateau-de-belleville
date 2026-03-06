@@ -10,6 +10,27 @@
 {% endblock %}
 
 {% block body %}
+    <nav class="checkout-steps" aria-label="Étapes de commande">
+        <div class="container">
+            <div class="checkout-steps-inner">
+                <div class="checkout-step done">
+                    <span class="checkout-step-num">✓</span>
+                    <span class="checkout-step-label">Coordonnées</span>
+                </div>
+                <div class="checkout-step-sep done"></div>
+                <div class="checkout-step active">
+                    <span class="checkout-step-num">2</span>
+                    <span class="checkout-step-label">Paiement</span>
+                </div>
+                <div class="checkout-step-sep"></div>
+                <div class="checkout-step">
+                    <span class="checkout-step-num">3</span>
+                    <span class="checkout-step-label">Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
     <section class="section section-white">
         <div class="container" style="max-width: 900px;">
             <div class="grid-checkout">
@@ -47,7 +68,7 @@
                 </div>
 
                 {# Order Summary #}
-                <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; position: sticky; top: 120px;" data-reveal="slide-right" data-reveal-delay="150">
+                <div class="checkout-order-summary" data-reveal="slide-right" data-reveal-delay="150">
                     <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Récapitulatif</h3>
 
                     <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.5rem;">Commande {{ order.reference }}</div>
@@ -72,10 +93,11 @@
                             <span>{% if order.shippingCostInCents == 0 %}Offerte{% else %}{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €{% endif %}</span>
                         </div>
                         <div style="height: 1px; background: var(--color-beige); margin: 1rem 0;"></div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);">Total</span>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.3rem;">
+                            <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);">Total TTC</span>
                             <span style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold); font-weight: 600;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
                         </div>
+                        <div style="text-align: right; font-size: 0.8rem; color: var(--color-secondary);">dont TVA 20% : {{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</div>
                     </div>
                 </div>
             </div>

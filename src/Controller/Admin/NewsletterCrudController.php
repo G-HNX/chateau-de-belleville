@@ -21,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -131,6 +132,7 @@ class NewsletterCrudController extends AbstractCrudController
         }
 
         $sentCount = 0;
+        $failCount = 0;
         foreach ($allRecipients as $recipient) {
             $email = (new TemplatedEmail())
                 ->from('chateaudebelleville@gmail.com')
@@ -142,14 +144,28 @@ class NewsletterCrudController extends AbstractCrudController
                     'unsubscribeUrl' => $recipient['unsubscribeUrl'],
                 ]);
 
-            $this->mailer->send($email);
-            ++$sentCount;
+            try {
+                $this->mailer->send($email);
+                ++$sentCount;
+            } catch (TransportExceptionInterface) {
+                ++$failCount;
+            }
         }
 
+        // Marquer comme envoyée même en cas d'échecs partiels
+        // pour éviter un double envoi complet lors de la prochaine tentative.
         $newsletter->setSentAt(new \DateTimeImmutable());
         $this->em->flush();
 
-        $this->addFlash('success', sprintf('Newsletter envoyée à %d destinataire(s).', $sentCount));
+        if ($failCount > 0) {
+            $this->addFlash('warning', sprintf(
+                'Newsletter envoyée à %d destinataire(s). %d envoi(s) ont échoué.',
+                $sentCount,
+                $failCount
+            ));
+        } else {
+            $this->addFlash('success', sprintf('Newsletter envoyée à %d destinataire(s).', $sentCount));
+        }
 
         return $this->redirectToList();
     }

@@ -25,12 +25,12 @@ enum OrderStatus: string
     {
         return match ($this) {
             self::PENDING => 'En attente',
-            self::PAID => 'Payee',
-            self::PROCESSING => 'En preparation',
-            self::SHIPPED => 'Expediee',
-            self::DELIVERED => 'Livree',
-            self::CANCELLED => 'Annulee',
-            self::REFUNDED => 'Remboursee',
+            self::PAID => 'Payée',
+            self::PROCESSING => 'En préparation',
+            self::SHIPPED => 'Expédiée',
+            self::DELIVERED => 'Livrée',
+            self::CANCELLED => 'Annulée',
+            self::REFUNDED => 'Remboursée',
         };
     }
 

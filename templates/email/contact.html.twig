@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Georgia', serif; background: #F5F2ED; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #5B4638; padding: 30px; text-align: center; }
+        .header h1 { color: #C9A87C; font-size: 22px; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
+        .header p { color: #E8E3D9; font-size: 13px; margin: 8px 0 0; }
+        .body { padding: 30px; }
+        .field { margin-bottom: 20px; border-bottom: 1px solid #E8E3D9; padding-bottom: 15px; }
+        .field:last-child { border-bottom: none; }
+        .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #8B7355; margin-bottom: 5px; }
+        .value { font-size: 15px; color: #2C2420; line-height: 1.6; }
+        .message-box { background: #F5F2ED; border-left: 3px solid #C9A87C; padding: 15px; border-radius: 0 4px 4px 0; }
+        .footer { background: #F5F2ED; padding: 20px; text-align: center; font-size: 12px; color: #8B7355; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Château de Belleville</h1>
+            <p>Nouveau message de contact</p>
+        </div>
+        <div class="body">
+            <div class="field">
+                <div class="label">Expéditeur</div>
+                <div class="value">{{ prenom }} {{ nom }}</div>
+            </div>
+            <div class="field">
+                <div class="label">Email</div>
+                <div class="value">{{ senderEmail }}</div>
+            </div>
+            {% if telephone %}
+            <div class="field">
+                <div class="label">Téléphone</div>
+                <div class="value">{{ telephone }}</div>
+            </div>
+            {% endif %}
+            <div class="field">
+                <div class="label">Sujet</div>
+                <div class="value">{{ sujet }}</div>
+            </div>
+            <div class="field">
+                <div class="label">Message</div>
+                <div class="value">
+                    <div class="message-box">{{ message|nl2br }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            Château de Belleville — 49 · Anjou · France
+        </div>
+    </div>
+</body>
+</html>

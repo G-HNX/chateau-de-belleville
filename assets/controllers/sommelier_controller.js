@@ -9,6 +9,35 @@ export default class extends Controller {
         if (wasOpen) {
             this.open();
         }
+
+        this._onAsk = (e) => {
+            this.open();
+            this.inputTarget.value = e.detail.message ?? '';
+            this.inputTarget.focus();
+        };
+        document.addEventListener('sommelier:ask', this._onAsk);
+        this.setContextualSuggestions();
+    }
+
+    disconnect() {
+        document.removeEventListener('sommelier:ask', this._onAsk);
+    }
+
+    setContextualSuggestions() {
+        if (!this.hasSuggestionsTarget) return;
+        const path = window.location.pathname;
+        let suggestions;
+        if (path.startsWith('/boutique') || path.startsWith('/vins')) {
+            suggestions = ['Quel blanc pour l\'apéritif ?', 'Recommandez-moi un rouge', 'Quel vin offrir ?'];
+        } else if (path.startsWith('/panier')) {
+            suggestions = ['Accord mets-vins pour ce soir ?', 'Quelle bouteille ajouter ?', 'Vins à moins de 15€ ?'];
+        } else if (path.startsWith('/degustations')) {
+            suggestions = ['Quelles dégustations proposez-vous ?', 'C\'est quoi la dégustation Prestige ?', 'Comment réserver ?'];
+        } else {
+            suggestions = ['Quel vin avec du poisson ?', 'Recommandez-moi un rouge', 'Parlez-moi de vos dégustations'];
+        }
+        const buttons = this.suggestionsTarget.querySelectorAll('.sommelier-suggestion');
+        buttons.forEach((btn, i) => { if (suggestions[i]) btn.textContent = suggestions[i]; });
     }
 
     togglePanel() {
@@ -62,7 +91,7 @@ export default class extends Controller {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: message,
-                    history: this.conversationHistory.slice(0, -1), // exclude the message we just sent
+                    history: this.conversationHistory.slice(0, -1).slice(-10), // max 10 derniers messages
                 }),
             });
 
@@ -84,9 +113,21 @@ export default class extends Controller {
     addMessage(text, type) {
         const msg = document.createElement('div');
         msg.classList.add('sommelier-msg', type);
-        msg.textContent = text;
+        if (type === 'bot') {
+            msg.innerHTML = this.renderMarkdown(text);
+        } else {
+            msg.textContent = text;
+        }
         this.messagesTarget.appendChild(msg);
         this.scrollToBottom();
+    }
+
+    renderMarkdown(text) {
+        return text
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
     }
 
     showTyping() {

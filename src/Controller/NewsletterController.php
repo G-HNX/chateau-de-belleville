@@ -50,8 +50,13 @@ class NewsletterController extends AbstractController
         if ($user instanceof User) {
             if (!$user->isNewsletterOptIn()) {
                 $user->setNewsletterOptIn(true);
-                $em->flush();
             }
+            // Nettoyer l'éventuel abonné anonyme pour cet email (évite les doublons)
+            $existingSubscriber = $subscriberRepo->findOneBy(['email' => $email]);
+            if ($existingSubscriber !== null) {
+                $em->remove($existingSubscriber);
+            }
+            $em->flush();
             $this->addFlash('success', 'Votre inscription à la newsletter a bien été enregistrée.');
             return $this->redirectToRoute('app_home');
         }

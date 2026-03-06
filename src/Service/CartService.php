@@ -9,6 +9,7 @@ use App\Entity\Order\Cart;
 use App\Entity\Order\CartItem;
 use App\Entity\User\User;
 use App\Repository\Order\CartRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -62,37 +63,46 @@ class CartService
         }
 
         $quantity = max(1, $quantity);
-
-        if (!$wine->hasEnoughStock($quantity)) {
-            return 'Stock insuffisant.';
-        }
+        $error = null;
 
         $cart = $this->getOrCreateCart($user);
 
-        $existingItem = null;
-        foreach ($cart->getItems() as $item) {
-            if ($item->getWine()->getId() === $wine->getId()) {
-                $existingItem = $item;
-                break;
+        $this->em->wrapInTransaction(function () use ($cart, $wine, $quantity, &$error): void {
+            // Verrou de lecture partagé : recharge le stock depuis la DB
+            $freshWine = $this->em->find(Wine::class, $wine->getId(), LockMode::PESSIMISTIC_READ);
+            if ($freshWine === null || !$freshWine->isAvailable()) {
+                $error = 'Ce vin n\'est pas disponible.';
+                return;
             }
-        }
 
-        if ($existingItem) {
-            $newQuantity = $existingItem->getQuantity() + $quantity;
-            if (!$wine->hasEnoughStock($newQuantity)) {
-                return 'Stock insuffisant pour cette quantite.';
+            $existingItem = null;
+            foreach ($cart->getItems() as $item) {
+                if ($item->getWine()->getId() === $freshWine->getId()) {
+                    $existingItem = $item;
+                    break;
+                }
             }
-            $existingItem->setQuantity($newQuantity);
-        } else {
-            $cartItem = new CartItem();
-            $cartItem->setWine($wine);
-            $cartItem->setQuantity($quantity);
-            $cart->addItem($cartItem);
-        }
 
-        $this->em->flush();
+            if ($existingItem) {
+                $newQuantity = $existingItem->getQuantity() + $quantity;
+                if (!$freshWine->hasEnoughStock($newQuantity)) {
+                    $error = 'Stock insuffisant pour cette quantité.';
+                    return;
+                }
+                $existingItem->setQuantity($newQuantity);
+            } else {
+                if (!$freshWine->hasEnoughStock($quantity)) {
+                    $error = 'Stock insuffisant.';
+                    return;
+                }
+                $cartItem = new CartItem();
+                $cartItem->setWine($freshWine);
+                $cartItem->setQuantity($quantity);
+                $cart->addItem($cartItem);
+            }
+        });
 
-        return null;
+        return $error;
     }
 
     /**

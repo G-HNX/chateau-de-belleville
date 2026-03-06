@@ -84,7 +84,7 @@
 
                     {% if recentOrders|length > 0 %}
                         {% for order in recentOrders|slice(0, 3) %}
-                            <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--color-beige); text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='var(--color-cream)'" onmouseout="this.style.background='transparent'">
+                            <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" class="account-order-row" onmouseover="this.style.background='var(--color-cream)'" onmouseout="this.style.background='transparent'">
                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                     <div style="width: 38px; height: 38px; background: var(--color-cream); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
@@ -94,7 +94,7 @@
                                         <div style="font-size: 0.8rem; color: var(--color-secondary);">{{ order.createdAt|date('d/m/Y') }}</div>
                                     </div>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="account-order-meta">
                                     {% set statusColors = {
                                         'pending':    {bg: '#FFF8E7', color: '#B8860B'},
                                         'paid':       {bg: '#E8F5E9', color: '#2E7D32'},

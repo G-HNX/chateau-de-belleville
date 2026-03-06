@@ -66,7 +66,7 @@ class TastingController extends AbstractController
     ): Response {
         $slot = $slotRepository->find($slotId);
 
-        if (!$slot || $slot->getTasting() !== $tasting || !$slot->isAvailable() || $slot->isPast()) {
+        if (!$slot || $slot->getTasting() !== $tasting || !$slot->isAvailable() || $slot->isPast() || $slot->getRemainingSpots() === 0) {
             throw $this->createNotFoundException('Ce créneau n\'est pas disponible.');
         }
 
@@ -93,6 +93,12 @@ class TastingController extends AbstractController
                 $reservation->getReference(),
             ));
 
+            // Pour les réservations anonymes : stocker la référence en session
+            // afin que seul le créateur puisse consulter la page de confirmation.
+            if ($this->getUser() === null) {
+                $request->getSession()->set('reservation_confirmed_' . $reservation->getReference(), true);
+            }
+
             return $this->redirectToRoute('app_tasting_reservation_confirmation', [
                 'reference' => $reservation->getReference(),
             ]);
@@ -108,12 +114,26 @@ class TastingController extends AbstractController
     #[Route('/reservation/{reference}', name: 'app_tasting_reservation_confirmation', priority: 2)]
     public function confirmation(
         string $reference,
+        Request $request,
         ReservationRepository $reservationRepository,
     ): Response {
         $reservation = $reservationRepository->findByReference($reference);
 
         if (!$reservation) {
             throw $this->createNotFoundException('Réservation introuvable.');
+        }
+
+        $reservationUser = $reservation->getUser();
+        if ($reservationUser !== null) {
+            // Réservation liée à un compte : seul ce client peut la consulter.
+            if ($reservationUser !== $this->getUser()) {
+                throw $this->createAccessDeniedException();
+            }
+        } else {
+            // Réservation anonyme : vérifier que la session contient le token de création.
+            if (!$request->getSession()->get('reservation_confirmed_' . $reference)) {
+                throw $this->createAccessDeniedException();
+            }
         }
 
         return $this->render('tasting/confirmation.html.twig', [

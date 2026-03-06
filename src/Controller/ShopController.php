@@ -46,11 +46,17 @@ class ShopController extends AbstractController
         }
 
         if ($priceMin = $request->query->get('prix_min')) {
-            $filters['priceMin'] = (float) $priceMin;
+            $val = (float) $priceMin;
+            if ($val >= 0 && $val <= 10000) {
+                $filters['priceMin'] = $val;
+            }
         }
 
         if ($priceMax = $request->query->get('prix_max')) {
-            $filters['priceMax'] = (float) $priceMax;
+            $val = (float) $priceMax;
+            if ($val >= 0 && $val <= 10000) {
+                $filters['priceMax'] = $val;
+            }
         }
 
         if ($request->query->get('en_stock')) {

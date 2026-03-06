@@ -41,7 +41,7 @@ class WineController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'app_wine_show')]
-    public function show(Wine $wine, ReviewService $reviewService): Response
+    public function show(Wine $wine, ReviewService $reviewService, WineRepository $wineRepository): Response
     {
         if (!$wine->isActive()) {
             throw $this->createNotFoundException('Ce vin n\'est pas disponible.');
@@ -50,7 +50,14 @@ class WineController extends AbstractController
         $user = $this->getUser();
         $reviews = $reviewService->getApprovedReviews($wine);
         $hasReviewed = $user ? $reviewService->hasUserReviewed($user, $wine) : false;
-        $purchaserIds = $reviewService->getPurchaserIds($wine);
+
+        // Calcul côté serveur : IDs d'avis (pas d'utilisateurs) dont l'auteur a acheté le vin.
+        // On n'expose jamais les user IDs au template pour éviter la fuite PII.
+        $purchaserUserIds = $reviewService->getPurchaserIds($wine);
+        $verifiedReviewIds = array_values(array_map(
+            static fn ($r) => $r->getId(),
+            array_filter($reviews, static fn ($r) => in_array($r->getUser()?->getId(), $purchaserUserIds, true))
+        ));
 
         $reviewForm = null;
         if ($user && !$hasReviewed) {
@@ -64,7 +71,8 @@ class WineController extends AbstractController
             'reviews' => $reviews,
             'reviewForm' => $reviewForm,
             'hasReviewed' => $hasReviewed,
-            'purchaserIds' => $purchaserIds,
+            'verifiedReviewIds' => $verifiedReviewIds,
+            'similarWines' => $wineRepository->findSimilar($wine, 3),
         ]);
     }
 }

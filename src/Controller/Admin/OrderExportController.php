@@ -42,7 +42,7 @@ class OrderExportController extends AbstractController
         }
 
         $statusValue = $request->query->get('status');
-        $status = $statusValue ? OrderStatus::from($statusValue) : null;
+        $status = $statusValue ? OrderStatus::tryFrom($statusValue) : null;
 
         $orders = $orderRepository->findForExport($from, $to, $status);
 

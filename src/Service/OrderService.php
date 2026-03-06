@@ -9,13 +9,15 @@ use App\Entity\Order\Cart;
 use App\Entity\Order\Order;
 use App\Entity\Order\OrderItem;
 use App\Entity\User\User;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\LockMode;
+use Psr\Log\LoggerInterface;
 
 class OrderService
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
+        private readonly LoggerInterface $logger,
         private readonly EmailService $emailService,
     ) {}
 
@@ -87,10 +89,20 @@ class OrderService
             $order->calculateTotals();
             $this->em->persist($order);
             $cart->clear();
+
+            // Supprime le panier anonyme (sans utilisateur) pour éviter l'accumulation en base
+            if ($cart->getUser() === null) {
+                $this->em->remove($cart);
+            }
         });
 
-        // L'email est envoyé après la transaction : si l'envoi échoue,
-        // la commande est déjà persistée (EmailService logue l'erreur sans exception).
+        $this->logger->info('Order created.', [
+            'reference'      => $order->getReference(),
+            'customer_email' => $order->getCustomerEmail(),
+            'total_cents'    => $order->getTotalInCents(),
+            'items_count'    => $order->getItems()->count(),
+        ]);
+
         $this->emailService->sendOrderConfirmation($order);
 
         return $order;

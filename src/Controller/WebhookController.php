@@ -44,11 +44,24 @@ class WebhookController extends AbstractController
 
             if ($orderRef) {
                 $order = $orderRepository->findByReference($orderRef);
-                if ($order && $order->getStatus() === \App\Enum\OrderStatus::PENDING) {
+
+                // Double garde idempotence : statut PENDING ET paiement non déjà enregistré
+                if ($order
+                    && $order->getStatus() === \App\Enum\OrderStatus::PENDING
+                    && $order->getPaidAt() === null
+                ) {
                     $order->markAsPaid();
                     $em->flush();
                     $emailService->sendPaymentConfirmation($order);
-                    $logger->info('Order marked as paid.', ['reference' => $orderRef]);
+                    $logger->info('Order marked as paid.', [
+                        'reference' => $orderRef,
+                        'stripe_event_id' => $event->id,
+                    ]);
+                } elseif ($order && $order->getPaidAt() !== null) {
+                    $logger->info('Webhook payment_intent.succeeded ignored (already paid).', [
+                        'reference' => $orderRef,
+                        'stripe_event_id' => $event->id,
+                    ]);
                 }
             }
         }

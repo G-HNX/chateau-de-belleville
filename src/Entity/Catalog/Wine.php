@@ -205,6 +205,9 @@ class Wine
 
     public function setPriceInCents(int $priceInCents): static
     {
+        if ($priceInCents < 0) {
+            throw new \InvalidArgumentException('Le prix ne peut pas être négatif.');
+        }
         $this->priceInCents = $priceInCents;
 
         return $this;
@@ -217,6 +220,9 @@ class Wine
 
     public function setPrice(float $price): static
     {
+        if ($price < 0) {
+            throw new \InvalidArgumentException('Le prix ne peut pas être négatif.');
+        }
         $this->priceInCents = (int) round($price * 100);
 
         return $this;
@@ -523,7 +529,9 @@ class Wine
             $slugger = new AsciiSlugger('fr');
             $this->slug = strtolower($slugger->slug($this->name)->toString());
         }
-        $this->createdAt = new \DateTime();
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTime();
+        }
         $this->updatedAt = new \DateTime();
     }
 

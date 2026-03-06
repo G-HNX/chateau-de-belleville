@@ -8,6 +8,7 @@ use App\Entity\Catalog\Wine;
 use App\Form\ReviewType;
 use App\Entity\Customer\Review;
 use App\Service\ReviewService;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,9 +41,12 @@ class ReviewController extends AbstractController
             $review->setUser($user);
             $review->setWine($wine);
 
-            $this->reviewService->createReview($review);
-
-            $this->addFlash('success', 'Merci pour votre avis ! Il sera publié après modération.');
+            try {
+                $this->reviewService->createReview($review);
+                $this->addFlash('success', 'Merci pour votre avis ! Il sera publié après modération.');
+            } catch (UniqueConstraintViolationException) {
+                $this->addFlash('warning', 'Vous avez déjà laissé un avis pour ce vin.');
+            }
 
             return $this->redirectToRoute('app_wine_show', ['slug' => $wine->getSlug()]);
         }

@@ -64,6 +64,13 @@ class Reservation
     #[Assert\Range(min: 1, max: 20)]
     private int $numberOfParticipants = 2;
 
+    /**
+     * Prix par personne en centimes au moment de la réservation (snapshot).
+     * Permet de conserver le tarif même si le prix de la dégustation change ultérieurement.
+     */
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $pricePerPersonInCents = 0;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
 
@@ -199,6 +206,18 @@ class Reservation
         return $this;
     }
 
+    public function getPricePerPersonInCents(): int
+    {
+        return $this->pricePerPersonInCents;
+    }
+
+    public function setPricePerPersonInCents(int $pricePerPersonInCents): static
+    {
+        $this->pricePerPersonInCents = $pricePerPersonInCents;
+
+        return $this;
+    }
+
     public function getMessage(): ?string
     {
         return $this->message;
@@ -259,11 +278,11 @@ class Reservation
     }
 
     /**
-     * Calcule le prix total de la reservation.
+     * Calcule le prix total de la reservation à partir du snapshot.
      */
     public function getTotalPrice(): float
     {
-        return $this->slot->getTasting()->getPrice() * $this->numberOfParticipants;
+        return ($this->pricePerPersonInCents / 100) * $this->numberOfParticipants;
     }
 
     /**
@@ -288,7 +307,9 @@ class Reservation
                 strtoupper(bin2hex(random_bytes(2)))
             );
         }
-        $this->createdAt = new \DateTime();
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTime();
+        }
     }
 
     public function __toString(): string

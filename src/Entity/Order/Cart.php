@@ -173,12 +173,15 @@ class Cart
     public function clear(): void
     {
         $this->items->clear();
+        $this->updatedAt = new \DateTime();
     }
 
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
-        $this->createdAt = new \DateTime();
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTime();
+        }
         $this->updatedAt = new \DateTime();
     }
 

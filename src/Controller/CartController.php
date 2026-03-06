@@ -78,6 +78,11 @@ class CartController extends AbstractController
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
+        $cart = $this->cartService->getCart($this->getUser());
+        if (!$cart || $cartItem->getCart() !== $cart) {
+            throw $this->createAccessDeniedException();
+        }
+
         $quantity = max(1, $request->request->getInt('quantity', 1));
 
         $error = $this->cartService->updateItemQuantity($cartItem, $quantity);
@@ -94,6 +99,11 @@ class CartController extends AbstractController
     {
         if (!$this->isCsrfTokenValid('cart_remove', $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
+        $cart = $this->cartService->getCart($this->getUser());
+        if (!$cart || $cartItem->getCart() !== $cart) {
+            throw $this->createAccessDeniedException();
         }
 
         $this->cartService->removeItem($cartItem);

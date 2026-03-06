@@ -10,7 +10,7 @@
     </div>
 
     <div style="background: #ffffff; padding: 30px; margin: 0 auto; max-width: 600px;">
-        {{ newsletter.content|raw }}
+        {{ newsletter.content|sanitize_html }}
     </div>
 
     <div style="background: #F5F2ED; padding: 20px; text-align: center; border-top: 2px solid #E8E3D9;">

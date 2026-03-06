@@ -279,6 +279,9 @@ class AccountController extends AbstractController
             $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
             $em->flush();
 
+            // Régénère l'ID de session pour prévenir la fixation de session
+            $request->getSession()->migrate();
+
             $this->addFlash('success', 'Mot de passe modifié.');
 
             return $this->redirectToRoute('app_account_index');

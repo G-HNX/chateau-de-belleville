@@ -46,10 +46,10 @@ class ReviewService
             ->setParameter('user', $user)
             ->setParameter('wine', $wine)
             ->setParameter('statuses', [
-                OrderStatus::PAID->value,
-                OrderStatus::PROCESSING->value,
-                OrderStatus::SHIPPED->value,
-                OrderStatus::DELIVERED->value,
+                OrderStatus::PAID,
+                OrderStatus::PROCESSING,
+                OrderStatus::SHIPPED,
+                OrderStatus::DELIVERED,
             ])
             ->getQuery()
             ->getSingleScalarResult();
@@ -71,10 +71,10 @@ class ReviewService
             ->andWhere('o.status IN (:statuses)')
             ->setParameter('wine', $wine)
             ->setParameter('statuses', [
-                OrderStatus::PAID->value,
-                OrderStatus::PROCESSING->value,
-                OrderStatus::SHIPPED->value,
-                OrderStatus::DELIVERED->value,
+                OrderStatus::PAID,
+                OrderStatus::PROCESSING,
+                OrderStatus::SHIPPED,
+                OrderStatus::DELIVERED,
             ])
             ->getQuery()
             ->getScalarResult();

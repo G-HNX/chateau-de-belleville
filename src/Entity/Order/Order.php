@@ -358,8 +358,8 @@ class Order
         // Livraison gratuite au-dessus de 150 EUR
         $this->shippingCostInCents = $subtotal >= 15000 ? 0 : 990;
 
-        // TVA 20%
-        $this->taxAmountInCents = (int) round(($subtotal + $this->shippingCostInCents) * 0.20);
+        // TVA 20% extraite (les prix sont TTC)
+        $this->taxAmountInCents = (int) round(($subtotal + $this->shippingCostInCents) / 1.20 * 0.20);
 
         $this->totalInCents = $subtotal + $this->shippingCostInCents;
     }
@@ -465,7 +465,7 @@ class Order
         $this->paidAt = new \DateTime();
     }
 
-    public function markAsShipped(string $trackingNumber = null, string $carrier = null): void
+    public function markAsShipped(?string $trackingNumber = null, ?string $carrier = null): void
     {
         $this->status = OrderStatus::SHIPPED;
         $this->shippedAt = new \DateTime();
@@ -489,7 +489,9 @@ class Order
                 strtoupper(bin2hex(random_bytes(2)))
             );
         }
-        $this->createdAt = new \DateTime();
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTime();
+        }
     }
 
     public function __toString(): string

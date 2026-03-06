@@ -20,7 +20,7 @@
                     <p style="margin-top: 0.5rem; font-size: 0.95rem;">Revenez bientôt pour suivre la vie du domaine.</p>
                 </div>
             {% else %}
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 2rem;">
                     {% for article in articles %}
                         <article class="card" style="display: flex; flex-direction: column; overflow: hidden;" data-reveal="fade-up" data-reveal-delay="{{ loop.index0 * 80 }}">
 

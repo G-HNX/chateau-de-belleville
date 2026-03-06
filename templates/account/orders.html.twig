@@ -19,14 +19,14 @@
                     <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Historique des commandes</h2>
                     {% if orders|length > 0 %}
                         <div class="responsive-table">
-                            <table style="width: 100%; border-collapse: collapse;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 560px;">
                                 <thead>
                                     <tr style="border-bottom: 2px solid var(--color-beige);">
                                         <th style="padding: 1rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Référence</th>
                                         <th style="padding: 1rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Date</th>
                                         <th style="padding: 1rem; text-align: center; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Statut</th>
-                                        <th style="padding: 1rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Total</th>
-                                        <th style="padding: 1rem; text-align: center; width: 80px;"></th>
+                                        <th style="padding: 1rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Total TTC</th>
+                                        <th style="padding: 1rem; text-align: center; width: 140px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -39,7 +39,15 @@
                                             </td>
                                             <td style="padding: 1rem; text-align: right; font-weight: 500;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
                                             <td style="padding: 1rem; text-align: center;">
-                                                <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" class="btn btn-outline btn-sm">Détails</a>
+                                                <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                                    <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" class="btn btn-outline btn-sm">Détails</a>
+                                                    <a href="{{ path('app_account_order_invoice', {reference: order.reference}) }}"
+                                                       class="btn btn-outline btn-sm"
+                                                       title="Télécharger la facture PDF"
+                                                       style="padding: 0.35rem 0.65rem;">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     {% endfor %}

@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Repository\Catalog\WineRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SommelierService
 {
+    private const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent';
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly WineRepository $wineRepository,
+        private readonly LoggerInterface $logger,
         private readonly string $sommelierApiKey,
         private readonly string $sommelierModel,
     ) {}
@@ -47,37 +51,43 @@ Règles :
 - Si la question ne concerne pas le vin ou le domaine, redirige poliment vers le sujet.
 PROMPT;
 
-        $messages = [
-            ['role' => 'system', 'content' => $systemPrompt],
-        ];
+        $messages = [];
 
         foreach ($conversationHistory as $msg) {
             $messages[] = [
-                'role' => $msg['role'],
-                'content' => $msg['content'],
+                'role' => $msg['role'] === 'assistant' ? 'model' : $msg['role'],
+                'parts' => [['text' => $msg['content']]],
             ];
         }
 
-        $messages[] = ['role' => 'user', 'content' => $userMessage];
+        $messages[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
+
+        $url = sprintf(self::GEMINI_API_URL, $this->sommelierModel);
 
         try {
-            $response = $this->httpClient->request('POST', 'https://api.mistral.ai/v1/chat/completions', [
+            $response = $this->httpClient->request('POST', $url, [
+                'verify_peer' => false,
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->sommelierApiKey,
+                    'x-goog-api-key' => $this->sommelierApiKey,
                     'Content-Type' => 'application/json',
                 ],
                 'json' => [
-                    'model' => $this->sommelierModel,
-                    'messages' => $messages,
-                    'max_tokens' => 300,
-                    'temperature' => 0.7,
+                    'system_instruction' => [
+                        'parts' => [['text' => $systemPrompt]],
+                    ],
+                    'contents' => $messages,
+                    'generationConfig' => [
+                        'maxOutputTokens' => 300,
+                    ],
                 ],
             ]);
 
             $data = $response->toArray();
 
-            return $data['choices'][0]['message']['content'] ?? 'Désolé, je n\'ai pas pu formuler une réponse. Réessayez !';
+            return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Désolé, je n\'ai pas pu formuler une réponse. Réessayez !';
         } catch (\Exception $e) {
+            $this->logger->error('Sommelier API error.', ['error' => $e->getMessage()]);
+
             return 'Notre sommelier est momentanément indisponible. N\'hésitez pas à explorer notre catalogue de vins ou à nous contacter directement !';
         }
     }
@@ -91,7 +101,7 @@ PROMPT;
         $lines = [];
         foreach ($wines as $wine) {
             $grapes = $wine->getGrapeVarietiesAsString();
-            $pairings = $wine->getFoodPairings() ? implode(', ', $wine->getFoodPairings()) : 'Non précisé';
+            $pairings = $wine->getFoodPairings()->isEmpty() ? 'Non précisé' : $wine->getFoodPairingsAsString();
             $tastingNotes = $wine->getTastingNotes();
             $notesStr = '';
             if ($tastingNotes) {
@@ -111,7 +121,7 @@ PROMPT;
             $line = sprintf(
                 '- %s (%s%s) : %.2f€ | Cépages: %s | Accords: %s | %s°, servir à %s | Stock: %d%s',
                 $wine->getName(),
-                $wine->getType()->value,
+                $wine->getCategory()?->getName() ?? 'Non précisé',
                 $wine->getVintage() ? ', ' . $wine->getVintage() : '',
                 $wine->getPrice(),
                 $grapes ?: 'Non précisé',

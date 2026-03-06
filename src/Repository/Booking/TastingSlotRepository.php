@@ -27,6 +27,8 @@ class TastingSlotRepository extends ServiceEntityRepository
         $fromDate = $fromDate ?? new \DateTime('today');
 
         return $this->createQueryBuilder('s')
+            ->leftJoin('s.reservations', 'r')
+            ->addSelect('r')
             ->andWhere('s.tasting = :tasting')
             ->andWhere('s.date >= :fromDate')
             ->andWhere('s.isAvailable = :available')
