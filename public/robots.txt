@@ -5,5 +5,6 @@ Disallow: /panier/
 Disallow: /commande/
 Disallow: /mon-compte/
 Disallow: /webhook/
+Disallow: /health
 
 Sitemap: https://chateaudebelleville.fr/sitemap.xml
