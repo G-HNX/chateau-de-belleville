@@ -104,7 +104,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/renvoyer-verification', name: 'app_resend_verification')]
-    public function resendVerification(): Response
+    public function resendVerification(Request $request, RateLimiterFactory $resendVerificationLimiter): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -113,6 +113,12 @@ class SecurityController extends AbstractController
 
         if ($user->isVerified()) {
             return $this->redirectToRoute('app_account_index');
+        }
+
+        $limiter = $resendVerificationLimiter->create($request->getClientIp() ?? '0.0.0.0');
+        if (!$limiter->consume(1)->isAccepted()) {
+            $this->addFlash('error', 'Trop de demandes. Veuillez patienter avant de réessayer.');
+            return $this->redirectToRoute('app_home');
         }
 
         $this->emailVerifier->sendEmailConfirmation(

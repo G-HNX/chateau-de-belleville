@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -34,6 +35,7 @@ class NewsletterCrudController extends AbstractCrudController
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly NewsletterSubscriberRepository $subscriberRepo,
         private readonly UserRepository $userRepo,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {}
 
     public static function getEntityFqcn(): string
@@ -54,7 +56,14 @@ class NewsletterCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $sendAction = Action::new('sendNewsletter', 'Envoyer', 'fa fa-paper-plane')
-            ->linkToCrudAction('sendNewsletter')
+            ->linkToUrl(function (Newsletter $n): string {
+                return $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('sendNewsletter')
+                    ->setEntityId($n->getId())
+                    ->set('token', $this->csrfTokenManager->getToken('send_newsletter')->getValue())
+                    ->generateUrl();
+            })
             ->displayIf(fn (Newsletter $n) => $n->getSentAt() === null)
             ->setCssClass('btn btn-success');
 
@@ -85,7 +94,15 @@ class NewsletterCrudController extends AbstractCrudController
 
     public function sendNewsletter(AdminContext $context): Response
     {
-        $entityId = $context->getRequest()->query->getInt('entityId');
+        $request = $context->getRequest();
+
+        // Protection CSRF : vérifier le token pour éviter les envois par lien forgé
+        if (!$this->isCsrfTokenValid('send_newsletter', $request->query->get('token', ''))) {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+            return $this->redirectToList();
+        }
+
+        $entityId = $request->query->getInt('entityId');
         /** @var Newsletter|null $newsletter */
         $newsletter = $this->em->find(Newsletter::class, $entityId);
 

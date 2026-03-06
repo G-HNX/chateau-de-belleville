@@ -111,15 +111,18 @@ class CartService
     public function updateItemQuantity(CartItem $cartItem, int $quantity): ?string
     {
         $quantity = max(1, $quantity);
+        $error = null;
 
-        if (!$cartItem->getWine()->hasEnoughStock($quantity)) {
-            return 'Stock insuffisant.';
-        }
+        $this->em->wrapInTransaction(function () use ($cartItem, $quantity, &$error): void {
+            $freshWine = $this->em->find(Wine::class, $cartItem->getWine()->getId(), LockMode::PESSIMISTIC_READ);
+            if ($freshWine === null || !$freshWine->hasEnoughStock($quantity)) {
+                $error = 'Stock insuffisant.';
+                return;
+            }
+            $cartItem->setQuantity($quantity);
+        });
 
-        $cartItem->setQuantity($quantity);
-        $this->em->flush();
-
-        return null;
+        return $error;
     }
 
     public function removeItem(CartItem $cartItem): void

@@ -261,15 +261,16 @@ class OrderCrudController extends AbstractCrudController
                 ->generateUrl());
         }
 
-        foreach ($order->getItems() as $item) {
-            $wine = $item->getWine();
-            if ($wine !== null) {
-                $wine->incrementStock($item->getQuantity());
+        $this->em->wrapInTransaction(function () use ($order): void {
+            foreach ($order->getItems() as $item) {
+                $wine = $item->getWine();
+                if ($wine !== null) {
+                    $freshWine = $this->em->find(\App\Entity\Catalog\Wine::class, $wine->getId(), \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
+                    $freshWine?->incrementStock($item->getQuantity());
+                }
             }
-        }
-
-        $order->setStatus(OrderStatus::CANCELLED);
-        $this->em->flush();
+            $order->setStatus(OrderStatus::CANCELLED);
+        });
 
         $this->addFlash('warning', sprintf('Commande %s annulée.', $order->getReference()));
 

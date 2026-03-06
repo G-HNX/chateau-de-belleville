@@ -12,17 +12,23 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ContactController extends AbstractController
 {
     #[Route('/contact', name: 'app_contact')]
-    public function index(Request $request, MailerInterface $mailer): Response
+    public function index(Request $request, MailerInterface $mailer, RateLimiterFactory $contactLimiter): Response
     {
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $limiter = $contactLimiter->create($request->getClientIp() ?? '0.0.0.0');
+            if (!$limiter->consume(1)->isAccepted()) {
+                $this->addFlash('error', 'Trop de messages envoyés. Veuillez patienter avant de réessayer.');
+                return $this->redirectToRoute('app_contact');
+            }
             $data = $form->getData();
 
             $email = (new TemplatedEmail())

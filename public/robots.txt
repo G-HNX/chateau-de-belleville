@@ -6,4 +6,4 @@ Disallow: /commande/
 Disallow: /mon-compte/
 Disallow: /webhook/
 
-# Sitemap: https://votre-domaine.fr/sitemap.xml
+Sitemap: https://chateaudebelleville.fr/sitemap.xml

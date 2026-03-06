@@ -161,25 +161,36 @@ class CartServiceTest extends TestCase
     {
         $wine = $this->createStub(Wine::class);
         $wine->method('hasEnoughStock')->willReturn(false);
+        $wine->method('getId')->willReturn(1);
+
+        $freshWine = $this->createStub(Wine::class);
+        $freshWine->method('hasEnoughStock')->willReturn(false);
+
+        $em = $this->makeEmWithTransaction();
+        $em->method('find')->willReturn($freshWine);
 
         $cartItem = new CartItem();
         $cartItem->setWine($wine);
         $cartItem->setQuantity(1);
 
-        $this->assertSame('Stock insuffisant.', $this->makeService()->updateItemQuantity($cartItem, 100));
+        $this->assertSame('Stock insuffisant.', $this->makeService(em: $em)->updateItemQuantity($cartItem, 100));
     }
 
     public function testUpdateItemQuantitySuccessFlushesAndUpdates(): void
     {
         $wine = $this->createStub(Wine::class);
         $wine->method('hasEnoughStock')->willReturn(true);
+        $wine->method('getId')->willReturn(1);
+
+        $freshWine = $this->createStub(Wine::class);
+        $freshWine->method('hasEnoughStock')->willReturn(true);
+
+        $em = $this->makeEmWithTransaction();
+        $em->method('find')->willReturn($freshWine);
 
         $cartItem = new CartItem();
         $cartItem->setWine($wine);
         $cartItem->setQuantity(1);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())->method('flush');
 
         $result = $this->makeService(em: $em)->updateItemQuantity($cartItem, 3);
 

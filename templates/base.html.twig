@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Château de Belleville{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Domaine viticole familial en Val de Loire. Découvrez nos vins d'exception et réservez une dégustation.{% endblock %}">
-    <link rel="canonical" href="{% block canonical %}{{ app.request ? app.request.schemeAndHttpHost ~ app.request.requestUri : '' }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ app.request ? app.request.schemeAndHttpHost ~ app.request.pathInfo : '' }}{% endblock %}">
 
     {# Open Graph #}
     <meta property="og:site_name" content="Château de Belleville">

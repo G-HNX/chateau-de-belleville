@@ -17,6 +17,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
@@ -38,12 +39,18 @@ class ResetPasswordController extends AbstractController
      * Display & process form to request a password reset.
      */
     #[Route('', name: 'app_forgot_password_request')]
-    public function request(Request $request, MailerInterface $mailer, TranslatorInterface $translator): Response
+    public function request(Request $request, MailerInterface $mailer, TranslatorInterface $translator, RateLimiterFactory $resetPasswordLimiter): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $limiter = $resetPasswordLimiter->create($request->getClientIp() ?? '0.0.0.0');
+            if (!$limiter->consume(1)->isAccepted()) {
+                $this->addFlash('error', 'Trop de demandes. Veuillez patienter avant de réessayer.');
+                return $this->redirectToRoute('app_forgot_password_request');
+            }
+
             /** @var string $email */
             $email = $form->get('email')->getData();
 
@@ -123,6 +130,9 @@ class ResetPasswordController extends AbstractController
 
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
+
+            // Régénère l'ID de session pour prévenir la fixation de session
+            $request->getSession()->migrate();
 
             return $this->redirectToRoute('app_home');
         }

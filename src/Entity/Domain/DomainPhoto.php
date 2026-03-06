@@ -26,6 +26,7 @@ class DomainPhoto
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/\.(jpe?g|png|webp|gif)$/i', message: 'Seules les images (jpg, png, webp, gif) sont autorisées.')]
     private ?string $filename = null;
 
     #[ORM\Column(length: 255, nullable: true)]

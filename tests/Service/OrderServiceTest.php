@@ -8,6 +8,7 @@ use App\Entity\Catalog\Wine;
 use App\Entity\Order\Cart;
 use App\Entity\Order\CartItem;
 use App\Entity\User\User;
+use App\Service\EmailService;
 use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -18,10 +19,12 @@ class OrderServiceTest extends TestCase
     private function makeService(
         ?EntityManagerInterface $em = null,
         ?LoggerInterface $logger = null,
+        ?EmailService $emailService = null,
     ): OrderService {
         return new OrderService(
             $em ?? $this->createStub(EntityManagerInterface::class),
             $logger ?? $this->createStub(LoggerInterface::class),
+            $emailService ?? $this->createStub(EmailService::class),
         );
     }
 

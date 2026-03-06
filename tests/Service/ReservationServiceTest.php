@@ -27,22 +27,32 @@ class ReservationServiceTest extends TestCase
         return $r;
     }
 
-    private function makeSlot(bool $canAccommodate, int $priceInCents = 3500): TastingSlot
+    private function makeSlot(int $availableSpots, int $priceInCents = 3500): TastingSlot
     {
         $tasting = $this->createStub(Tasting::class);
         $tasting->method('getPriceInCents')->willReturn($priceInCents);
 
         $slot = $this->createStub(TastingSlot::class);
-        $slot->method('canAccommodate')->willReturn($canAccommodate);
+        $slot->method('getAvailableSpots')->willReturn($availableSpots);
         $slot->method('getTasting')->willReturn($tasting);
 
         return $slot;
     }
 
-    private function makeEmStub(): EntityManagerInterface
+    private function makeQueryReturning(int $bookedSpots): \Doctrine\ORM\Query
+    {
+        $query = $this->createStub(\Doctrine\ORM\Query::class);
+        $query->method('setParameter')->willReturnSelf();
+        $query->method('getSingleScalarResult')->willReturn($bookedSpots);
+
+        return $query;
+    }
+
+    private function makeEmStub(int $bookedSpots = 0): EntityManagerInterface
     {
         $em = $this->createStub(EntityManagerInterface::class);
         $em->method('wrapInTransaction')->willReturnCallback(fn(callable $fn) => $fn());
+        $em->method('createQuery')->willReturn($this->makeQueryReturning($bookedSpots));
 
         return $em;
     }
@@ -53,13 +63,15 @@ class ReservationServiceTest extends TestCase
     {
         $em = $this->createMock(EntityManagerInterface::class);
         $em->method('wrapInTransaction')->willReturnCallback(fn(callable $fn) => $fn());
+        $em->method('createQuery')->willReturn($this->makeQueryReturning(10));
         $em->expects($this->never())->method('persist');
 
         $emailService = $this->createMock(EmailService::class);
         $emailService->expects($this->never())->method('sendReservationConfirmation');
 
         $service = new ReservationService($em, $emailService);
-        $error = $service->createReservation($this->makeReservation(4), $this->makeSlot(false));
+        // Slot has 10 available spots, 10 already booked, requesting 4 → full
+        $error = $service->createReservation($this->makeReservation(4), $this->makeSlot(10));
 
         $this->assertSame('Il n\'y a pas assez de places disponibles pour ce créneau.', $error);
     }
@@ -68,13 +80,14 @@ class ReservationServiceTest extends TestCase
     {
         $em = $this->createMock(EntityManagerInterface::class);
         $em->method('wrapInTransaction')->willReturnCallback(fn(callable $fn) => $fn());
+        $em->method('createQuery')->willReturn($this->makeQueryReturning(0));
         $em->expects($this->once())->method('persist');
 
         $emailService = $this->createStub(EmailService::class);
         $service = new ReservationService($em, $emailService);
 
         $reservation = $this->makeReservation(2);
-        $error = $service->createReservation($reservation, $this->makeSlot(true, 4200));
+        $error = $service->createReservation($reservation, $this->makeSlot(10, 4200));
 
         $this->assertNull($error);
         $this->assertSame(4200, $reservation->getPricePerPersonInCents());
@@ -89,7 +102,7 @@ class ReservationServiceTest extends TestCase
         $service = new ReservationService($em, $emailService);
 
         $reservation = $this->makeReservation(1);
-        $slot = $this->makeSlot(true, 2500);
+        $slot = $this->makeSlot(10, 2500);
 
         $service->createReservation($reservation, $slot);
 
@@ -105,7 +118,7 @@ class ReservationServiceTest extends TestCase
         $emailService->expects($this->once())->method('sendReservationConfirmation');
 
         $service = new ReservationService($em, $emailService);
-        $service->createReservation($this->makeReservation(2), $this->makeSlot(true));
+        $service->createReservation($this->makeReservation(2), $this->makeSlot(10));
     }
 
     public function testCreateReservationEmailTransportExceptionNotPropagated(): void
@@ -120,7 +133,7 @@ class ReservationServiceTest extends TestCase
         $service = new ReservationService($em, $emailService);
 
         // Ne doit pas propager l'exception de transport
-        $error = $service->createReservation($this->makeReservation(2), $this->makeSlot(true));
+        $error = $service->createReservation($this->makeReservation(2), $this->makeSlot(10));
 
         $this->assertNull($error);
     }

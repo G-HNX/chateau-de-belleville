@@ -54,9 +54,11 @@ class Order
     private ?string $customerEmail = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire')]
     private ?string $customerFirstName = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire')]
     private ?string $customerLastName = null;
 
     #[ORM\Column(length: 20, nullable: true)]
@@ -456,7 +458,7 @@ class Order
 
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, [OrderStatus::PENDING, OrderStatus::PAID], true);
+        return $this->status->canTransitionTo(OrderStatus::CANCELLED);
     }
 
     public function markAsPaid(): void

@@ -46,9 +46,16 @@ class ReservationService
         $this->em->wrapInTransaction(function () use ($reservation, $slot, &$error): void {
             // Verrou pessimiste : empêche la surréservation simultanée
             $this->em->lock($slot, LockMode::PESSIMISTIC_WRITE);
-            $this->em->refresh($slot);
 
-            if (!$slot->canAccommodate($reservation->getNumberOfParticipants())) {
+            // COUNT SQL direct pour éviter une collection stale après le lock
+            $bookedSpots = (int) $this->em->createQuery(
+                'SELECT COALESCE(SUM(r.numberOfParticipants), 0) FROM App\Entity\Booking\Reservation r WHERE r.slot = :slot AND r.status != :cancelled'
+            )->setParameter('slot', $slot)
+             ->setParameter('cancelled', \App\Enum\ReservationStatus::CANCELLED)
+             ->getSingleScalarResult();
+
+            $remaining = $slot->getAvailableSpots() - $bookedSpots;
+            if ($remaining < $reservation->getNumberOfParticipants()) {
                 $error = 'Il n\'y a pas assez de places disponibles pour ce créneau.';
 
                 return;

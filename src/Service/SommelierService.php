@@ -66,7 +66,6 @@ PROMPT;
 
         try {
             $response = $this->httpClient->request('POST', $url, [
-                'verify_peer' => false,
                 'headers' => [
                     'x-goog-api-key' => $this->sommelierApiKey,
                     'Content-Type' => 'application/json',
