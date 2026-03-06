@@ -3,80 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <style>
+        @page {
+            margin: 40px 45px 80px 45px;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Helvetica, Arial, sans-serif; font-size: 11px; color: #2C2420; line-height: 1.4; }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 10px; color: #2C2420; line-height: 1.5; }
 
-        .header { display: table; width: 100%; margin-bottom: 30px; }
+        /* ===== Header ===== */
+        .header { display: table; width: 100%; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #5B4638; }
         .header-left, .header-right { display: table-cell; vertical-align: top; }
-        .header-left { width: 50%; }
-        .header-right { width: 50%; text-align: right; }
+        .header-left { width: 55%; }
+        .header-right { width: 45%; text-align: right; }
 
-        .company-name { font-size: 22px; font-weight: bold; color: #5B4638; margin-bottom: 5px; }
-        .company-info { color: #8B7355; font-size: 10px; line-height: 1.6; }
+        .company-name { font-size: 22px; font-weight: bold; color: #5B4638; letter-spacing: 0.5px; }
+        .company-tagline { font-size: 10px; color: #C9A87C; font-style: italic; margin-bottom: 8px; }
+        .company-info { color: #8B7355; font-size: 9px; line-height: 1.7; }
 
-        .invoice-title { font-size: 28px; font-weight: bold; color: #5B4638; margin-bottom: 5px; }
-        .invoice-ref { font-size: 12px; color: #8B7355; }
+        .invoice-badge { display: inline-block; background: #5B4638; color: #fff; font-size: 20px; font-weight: bold; letter-spacing: 2px; padding: 8px 20px; margin-bottom: 8px; }
+        .invoice-ref { font-size: 11px; color: #2C2420; line-height: 1.8; }
+        .invoice-ref strong { color: #5B4638; }
 
-        .addresses { display: table; width: 100%; margin-bottom: 25px; }
+        /* ===== Addresses ===== */
+        .addresses { display: table; width: 100%; margin-bottom: 20px; }
         .address-box { display: table-cell; width: 48%; vertical-align: top; }
         .address-spacer { display: table-cell; width: 4%; }
-        .address-label { font-size: 9px; text-transform: uppercase; color: #8B7355; letter-spacing: 1px; margin-bottom: 5px; font-weight: bold; }
-        .address-content { background: #F5F2ED; padding: 12px; border-radius: 4px; font-size: 11px; }
+        .address-label { font-size: 8px; text-transform: uppercase; color: #8B7355; letter-spacing: 1.5px; margin-bottom: 6px; font-weight: bold; border-bottom: 1px solid #E8E3D9; padding-bottom: 4px; }
+        .address-content { background: #F5F2ED; padding: 12px; border-radius: 3px; font-size: 10px; line-height: 1.6; margin-top: 6px; }
+        .address-name { font-weight: bold; color: #5B4638; font-size: 11px; }
 
-        .meta-table { width: 100%; margin-bottom: 25px; }
-        .meta-table td { padding: 6px 12px; font-size: 10px; }
-        .meta-table .label { color: #8B7355; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
-        .meta-table .value { font-weight: 500; }
+        /* ===== Client info row ===== */
+        .client-bar { display: table; width: 100%; background: #F5F2ED; padding: 8px 12px; border-radius: 3px; margin-bottom: 20px; }
+        .client-bar-cell { display: table-cell; vertical-align: middle; }
+        .client-bar .cb-label { font-size: 8px; text-transform: uppercase; color: #8B7355; letter-spacing: 0.5px; }
+        .client-bar .cb-value { font-size: 10px; font-weight: 500; color: #2C2420; }
 
-        table.items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        table.items th { background: #5B4638; color: #fff; padding: 10px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; }
-        table.items th:last-child, table.items td:last-child { text-align: right; }
-        table.items th:nth-child(3), table.items td:nth-child(3) { text-align: center; }
-        table.items td { padding: 10px 12px; border-bottom: 1px solid #E8E3D9; }
-        table.items tr:last-child td { border-bottom: 2px solid #5B4638; }
+        /* ===== Items table ===== */
+        table.items { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+        table.items thead th {
+            background: #5B4638; color: #fff; padding: 9px 10px; font-size: 8px;
+            text-transform: uppercase; letter-spacing: 0.8px; text-align: left;
+        }
+        table.items thead th.right { text-align: right; }
+        table.items thead th.center { text-align: center; }
 
-        .totals { width: 300px; margin-left: auto; margin-bottom: 30px; }
-        .totals table { width: 100%; }
-        .totals td { padding: 6px 0; }
+        table.items tbody td { padding: 9px 10px; border-bottom: 1px solid #E8E3D9; font-size: 10px; }
+        table.items tbody tr:nth-child(even) td { background: #FAFAF8; }
+        table.items tbody td.right { text-align: right; }
+        table.items tbody td.center { text-align: center; }
+        table.items tbody .item-name { font-weight: bold; color: #2C2420; }
+        table.items tbody .item-vintage { font-size: 9px; color: #8B7355; }
+        table.items tbody .item-line { display: block; font-size: 9px; color: #8B7355; }
+
+        .items-count { font-size: 9px; color: #8B7355; margin-bottom: 15px; padding-left: 2px; }
+
+        /* ===== Totals ===== */
+        .totals-wrapper { display: table; width: 100%; margin-bottom: 15px; }
+        .totals-left { display: table-cell; width: 55%; vertical-align: top; padding-right: 20px; }
+        .totals-right { display: table-cell; width: 45%; vertical-align: top; }
+
+        .totals { width: 100%; }
+        .totals table { width: 100%; border-collapse: collapse; }
+        .totals td { padding: 5px 8px; font-size: 10px; }
         .totals .total-label { color: #8B7355; }
-        .totals .total-value { text-align: right; }
-        .totals .grand-total { font-size: 16px; font-weight: bold; color: #5B4638; border-top: 2px solid #5B4638; padding-top: 10px; }
+        .totals .total-value { text-align: right; color: #2C2420; }
+        .totals .separator td { border-top: 1px solid #E8E3D9; }
+        .totals .grand-total td {
+            font-size: 14px; font-weight: bold; color: #5B4638;
+            border-top: 2px solid #5B4638; padding-top: 8px;
+        }
         .totals .grand-total .total-value { color: #C9A87C; }
 
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 8px; color: #8B7355; padding: 15px 40px; border-top: 1px solid #E8E3D9; }
-        .legal { margin-top: 30px; padding: 15px; background: #F5F2ED; border-radius: 4px; font-size: 9px; color: #8B7355; }
-        .stamp { margin-top: 20px; text-align: right; color: #5B4638; font-weight: bold; font-size: 14px; }
+        /* ===== Payment info ===== */
+        .payment-info { background: #F5F2ED; padding: 10px 12px; border-radius: 3px; font-size: 9px; color: #8B7355; line-height: 1.6; }
+        .payment-info strong { color: #5B4638; }
+
+        /* ===== Stamp ===== */
+        .stamp {
+            display: inline-block; border: 3px solid #5B4638; color: #5B4638;
+            font-size: 16px; font-weight: bold; letter-spacing: 3px; padding: 6px 18px;
+            transform: rotate(-5deg); opacity: 0.8; margin-top: 10px; float: right;
+        }
+        .stamp-cancelled { border-color: #C44; color: #C44; }
+
+        /* ===== Legal ===== */
+        .legal { margin-top: 20px; padding: 12px; background: #F5F2ED; border-radius: 3px; font-size: 8px; color: #8B7355; line-height: 1.6; }
+        .legal strong { color: #5B4638; }
+
+        /* ===== Footer ===== */
+        .footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            text-align: center; font-size: 7px; color: #8B7355;
+            padding: 10px 40px; border-top: 1px solid #E8E3D9;
+            background: #fff;
+        }
+        .footer .page-number::after { content: counter(page) " / " counter(pages); }
     </style>
 </head>
 <body>
+    {# ===== HEADER ===== #}
     <div class="header">
         <div class="header-left">
-            <div class="company-name">Château de Belleville</div>
+            <div class="company-name">Chateau de Belleville</div>
+            <div class="company-tagline">Vignoble d'Anjou</div>
             <div class="company-info">
-                Vignoble d'Anjou<br>
+                EARL Maison Baron<br>
                 36 rue de la Garde<br>
                 79100 Sainte-Verge (Thouars)<br>
-                Tél : 06 70 32 74 88<br>
-                chateaudebelleville@gmail.com<br><br>
-                EARL Maison Baron<br>
+                Tel : 06 70 32 74 88<br>
+                chateaudebelleville@gmail.com<br>
                 SIRET : 329 416 978 000 24<br>
-                N° TVA : FR08 329416978
+                N&deg; TVA : FR08 329416978
             </div>
         </div>
         <div class="header-right">
-            <div class="invoice-title">FACTURE</div>
+            <div class="invoice-badge">FACTURE</div><br>
             <div class="invoice-ref">
-                N° {{ order.reference }}<br>
-                Date : {{ order.createdAt|date('d/m/Y') }}
+                <strong>N&deg;</strong> {{ order.reference }}<br>
+                <strong>Date :</strong> {{ order.createdAt|date('d/m/Y') }}<br>
+                {% if order.paidAt %}
+                <strong>Payee le :</strong> {{ order.paidAt|date('d/m/Y') }}<br>
+                {% endif %}
+                {% if order.shippedAt %}
+                <strong>Expediee le :</strong> {{ order.shippedAt|date('d/m/Y') }}<br>
+                {% endif %}
+                {% if order.deliveredAt %}
+                <strong>Livree le :</strong> {{ order.deliveredAt|date('d/m/Y') }}<br>
+                {% endif %}
             </div>
         </div>
     </div>
 
+    {# ===== ADDRESSES ===== #}
     <div class="addresses">
         <div class="address-box">
             <div class="address-label">Adresse de facturation</div>
             <div class="address-content">
-                {{ order.billingAddress.firstName ?? '' }} {{ order.billingAddress.lastName ?? '' }}<br>
+                <span class="address-name">{{ order.billingAddress.firstName ?? '' }} {{ order.billingAddress.lastName ?? '' }}</span><br>
                 {{ order.billingAddress.street ?? '' }}<br>
                 {{ order.billingAddress.zipCode ?? '' }} {{ order.billingAddress.city ?? '' }}<br>
                 {{ order.billingAddress.country ?? 'France' }}
@@ -86,7 +148,7 @@
         <div class="address-box">
             <div class="address-label">Adresse de livraison</div>
             <div class="address-content">
-                {{ order.shippingAddress.firstName ?? '' }} {{ order.shippingAddress.lastName ?? '' }}<br>
+                <span class="address-name">{{ order.shippingAddress.firstName ?? '' }} {{ order.shippingAddress.lastName ?? '' }}</span><br>
                 {{ order.shippingAddress.street ?? '' }}<br>
                 {{ order.shippingAddress.zipCode ?? '' }} {{ order.shippingAddress.city ?? '' }}<br>
                 {{ order.shippingAddress.country ?? 'France' }}
@@ -94,81 +156,133 @@
         </div>
     </div>
 
-    <table class="meta-table">
-        <tr>
-            <td class="label">Client</td>
-            <td class="value">{{ order.customerFirstName }} {{ order.customerLastName }}</td>
-            <td class="label">Email</td>
-            <td class="value">{{ order.customerEmail }}</td>
-        </tr>
-        <tr>
-            <td class="label">Statut</td>
-            <td class="value">{{ order.status.label }}</td>
-            <td class="label">{% if order.paidAt %}Payée le{% endif %}</td>
-            <td class="value">{% if order.paidAt %}{{ order.paidAt|date('d/m/Y') }}{% endif %}</td>
-        </tr>
-    </table>
+    {# ===== CLIENT BAR ===== #}
+    <div class="client-bar">
+        <div class="client-bar-cell" style="width: 30%;">
+            <div class="cb-label">Client</div>
+            <div class="cb-value">{{ order.customerFirstName }} {{ order.customerLastName }}</div>
+        </div>
+        <div class="client-bar-cell" style="width: 35%;">
+            <div class="cb-label">Email</div>
+            <div class="cb-value">{{ order.customerEmail }}</div>
+        </div>
+        <div class="client-bar-cell" style="width: 20%;">
+            <div class="cb-label">Telephone</div>
+            <div class="cb-value">{{ order.customerPhone ?? '-' }}</div>
+        </div>
+        <div class="client-bar-cell" style="width: 15%;">
+            <div class="cb-label">Statut</div>
+            <div class="cb-value">{{ order.status.label }}</div>
+        </div>
+    </div>
 
+    {# ===== ITEMS TABLE ===== #}
     <table class="items">
         <thead>
             <tr>
-                <th style="width: 45%;">Désignation</th>
-                <th style="width: 15%;">Prix unit. HT</th>
-                <th style="width: 10%;">Qté</th>
-                <th style="width: 15%;">Total HT</th>
-                <th style="width: 15%;">Total TTC</th>
+                <th style="width: 5%;" class="center">#</th>
+                <th style="width: 37%;">Designation</th>
+                <th style="width: 14%;" class="right">P.U. HT</th>
+                <th style="width: 8%;" class="center">Qte</th>
+                <th style="width: 14%;" class="right">Total HT</th>
+                <th style="width: 8%;" class="center">TVA</th>
+                <th style="width: 14%;" class="right">Total TTC</th>
             </tr>
         </thead>
         <tbody>
             {% for item in order.items %}
             <tr>
+                <td class="center" style="color: #8B7355;">{{ loop.index }}</td>
                 <td>
-                    <strong>{{ item.wineName }}</strong>
-                    {% if item.wineVintage %}<br><span style="color: #8B7355; font-size: 10px;">Millésime {{ item.wineVintage }}</span>{% endif %}
+                    <span class="item-name">{{ item.wineName }}</span>
+                    {% if item.wineVintage %}<span class="item-vintage"> - Millesime {{ item.wineVintage }}</span>{% endif %}
+                    <span class="item-line">P.U. TTC : {{ (item.unitPriceInCents / 100)|number_format(2, ',', ' ') }} &euro;</span>
                 </td>
-                <td>{{ (item.unitPriceInCents / 100 / 1.20)|number_format(2, ',', ' ') }} €</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ (item.totalInCents / 100 / 1.20)|number_format(2, ',', ' ') }} €</td>
-                <td>{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                <td class="right">{{ (item.unitPriceInCents / 100 / 1.20)|number_format(2, ',', ' ') }} &euro;</td>
+                <td class="center">{{ item.quantity }}</td>
+                <td class="right">{{ (item.totalInCents / 100 / 1.20)|number_format(2, ',', ' ') }} &euro;</td>
+                <td class="center">20%</td>
+                <td class="right"><strong>{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} &euro;</strong></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <div class="totals">
-        <table>
-            <tr>
-                <td class="total-label">Sous-total HT</td>
-                <td class="total-value">{{ (order.subtotalInCents / 100 / 1.20)|number_format(2, ',', ' ') }} €</td>
-            </tr>
-            <tr>
-                <td class="total-label">TVA (20%)</td>
-                <td class="total-value">{{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</td>
-            </tr>
-            <tr>
-                <td class="total-label">Livraison</td>
-                <td class="total-value">{% if order.shippingCostInCents == 0 %}Offerte{% else %}{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €{% endif %}</td>
-            </tr>
-            <tr class="grand-total">
-                <td class="total-label">Total TTC</td>
-                <td class="total-value">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
-            </tr>
-        </table>
+    <div class="items-count">
+        {{ order.items|length }} article{{ order.items|length > 1 ? 's' : '' }} &mdash; {{ order.itemsCount }} bouteille{{ order.itemsCount > 1 ? 's' : '' }}
     </div>
 
-    {% if order.status.value == 'paid' or order.status.value == 'processing' or order.status.value == 'shipped' or order.status.value == 'delivered' %}
-    <div class="stamp">PAYÉE</div>
-    {% endif %}
+    {# ===== TOTALS + PAYMENT ===== #}
+    <div class="totals-wrapper">
+        <div class="totals-left">
+            {# Payment info & notes #}
+            <div class="payment-info">
+                <strong>Mode de paiement :</strong> Carte bancaire (Stripe)<br>
+                {% if order.stripePaymentIntentId %}
+                <strong>Ref. transaction :</strong> {{ order.stripePaymentIntentId }}<br>
+                {% endif %}
+                {% if order.trackingNumber %}
+                <strong>N&deg; de suivi :</strong> {{ order.trackingNumber }}
+                    {% if order.carrier %} ({{ order.carrier }}){% endif %}<br>
+                {% endif %}
+                {% if order.customerNotes %}
+                <strong>Notes client :</strong> {{ order.customerNotes }}<br>
+                {% endif %}
+            </div>
 
+            {# Stamp #}
+            {% if order.status.value == 'paid' or order.status.value == 'processing' or order.status.value == 'shipped' or order.status.value == 'delivered' %}
+                <div class="stamp">PAYEE</div>
+            {% elseif order.status.value == 'cancelled' %}
+                <div class="stamp stamp-cancelled">ANNULEE</div>
+            {% endif %}
+        </div>
+        <div class="totals-right">
+            <div class="totals">
+                <table>
+                    <tr>
+                        <td class="total-label">Sous-total HT</td>
+                        <td class="total-value">{{ (order.subtotalInCents / 100 / 1.20)|number_format(2, ',', ' ') }} &euro;</td>
+                    </tr>
+                    <tr>
+                        <td class="total-label">TVA (20%)</td>
+                        <td class="total-value">{{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} &euro;</td>
+                    </tr>
+                    <tr class="separator">
+                        <td class="total-label">Sous-total TTC</td>
+                        <td class="total-value">{{ (order.subtotalInCents / 100)|number_format(2, ',', ' ') }} &euro;</td>
+                    </tr>
+                    <tr>
+                        <td class="total-label">Livraison</td>
+                        <td class="total-value">
+                            {% if order.shippingCostInCents == 0 %}
+                                <span style="color: #5B4638; font-weight: bold;">Offerte</span>
+                            {% else %}
+                                {{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} &euro;
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="grand-total">
+                        <td class="total-label">Total TTC</td>
+                        <td class="total-value">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} &euro;</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# ===== LEGAL ===== #}
     <div class="legal">
-        <strong>Conditions de paiement :</strong> Paiement par carte bancaire via Stripe.<br>
-        <strong>Conditions de livraison :</strong> Livraison sous 2 à 5 jours ouvrés. Gratuite à partir de 150 € d'achat.<br>
-        <strong>Droit de rétractation :</strong> Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation ne peut être exercé pour les biens qui, par leur nature, ne peuvent être réexpédiés.<br><br>
-        EARL Maison Baron - Château de Belleville - SIRET : 329 416 978 000 24 - N° TVA intracommunautaire : FR08 329416978
+        <strong>Conditions de paiement :</strong> Paiement integral a la commande par carte bancaire via Stripe. Aucun escompte pour paiement anticipe.<br>
+        <strong>Conditions de livraison :</strong> Livraison sous 2 a 5 jours ouvres en France metropolitaine. Gratuite a partir de 150 &euro; d'achat (sinon 9,90 &euro;).<br>
+        <strong>Penalites de retard :</strong> Taux d'interet legal en vigueur (art. L441-10 C. com.). Indemnite forfaitaire : 40 &euro; (art. D441-5 C. com.).<br>
+        <strong>Droit de retractation :</strong> Conformement a l'article L221-28 du Code de la consommation, le droit de retractation ne peut etre exerce pour les biens qui, par leur nature, ne peuvent etre reexpedies.<br><br>
+        EARL Maison Baron - Chateau de Belleville - SIRET : 329 416 978 000 24 - N&deg; TVA intracommunautaire : FR08 329416978
     </div>
 
+    {# ===== FOOTER (fixed on every page) ===== #}
     <div class="footer">
-        Château de Belleville - 36 rue de la Garde, 79100 Sainte-Verge - 06 70 32 74 88 - chateaudebelleville@gmail.com
+        EARL Maison Baron - Chateau de Belleville - 36 rue de la Garde, 79100 Sainte-Verge - Tel : 06 70 32 74 88 - chateaudebelleville@gmail.com
+        &nbsp;&bull;&nbsp; Page <span class="page-number"></span>
     </div>
 </body>
 </html>
