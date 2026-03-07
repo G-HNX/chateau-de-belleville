@@ -17,6 +17,12 @@
     <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" href="{{ asset('images/logo.jpg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.jpg') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#5B4638">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta property="og:locale" content="fr_FR">
 
     {% block stylesheets %}
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,7 +75,8 @@
             margin: 0;
             border-radius: 0 0 4px 4px;
         }
-        .nav-has-dropdown:hover .nav-dropdown { display: block; }
+        .nav-has-dropdown:hover .nav-dropdown,
+        .nav-has-dropdown:focus-within .nav-dropdown { display: block; }
         .nav-dropdown li a {
             display: block;
             padding: 0.6rem 1.25rem;
@@ -103,6 +110,8 @@
     {% endblock %}
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
     {# Navigation #}
     <div data-controller="mobile-menu">
         <nav class="site-nav" aria-label="Navigation principale">
@@ -118,8 +127,8 @@
                 <ul class="nav-links">
                     {% set domainActive = app.request.attributes.get('_route') starts with 'app_domain' or app.request.attributes.get('_route') starts with 'app_news' %}
                     <li class="nav-has-dropdown {% if domainActive %}active{% endif %}">
-                        <span class="nav-dropdown-trigger">Le Domaine</span>
-                        <ul class="nav-dropdown">
+                        <span class="nav-dropdown-trigger" role="button" aria-expanded="false" aria-haspopup="true" tabindex="0">Le Domaine</span>
+                        <ul class="nav-dropdown" role="menu">
                             <li><a href="{{ path('app_domain') }}" {% if app.request.attributes.get('_route') == 'app_domain' %}class="active"{% endif %}>Le Domaine</a></li>
                             <li><a href="{{ path('app_domain_excellence') }}" {% if app.request.attributes.get('_route') == 'app_domain_excellence' %}class="active"{% endif %}>Notre Excellence</a></li>
                             <li><a href="{{ path('app_domain_nature') }}" {% if app.request.attributes.get('_route') == 'app_domain_nature' %}class="active"{% endif %}>Nature &amp; Durabilité</a></li>
@@ -227,7 +236,7 @@
     </main>
 
     {# Footer #}
-    <footer class="site-footer">
+    <footer class="site-footer" role="contentinfo">
         <div class="footer-top-bar"></div>
 
         <div class="footer-inner">

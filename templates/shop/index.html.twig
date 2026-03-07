@@ -107,8 +107,8 @@
 <div class="shop-sort-header">
     <span class="shop-sort-count">{{ wines|length }} vin{{ wines|length > 1 ? 's' : '' }}</span>
     <div class="shop-sort-bar">
-        <label class="shop-sort-label">Trier par</label>
-        <select class="shop-sort-select" onchange="window.location = this.value">
+        <label class="shop-sort-label" for="shop-sort">Trier par</label>
+        <select id="shop-sort" class="shop-sort-select" onchange="window.location = this.value">
             <option value="{{ sortBase|replace({'__TRI__': 'newest'}) }}"  {% if currentSort == 'newest'     %}selected{% endif %}>Nouveautés</option>
             <option value="{{ sortBase|replace({'__TRI__': 'price_asc'}) }}" {% if currentSort == 'price_asc' %}selected{% endif %}>Prix croissant</option>
             <option value="{{ sortBase|replace({'__TRI__': 'price_desc'}) }}" {% if currentSort == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
@@ -293,11 +293,11 @@
                                   class="shop-card-form">
                                 <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
                                 <div class="shop-qty-wrap">
-                                    <button type="button" class="shop-qty-btn"
+                                    <button type="button" class="shop-qty-btn" aria-label="Diminuer la quantité"
                                             onclick="var i=this.nextElementSibling; i.value=Math.max(1,parseInt(i.value)-1)">−</button>
                                     <input type="number" name="quantity" value="1"
-                                           min="1" max="{{ wine.stock }}" class="shop-qty-input">
-                                    <button type="button" class="shop-qty-btn"
+                                           min="1" max="{{ wine.stock }}" class="shop-qty-input" aria-label="Quantité">
+                                    <button type="button" class="shop-qty-btn" aria-label="Augmenter la quantité"
                                             onclick="var i=this.previousElementSibling; i.value=Math.min({{ wine.stock }},parseInt(i.value)+1)">+</button>
                                 </div>
                                 <button type="submit" class="shop-add-btn" data-cart-add-target="button">

@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ tasting.name }} - Dégustations - Château de Belleville{% endblock %}
+{% block meta_description %}{{ tasting.name }} au Château de Belleville. {{ tasting.formattedPrice }}, durée {{ tasting.formattedDuration }}. Réservez votre dégustation en Val de Loire.{% endblock %}
+{% block og_type %}event{% endblock %}
 
 {% block header %}
     <header class="page-header">

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
 </head>
 <body style="font-family: 'Montserrat', Arial, sans-serif; color: #2C2420; background: #F5F2ED; margin: 0; padding: 0;">
+    <div style="display: none; max-height: 0; overflow: hidden;">Votre commande {{ order.reference }} est en route !{% if order.trackingNumber %} Suivi : {{ order.trackingNumber }}{% endif %}</div>
     <div style="background: #5B4638; padding: 30px; text-align: center;">
         <h1 style="color: #C9A87C; font-family: Georgia, serif; margin: 0; font-size: 24px;">Château de Belleville</h1>
         <p style="color: #E8E3D9; margin: 5px 0 0; font-size: 14px;">Vignoble d'Anjou</p>
@@ -33,7 +34,8 @@
     </div>
 
     <div style="text-align: center; padding: 20px; color: #8B7355; font-size: 12px;">
-        <p>Château de Belleville - 36 rue de la Garde, 79100 Sainte-Verge</p>
+        <p>EARL Maison Baron - Château de Belleville</p>
+        <p>36 rue de la Garde, 79100 Sainte-Verge — SIRET 329 416 978 000 24</p>
         <p>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
     </div>
 </body>

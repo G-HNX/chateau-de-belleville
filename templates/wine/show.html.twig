@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ wine.name }} - Château de Belleville{% endblock %}
+{% block title %}{{ wine.name }}{% if wine.vintage %} {{ wine.vintage }}{% endif %} - Château de Belleville{% endblock %}
+{% block meta_description %}{{ wine.name }}{% if wine.appellation %}, {{ wine.appellation }}{% endif %}. Vin du domaine Château de Belleville, vignoble d'Anjou. {{ wine.price|number_format(2, ',', ' ') }} €.{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_image %}{% if wine.images|length > 0 %}{{ app.request.schemeAndHttpHost ~ asset('uploads/wines/' ~ wine.images|first.filename) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
 
 {% block header %}
     <header class="page-header">
