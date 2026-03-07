@@ -65,6 +65,8 @@ class UserCrudController extends AbstractCrudController
             ->setHelp('Les rôles ne sont pas modifiables via ce formulaire. Utilisez la commande <code>php bin/console app:grant-admin &lt;email&gt;</code>.')
             ->hideOnIndex();
         yield BooleanField::new('isVerified', 'Vérifié');
+        yield BooleanField::new('twoFactorEnabled', '2FA')
+            ->setHelp('Authentification à deux facteurs par email (recommandé pour les admins).');
         yield BooleanField::new('newsletterOptIn', 'Newsletter')
             ->hideOnIndex();
         yield DateTimeField::new('createdAt', 'Inscrit le')

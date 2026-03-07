@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification en deux étapes - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Vérification en deux étapes</h1>
+        <p>Un code de sécurité a été envoyé à votre adresse email.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <meta name="turbo-cache-control" content="no-cache">
+    <section class="section section-white">
+        <div class="container" style="max-width: 500px;">
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);" data-reveal="fade-up">
+
+                {% if authenticationError %}
+                    <div class="flash-message flash-error" style="position: static; margin-bottom: 1.5rem;">
+                        Code invalide. Veuillez réessayer.
+                    </div>
+                {% endif %}
+
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="width: 64px; height: 64px; background: var(--color-cream); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 1rem;">
+                        &#9993;
+                    </div>
+                    <p style="color: var(--color-secondary); font-size: 0.9rem;">
+                        Nous avons envoyé un code de vérification à 6 chiffres à votre adresse email. Consultez votre boîte de réception.
+                    </p>
+                </div>
+
+                <form method="post" action="{{ checkPathUrl }}" data-turbo="false">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="auth-code">Code de vérification</label>
+                        <input type="text" id="auth-code" name="{{ authCodeParameterName }}"
+                               autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*"
+                               maxlength="6" required autofocus
+                               style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; font-weight: 600;">
+                    </div>
+                    {% if isCsrfProtectionEnabled %}
+                        <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary btn-full">Vérifier</button>
+                </form>
+
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="{{ logoutPath }}" style="color: var(--color-secondary); font-size: 0.85rem; text-decoration: none;">
+                        Annuler et se déconnecter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

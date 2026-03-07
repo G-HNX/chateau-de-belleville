@@ -475,6 +475,7 @@ class AppFixtures extends Fixture
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
         $admin->setIsVerified(true);
+        $admin->setTwoFactorEnabled(true);
         $manager->persist($admin);
 
         // Test customer

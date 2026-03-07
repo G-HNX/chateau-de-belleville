@@ -25,6 +25,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    Scheb\TwoFactorBundle\Mailer\AuthCodeMailerInterface:
+        alias: App\Security\TwoFactorAuthCodeMailer
+
     App\Service\StripeService:
         arguments:
             $stripeSecretKey: '%stripe_secret_key%'
