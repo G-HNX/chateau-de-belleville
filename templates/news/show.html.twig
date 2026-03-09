@@ -2,6 +2,42 @@
 
 {% block title %}{{ article.title }} - Château de Belleville{% endblock %}
 {% block meta_description %}{{ article.excerpt ?? article.title }}{% endblock %}
+{% block og_image %}{% if article.coverImage %}{{ app.request.schemeAndHttpHost ~ asset('uploads/news/' ~ article.coverImage) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "{{ article.title }}",
+    "description": "{{ article.excerpt ?? article.title }}",
+    {% if article.coverImage %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('uploads/news/' ~ article.coverImage) }}",
+    {% else %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') }}",
+    {% endif %}
+    "url": "{{ app.request.schemeAndHttpHost ~ path('app_news_show', {slug: article.slug}) }}",
+    {% if article.publishedAt %}
+    "datePublished": "{{ article.publishedAt|date('c') }}",
+    {% endif %}
+    {% if article.updatedAt %}
+    "dateModified": "{{ article.updatedAt|date('c') }}",
+    {% endif %}
+    "publisher": {
+        "@type": "Organization",
+        "name": "Château de Belleville",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ app.request.schemeAndHttpHost ~ asset('images/logo.jpg') }}"
+        }
+    },
+    "author": {
+        "@type": "Organization",
+        "name": "Château de Belleville"
+    }
+}
+</script>
+{% endblock %}
 
 {% block header %}
     <header class="page-header">

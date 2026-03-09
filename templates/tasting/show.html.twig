@@ -4,6 +4,44 @@
 {% block meta_description %}{{ tasting.name }} au Château de Belleville. {{ tasting.formattedPrice }}, durée {{ tasting.formattedDuration }}. Réservez votre dégustation en Val de Loire.{% endblock %}
 {% block og_type %}event{% endblock %}
 
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "{{ tasting.name }}",
+    "description": "{{ tasting.description ? tasting.description|striptags|slice(0, 200) : (tasting.name ~ ' au Château de Belleville.') }}",
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') }}",
+    "url": "{{ app.request.schemeAndHttpHost ~ path('app_tasting_show', {slug: tasting.slug}) }}",
+    "organizer": {
+        "@type": "Organization",
+        "name": "Château de Belleville",
+        "url": "{{ app.request.schemeAndHttpHost }}"
+    },
+    "location": {
+        "@type": "Place",
+        "name": "Château de Belleville",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "36 rue de la Garde",
+            "addressLocality": "Sainte-Verge",
+            "postalCode": "79100",
+            "addressCountry": "FR"
+        }
+    },
+    "offers": {
+        "@type": "Offer",
+        "priceCurrency": "EUR",
+        "price": "{{ tasting.price|number_format(2, '.', '') }}",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ app.request.schemeAndHttpHost ~ path('app_tasting_show', {slug: tasting.slug}) }}"
+    },
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "eventStatus": "https://schema.org/EventScheduled"
+}
+</script>
+{% endblock %}
+
 {% block header %}
     <header class="page-header">
         <h1>{{ tasting.name }}</h1>

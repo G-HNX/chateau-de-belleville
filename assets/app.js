@@ -28,7 +28,7 @@ function initScrollReveal() {
             delay ? setTimeout(reveal, delay) : reveal()
             observer.unobserve(target)
         })
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+    }, { threshold: 0.12, rootMargin: '0px 0px -12% 0px' })
 
     document.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => observer.observe(el))
 }
@@ -57,11 +57,12 @@ function initNavScroll() {
 // Init
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    initScrollReveal()
+    // Double rAF : laisse le navigateur peindre opacity:0 avant de lancer les transitions
+    requestAnimationFrame(() => requestAnimationFrame(() => initScrollReveal()))
     initNavScroll()
 })
 
 // Ré-initialise le scroll reveal après chaque navigation Turbo
 document.addEventListener('turbo:render', () => {
-    initScrollReveal()
+    requestAnimationFrame(() => requestAnimationFrame(() => initScrollReveal()))
 })

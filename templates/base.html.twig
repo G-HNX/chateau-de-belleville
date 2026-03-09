@@ -15,6 +15,9 @@
     <meta property="og:image" content="{% block og_image %}{{ app.request ? app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') : '' }}{% endblock %}">
     <meta property="og:url" content="{{ app.request ? app.request.schemeAndHttpHost ~ app.request.requestUri : '' }}">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ block('og_title') }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ block('og_description') }}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ block('og_image') }}{% endblock %}">
 
     <link rel="icon" href="{{ asset('images/logo.jpg') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/logo.jpg') }}">
@@ -108,6 +111,38 @@
     {% block javascripts %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
     {% endblock %}
+
+    {# JSON-LD Organisation (toutes les pages) #}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Winery",
+        "name": "Château de Belleville",
+        "url": "{{ app.request ? app.request.schemeAndHttpHost : 'https://chateaudebelleville.fr' }}",
+        "logo": "{{ app.request ? app.request.schemeAndHttpHost ~ asset('images/logo.jpg') : '' }}",
+        "image": "{{ app.request ? app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') : '' }}",
+        "description": "Domaine viticole familial en Val de Loire. Vins d'exception et dégustations en Anjou.",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "36 rue de la Garde",
+            "addressLocality": "Sainte-Verge",
+            "postalCode": "79100",
+            "addressRegion": "Nouvelle-Aquitaine",
+            "addressCountry": "FR"
+        },
+        "telephone": "+33670327488",
+        "email": "chateaudebelleville@gmail.com",
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Friday",
+            "opens": "10:00",
+            "closes": "12:00"
+        }
+    }
+    </script>
+
+    {# JSON-LD spécifique à la page #}
+    {% block json_ld %}{% endblock %}
 </head>
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
@@ -160,7 +195,7 @@
                             <span>Connexion</span>
                         </a>
                     {% endif %}
-                    <a href="{{ path('app_cart_index') }}" class="nav-cart-link" title="Panier">
+                    <a href="{{ path('app_cart_index') }}" class="nav-cart-link" title="Panier" aria-label="Panier">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                         {% set count = cart_count() %}
                         <span id="cart-badge" class="cart-badge" aria-live="polite" aria-atomic="true" aria-label="{{ count }} article{{ count != 1 ? 's' : '' }} dans le panier"{% if count == 0 %} style="display: none;"{% endif %}>{{ count }}</span>
@@ -168,7 +203,7 @@
                 </div>
 
                 {# Hamburger (mobile) #}
-                <button class="hamburger" data-mobile-menu-target="hamburger" data-action="mobile-menu#toggle" aria-label="Menu">
+                <button class="hamburger" data-mobile-menu-target="hamburger" data-action="mobile-menu#toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu-dialog">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -177,10 +212,10 @@
         </nav>
 
         {# Mobile overlay - outside nav to avoid backdrop-filter stacking context #}
-        <div class="mobile-overlay" data-mobile-menu-target="overlay" data-action="click->mobile-menu#close"></div>
+        <div class="mobile-overlay" data-mobile-menu-target="overlay" data-action="click->mobile-menu#close" aria-hidden="true"></div>
 
         {# Mobile menu - outside nav to avoid backdrop-filter stacking context #}
-        <div class="mobile-menu" data-mobile-menu-target="menu">
+        <div id="mobile-menu-dialog" class="mobile-menu" data-mobile-menu-target="menu" role="dialog" aria-modal="true" aria-label="Menu de navigation" aria-hidden="true">
             <button class="mobile-menu-close" data-action="mobile-menu#close" aria-label="Fermer le menu">✕</button>
             <ul class="mobile-menu-links">
                 <li><a href="{{ path('app_home') }}" {% if app.request.attributes.get('_route') == 'app_home' %}class="active"{% endif %}>Accueil</a></li>

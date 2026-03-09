@@ -5,6 +5,40 @@
 {% block og_type %}product{% endblock %}
 {% block og_image %}{% if wine.images|length > 0 %}{{ app.request.schemeAndHttpHost ~ asset('uploads/wines/' ~ wine.images|first.filename) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
 
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ wine.name }}{% if wine.vintage %} {{ wine.vintage }}{% endif %}",
+    "description": "{{ wine.description ? wine.description|striptags|slice(0, 200) : (wine.name ~ ', vin du domaine Château de Belleville.') }}",
+    {% if wine.images|length > 0 %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('uploads/wines/' ~ wine.images|first.filename) }}",
+    {% else %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') }}",
+    {% endif %}
+    "brand": {
+        "@type": "Brand",
+        "name": "Château de Belleville"
+    },
+    "offers": {
+        "@type": "Offer",
+        "priceCurrency": "EUR",
+        "price": "{{ wine.price|number_format(2, '.', '') }}",
+        "availability": "{% if wine.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+        "url": "{{ app.request.schemeAndHttpHost ~ path('app_wine_show', {slug: wine.slug}) }}"
+    }{% if wine.averageRating %},
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ wine.averageRating|number_format(1, '.', '') }}",
+        "bestRating": "5",
+        "worstRating": "1",
+        "ratingCount": "{{ wine.reviews|filter(r => r.isApproved)|length }}"
+    }{% endif %}
+}
+</script>
+{% endblock %}
+
 {% block header %}
     <header class="page-header">
         <h1>{{ wine.name }}</h1>
@@ -90,6 +124,7 @@
                             data-favorite-toggle-token-value="{{ csrf_token('favorite_' ~ wine.id) }}"
                             data-action="click->favorite-toggle#toggle"
                             title="{{ app.user.isFavoriteWine(wine) ? 'Retirer de mes vins' : 'Ajouter à mes vins' }}"
+                            aria-label="{{ app.user.isFavoriteWine(wine) ? 'Retirer de mes vins' : 'Ajouter à mes vins' }}"
                             style="padding: 0.4rem 0.8rem; border: 1px solid var(--color-beige); background: white; border-radius: 6px; cursor: pointer; color: var(--color-primary); font-size: 1.3rem; line-height: 1;">
                             <span data-heart-full style="display: {{ app.user.isFavoriteWine(wine) ? 'block' : 'none' }};">♥</span>
                             <span data-heart-empty style="display: {{ app.user.isFavoriteWine(wine) ? 'none' : 'block' }};">♡</span>
