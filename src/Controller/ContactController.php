@@ -12,13 +12,13 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ContactController extends AbstractController
 {
     #[Route('/contact', name: 'app_contact')]
-    public function index(Request $request, MailerInterface $mailer, RateLimiterFactory $contactLimiter): Response
+    public function index(Request $request, MailerInterface $mailer, RateLimiterFactoryInterface $contactLimiter): Response
     {
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);

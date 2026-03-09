@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
@@ -52,7 +52,7 @@ class SecurityController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em,
         NewsletterSubscriberRepository $subscriberRepo,
-        RateLimiterFactory $registrationLimiter,
+        RateLimiterFactoryInterface $registrationLimiter,
     ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -104,7 +104,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/renvoyer-verification', name: 'app_resend_verification')]
-    public function resendVerification(Request $request, RateLimiterFactory $resendVerificationLimiter): Response
+    public function resendVerification(Request $request, RateLimiterFactoryInterface $resendVerificationLimiter): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 

@@ -8,13 +8,13 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class TwoFactorRateLimitSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly RateLimiterFactory $twoFactorCodeLimiter,
+        private readonly RateLimiterFactoryInterface $twoFactorCodeLimiter,
         private readonly RequestStack $requestStack,
     ) {
     }

@@ -22,7 +22,7 @@ class TastingSlotRepository extends ServiceEntityRepository
     /**
      * @return TastingSlot[]
      */
-    public function findAvailableForTasting(Tasting $tasting, \DateTimeInterface $fromDate = null): array
+    public function findAvailableForTasting(Tasting $tasting, ?\DateTimeInterface $fromDate = null): array
     {
         $fromDate = $fromDate ?? new \DateTime('today');
 

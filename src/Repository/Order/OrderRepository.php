@@ -68,7 +68,7 @@ class OrderRepository extends ServiceEntityRepository
     /**
      * Calcule le chiffre d'affaires sur une periode.
      */
-    public function getTotalRevenue(\DateTimeInterface $from = null, \DateTimeInterface $to = null): int
+    public function getTotalRevenue(?\DateTimeInterface $from = null, ?\DateTimeInterface $to = null): int
     {
         $qb = $this->createQueryBuilder('o')
             ->select('SUM(o.totalInCents)')
@@ -140,7 +140,7 @@ class OrderRepository extends ServiceEntityRepository
     /**
      * Panier moyen (en centimes).
      */
-    public function getAverageOrderValue(\DateTimeInterface $from = null): int
+    public function getAverageOrderValue(?\DateTimeInterface $from = null): int
     {
         $qb = $this->createQueryBuilder('o')
             ->select('AVG(o.totalInCents)')

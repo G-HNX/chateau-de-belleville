@@ -8,13 +8,13 @@ use App\Service\SommelierService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class SommelierController extends AbstractController
 {
     #[Route('/api/sommelier', name: 'app_sommelier_chat', methods: ['POST'])]
-    public function chat(Request $request, SommelierService $sommelierService, RateLimiterFactory $sommelierApiLimiter): JsonResponse
+    public function chat(Request $request, SommelierService $sommelierService, RateLimiterFactoryInterface $sommelierApiLimiter): JsonResponse
     {
         $limiter = $sommelierApiLimiter->create($request->getClientIp() ?? '0.0.0.0');
         if (!$limiter->consume(1)->isAccepted()) {
