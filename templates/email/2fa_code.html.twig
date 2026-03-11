@@ -1,30 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code de vérification — Château de Belleville</title>
 </head>
-<body style="font-family: 'Montserrat', Arial, sans-serif; color: #2C2420; background: #F5F2ED; margin: 0; padding: 0;">
-    <div style="display: none; max-height: 0; overflow: hidden;">Votre code de vérification : {{ authCode }}</div>
-    <div style="background: #5B4638; padding: 30px; text-align: center;">
-        <h1 style="color: #C9A87C; font-family: Georgia, serif; margin: 0; font-size: 24px;">Château de Belleville</h1>
-        <p style="color: #E8E3D9; margin: 5px 0 0; font-size: 14px;">Vignoble d'Anjou</p>
+<body style="margin: 0; padding: 0; background-color: #F5F2ED; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; color: #2C2420;">
+
+    {# Préheader invisible #}
+    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
+        Votre code de connexion administrateur : {{ authCode }}.
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
     </div>
 
-    <div style="background: #ffffff; padding: 30px; margin: 0 auto; max-width: 600px;">
-        <h2 style="color: #5B4638;">Code de vérification</h2>
-        <p>Une connexion à votre espace administrateur a été détectée.</p>
-        <p>Voici votre code de vérification :</p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%;">
 
-        <div style="background: #F5F2ED; padding: 25px; border-radius: 8px; text-align: center; margin: 25px 0;">
-            <div style="font-size: 36px; font-weight: 700; letter-spacing: 0.3em; color: #5B4638; font-family: 'Courier New', monospace;">{{ authCode }}</div>
-        </div>
+                    {# En-tête #}
+                    <tr>
+                        <td style="background-color: #5B4638; padding: 30px 40px; text-align: center; border-radius: 6px 6px 0 0;">
+                            <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 26px; color: #C9A87C; letter-spacing: 0.05em;">
+                                Château de Belleville
+                            </h1>
+                            <p style="margin: 6px 0 0; font-size: 13px; color: #E8E3D9; letter-spacing: 0.08em; text-transform: uppercase;">
+                                Vignoble d'Anjou
+                            </p>
+                        </td>
+                    </tr>
 
-        <p style="color: #8B7355; font-size: 0.9rem;">Ce code est valable pendant quelques minutes. Si vous n'avez pas demandé cette connexion, changez immédiatement votre mot de passe.</p>
-    </div>
+                    {# Corps #}
+                    <tr>
+                        <td style="background-color: #ffffff; padding: 40px 40px 30px;">
 
-    <div style="text-align: center; padding: 20px; color: #8B7355; font-size: 12px;">
-        <p>EARL Maison Baron - Château de Belleville</p>
-        <p>36 rue de la Garde, 79100 Sainte-Verge — SIRET 329 416 978 000 24</p>
-    </div>
+                            <h2 style="margin: 0 0 16px; font-family: Georgia, serif; font-size: 20px; color: #5B4638; font-weight: normal;">
+                                Code de vérification
+                            </h2>
+
+                            <p style="margin: 0 0 12px; font-size: 15px; line-height: 1.6; color: #2C2420;">
+                                Une connexion à votre espace administrateur a été détectée. Utilisez le code ci-dessous pour valider votre identité.
+                            </p>
+
+                            {# Bloc code #}
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 28px 0;">
+                                <tr>
+                                    <td align="center" style="background-color: #F5F2ED; border: 2px solid #E8E3D9; border-radius: 8px; padding: 28px 20px;">
+                                        <p style="margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #8B7355;">
+                                            Votre code
+                                        </p>
+                                        <div style="font-family: 'Courier New', Courier, monospace; font-size: 42px; font-weight: 700; letter-spacing: 0.4em; color: #5B4638; line-height: 1;">
+                                            {{ authCode }}
+                                        </div>
+                                        <p style="margin: 10px 0 0; font-size: 12px; color: #8B7355;">
+                                            À saisir dans les prochaines minutes
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Avertissement sécurité #}
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                    <td style="border-left: 3px solid #C9A87C; padding: 10px 14px; background-color: #faf8f5;">
+                                        <p style="margin: 0; font-size: 13px; color: #8B7355; line-height: 1.5;">
+                                            <strong style="color: #5B4638;">Vous n'êtes pas à l'origine de cette connexion ?</strong><br>
+                                            Changez immédiatement votre mot de passe et contactez l'administrateur.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+
+                    {# Pied de page #}
+                    <tr>
+                        <td style="background-color: #F5F2ED; padding: 20px 40px; text-align: center; border-top: 1px solid #E8E3D9; border-radius: 0 0 6px 6px;">
+                            <p style="margin: 0 0 4px; font-size: 12px; color: #8B7355;">
+                                EARL Maison Baron — Château de Belleville
+                            </p>
+                            <p style="margin: 0 0 4px; font-size: 12px; color: #8B7355;">
+                                36 rue de la Garde, 79100 Sainte-Verge
+                            </p>
+                            <p style="margin: 0; font-size: 11px; color: #A08D7A;">
+                                SIRET 329 416 978 000 24
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
 </body>
 </html>

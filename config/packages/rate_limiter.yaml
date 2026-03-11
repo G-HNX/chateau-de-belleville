@@ -1,9 +1,10 @@
 framework:
     rate_limiter:
-        sommelier_api:
-            policy: 'sliding_window'
-            limit: 20
-            interval: '1 hour'
+        # sommelier_api — à réactiver lors de l'intégration du sommelier IA
+        # sommelier_api:
+        #     policy: 'sliding_window'
+        #     limit: 20
+        #     interval: '1 hour'
         registration:
             policy: 'sliding_window'
             limit: 5

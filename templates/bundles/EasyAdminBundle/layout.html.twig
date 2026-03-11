@@ -1,0 +1,147 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block configured_stylesheets %}
+    {{ parent() }}
+    <style>
+        /* ============================================================
+           Château de Belleville — Thème EasyAdmin personnalisé
+           Palette : #5B4638 (primary) · #C9A87C (gold) · #8B7355 (secondary)
+           ============================================================ */
+
+        /* --- Bootstrap : override couleur primaire --- */
+        :root {
+            --bs-primary: #5B4638;
+            --bs-primary-rgb: 91, 70, 56;
+            --bs-link-color: #5B4638;
+            --bs-link-color-rgb: 91, 70, 56;
+            --bs-link-hover-color: #8B7355;
+            --bs-primary-bg-subtle: #f0ebe6;
+            --bs-primary-border-subtle: #c9b0a2;
+            --bs-primary-text-emphasis: #4a3829;
+            --bs-btn-focus-shadow-rgb: 91, 70, 56;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar,
+        .sidebar-wrapper,
+        aside.sidebar {
+            background-color: #5B4638 !important;
+        }
+
+        /* --- Header / logo dans la sidebar --- */
+        .sidebar .main-header,
+        .sidebar header.main-header {
+            background-color: #4a3829 !important;
+            border-bottom: 1px solid rgba(201, 168, 124, 0.2) !important;
+        }
+
+        .sidebar .logo,
+        .sidebar .logo:hover {
+            color: #C9A87C !important;
+            text-decoration: none;
+        }
+
+        .sidebar .logo-custom {
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        /* --- Liens du menu --- */
+        #main-menu .menu-item-contents {
+            color: rgba(248, 244, 239, 0.82) !important;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        #main-menu .menu-item-contents:hover,
+        #main-menu .menu-item.active > .menu-item-contents {
+            background-color: rgba(201, 168, 124, 0.14) !important;
+            color: #C9A87C !important;
+        }
+
+        #main-menu .menu-item.active > .menu-item-contents {
+            border-left: 3px solid #C9A87C;
+        }
+
+        /* --- Séparateurs de section --- */
+        #main-menu .menu-header .menu-header-contents {
+            color: #C9A87C !important;
+            opacity: 0.65;
+            font-size: 0.72em;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* --- Icônes de menu --- */
+        #main-menu .menu-icon {
+            color: inherit;
+        }
+
+        /* --- Badges menu (compteurs) --- */
+        #main-menu .menu-item-badge {
+            font-size: 0.7em;
+        }
+
+        /* --- Boutons Bootstrap primary --- */
+        .btn-primary {
+            background-color: #5B4638 !important;
+            border-color: #5B4638 !important;
+        }
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active {
+            background-color: #4a3829 !important;
+            border-color: #4a3829 !important;
+        }
+        .btn-outline-primary {
+            color: #5B4638 !important;
+            border-color: #5B4638 !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: #5B4638 !important;
+            color: #fff !important;
+        }
+
+        /* --- Liens primaires (actions EasyAdmin) --- */
+        a.action-edit,
+        a.action-detail,
+        .ea-action a {
+            color: #5B4638;
+        }
+        a.action-edit:hover,
+        a.action-detail:hover {
+            color: #8B7355;
+        }
+
+        /* --- Champs image : zoom au survol --- */
+        td .field-image img,
+        .field-image td img {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0s;
+            cursor: zoom-in;
+            position: relative;
+            z-index: 1;
+            border-radius: 4px;
+        }
+        td .field-image img:hover,
+        .field-image td img:hover {
+            transform: scale(3.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+            z-index: 100;
+        }
+
+        /* --- Filtres actifs : accent doré --- */
+        .datagrid-filters .badge-filter {
+            background-color: #C9A87C !important;
+        }
+
+        /* --- Panels de formulaire --- */
+        .form-panel-header {
+            border-left: 3px solid #C9A87C;
+            padding-left: 0.75rem;
+        }
+
+        /* --- En-tête du content (top bar) --- */
+        .content-top {
+            border-bottom: 1px solid #e8e3d9;
+        }
+    </style>
+{% endblock %}

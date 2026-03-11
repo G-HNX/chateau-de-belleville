@@ -34,7 +34,7 @@ class AdminAccessTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $admin = static::getContainer()->get(UserRepository::class)->findByEmail('admin@chateau-belleville.fr');
+        $admin = static::getContainer()->get(UserRepository::class)->findByEmail('gabriel.heneaux@gmail.com');
         $this->assertNotNull($admin, 'Fixture manquante — lancez : php bin/console doctrine:fixtures:load');
 
         $client->loginUser($admin);

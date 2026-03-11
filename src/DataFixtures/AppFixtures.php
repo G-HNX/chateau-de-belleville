@@ -469,7 +469,7 @@ class AppFixtures extends Fixture
     {
         // Admin user
         $admin = new User();
-        $admin->setEmail('admin@chateau-belleville.fr');
+        $admin->setEmail('gabriel.heneaux@gmail.com');
         $admin->setFirstName('Admin');
         $admin->setLastName('Belleville');
         $admin->setRoles(['ROLE_ADMIN']);

@@ -52,6 +52,33 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
+     * Nombre de réservations par mois sur les N derniers mois.
+     *
+     * @return array<int, array{month: string, count: int, participants: int}>
+     */
+    public function getMonthlyCount(int $months = 12): array
+    {
+        $from = new \DateTime("first day of -{$months} months midnight");
+
+        $rows = $this->createQueryBuilder('r')
+            ->select("SUBSTRING(r.createdAt, 1, 7) AS month, COUNT(r.id) AS cnt, SUM(r.numberOfParticipants) AS participants")
+            ->andWhere('r.createdAt >= :from')
+            ->andWhere('r.status NOT IN (:excluded)')
+            ->setParameter('from', $from)
+            ->setParameter('excluded', [ReservationStatus::CANCELLED])
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (array $r) => [
+            'month' => $r['month'],
+            'count' => (int) $r['cnt'],
+            'participants' => (int) $r['participants'],
+        ], $rows);
+    }
+
+    /**
      * @return Reservation[]
      */
     public function findUpcoming(): array

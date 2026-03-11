@@ -13,7 +13,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class SommelierController extends AbstractController
 {
-    #[Route('/api/sommelier', name: 'app_sommelier_chat', methods: ['POST'])]
+    // Route désactivée temporairement — à réactiver lors de l'intégration du sommelier IA
+    // #[Route('/api/sommelier', name: 'app_sommelier_chat', methods: ['POST'])]
     public function chat(Request $request, SommelierService $sommelierService, RateLimiterFactoryInterface $sommelierApiLimiter): JsonResponse
     {
         $limiter = $sommelierApiLimiter->create($request->getClientIp() ?? '0.0.0.0');

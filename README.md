@@ -42,7 +42,7 @@ symfony serve
 
 | Rôle   | Email                          | Mot de passe |
 |--------|--------------------------------|--------------|
-| Admin  | admin@chateau-belleville.fr    | admin123     |
+| Admin  | gabriel.heneaux@gmail.com      | admin123     |
 | Client | client@example.com             | client123    |
 
 ## Variables d'environnement

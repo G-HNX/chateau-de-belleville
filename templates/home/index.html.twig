@@ -2,6 +2,10 @@
 
 {% block title %}Château de Belleville - Vins d'Anjou{% endblock %}
 
+{% block preload %}
+    <link rel="preload" as="image" href="{{ asset('images/hero-vignes.jpg') }}">
+{% endblock %}
+
 {% block header %}
     <section class="hero"
              data-controller="parallax"

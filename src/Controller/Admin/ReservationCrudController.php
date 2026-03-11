@@ -33,7 +33,7 @@ class ReservationCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Réservation')
             ->setEntityLabelInPlural('Réservations')
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setSearchFields(['reference', 'email', 'lastName']);
+            ->setSearchFields(['reference', 'email', 'lastName', 'firstName', 'phone']);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -47,6 +47,7 @@ class ReservationCrudController extends AbstractCrudController
     {
         return $filters
             ->add('status')
+            ->add('slot')
             ->add('createdAt');
     }
 

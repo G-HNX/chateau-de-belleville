@@ -8,6 +8,7 @@ use App\Entity\News\NewsArticle;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -34,7 +35,10 @@ class NewsArticleCrudController extends AbstractCrudController
 
     public function configureFilters(Filters $filters): Filters
     {
-        return $filters->add('isPublished');
+        return $filters
+            ->add('isPublished')
+            ->add(DateTimeFilter::new('publishedAt', 'Date de publication'))
+            ->add(DateTimeFilter::new('createdAt', 'Créé le'));
     }
 
     public function configureFields(string $pageName): iterable

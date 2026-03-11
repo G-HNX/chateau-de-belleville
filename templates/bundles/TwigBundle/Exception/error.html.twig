@@ -14,7 +14,11 @@
                 Une erreur est survenue lors du traitement de votre demande.
                 <br>Veuillez réessayer ou retourner à l'accueil.
             </p>
-            <a href="{{ path('app_home') }}" class="btn btn-primary">Retour à l'accueil</a>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ path('app_home') }}" class="btn btn-primary">Retour à l'accueil</a>
+                <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">Voir nos vins</a>
+                <a href="{{ path('app_contact') }}" class="btn btn-secondary">Contact</a>
+            </div>
         </div>
     </section>
 {% endblock %}

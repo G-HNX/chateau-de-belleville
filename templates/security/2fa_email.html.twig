@@ -30,7 +30,7 @@
                     </p>
                 </div>
 
-                <form method="post" action="{{ checkPathUrl }}" data-turbo="false">
+                <form method="post" action="{{ checkPathUrl ?? path(checkPathRoute) }}" data-turbo="false">
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label for="auth-code">Code de vérification</label>
                         <input type="text" id="auth-code" name="{{ authCodeParameterName }}"

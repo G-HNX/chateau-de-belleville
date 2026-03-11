@@ -37,6 +37,42 @@
     }{% endif %}
 }
 </script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "{{ app.request.schemeAndHttpHost ~ path('app_home') }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Boutique",
+            "item": "{{ app.request.schemeAndHttpHost ~ path('app_shop_index') }}"
+        }{% if wine.category %},
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ wine.category.name }}",
+            "item": "{{ app.request.schemeAndHttpHost ~ path('app_shop_index', {categorie: wine.category.id}) }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "{{ wine.name }}"
+        }{% else %},
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ wine.name }}"
+        }{% endif %}
+    ]
+}
+</script>
 {% endblock %}
 
 {% block header %}
@@ -47,14 +83,14 @@
 {% endblock %}
 
 {% block body %}
-    {# Sur mobile, pousser le toggle sommelier au-dessus du sticky CTA #}
-    {% if wine.available %}
+    {# Sommelier IA — décalage mobile du toggle, à réactiver avec le widget #}
+    {# {% if wine.available %}
     <style>
     @media (max-width: 768px) {
         .sommelier-toggle { bottom: 5.5rem !important; }
     }
     </style>
-    {% endif %}
+    {% endif %} #}
 
     <nav class="breadcrumb" aria-label="Fil d'Ariane">
         <div class="container">
@@ -93,7 +129,7 @@
             <div class="wine-show-image" style="background: var(--color-cream); border-radius: 12px; padding: 2rem; text-align: center;"
                  data-reveal="fade-up">
                 {% if wine.mainImage %}
-                    <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}" style="max-height: 500px; width: auto; object-fit: contain;">
+                    <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}" style="max-height: 500px; width: auto; object-fit: contain;" fetchpriority="high" loading="eager">
                 {% else %}
                     <div style="font-size: 10rem; opacity: 0.3; padding: 4rem;">🍷</div>
                 {% endif %}
@@ -187,13 +223,14 @@
                 {% else %}
                     <p style="color: var(--color-accent); font-weight: 500;">Ce vin est actuellement indisponible.</p>
                 {% endif %}
-                <button type="button"
+                {# Bouton sommelier IA — à réactiver avec le widget #}
+                {# <button type="button"
                         onclick="document.dispatchEvent(new CustomEvent('sommelier:ask', {detail: {message: 'Parlez-moi du {{ wine.name|e('js') }} : accords mets-vins, quand le servir, avec quel plat ?'}}))"
                         style="width: 100%; margin-top: 0.75rem; padding: 0.75rem; border: 1px solid var(--color-gold); background: transparent; color: var(--color-gold); border-radius: 6px; cursor: pointer; font-size: 0.9rem; letter-spacing: 0.5px; transition: background 0.2s, color 0.2s;"
                         onmouseover="this.style.background='var(--color-gold)';this.style.color='white'"
                         onmouseout="this.style.background='transparent';this.style.color='var(--color-gold)'">
                     🍷 Demander au sommelier
-                </button>
+                </button> #}
             </div>
         </div>
     </section>

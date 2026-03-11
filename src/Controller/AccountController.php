@@ -277,6 +277,7 @@ class AccountController extends AbstractController
 
             $newPassword = $form->get('newPassword')->getData();
             $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+            $user->incrementTrustedTokenVersion(); // Invalide tous les cookies "appareil de confiance"
             $em->flush();
 
             // Régénère l'ID de session pour prévenir la fixation de session

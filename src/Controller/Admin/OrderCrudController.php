@@ -21,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,7 +44,7 @@ class OrderCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Commande')
             ->setEntityLabelInPlural('Commandes')
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setSearchFields(['reference', 'customerEmail', 'customerLastName'])
+            ->setSearchFields(['reference', 'customerEmail', 'customerLastName', 'customerFirstName'])
             ->showEntityActionsInlined()
             ->overrideTemplate('crud/detail', 'admin/order_detail.html.twig');
     }
@@ -93,7 +94,8 @@ class OrderCrudController extends AbstractCrudController
     {
         return $filters
             ->add('status')
-            ->add('createdAt');
+            ->add('createdAt')
+            ->add(DateTimeFilter::new('paidAt', 'Payée le'));
     }
 
     public function configureFields(string $pageName): iterable

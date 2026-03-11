@@ -12,16 +12,16 @@
     {# ===== KPIs PRINCIPAUX ===== #}
     <div class="row mb-4">
         <div class="col-sm-6 col-lg-3 mb-3">
-            <div class="card text-bg-primary h-100">
+            <div class="card h-100" style="border-left: 4px solid #5B4638; background: linear-gradient(135deg, #5B4638 0%, #7a5e4d 100%); color: white;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="fs-3 fw-bold">{{ (totalRevenue / 100)|number_format(0, ',', ' ') }} &euro;</div>
-                            <div>Chiffre d'affaires total</div>
+                            <div class="opacity-90">Chiffre d'affaires total</div>
                         </div>
-                        <i class="fa fa-euro-sign fa-2x opacity-50"></i>
+                        <i class="fa fa-euro-sign fa-2x" style="opacity:0.35;"></i>
                     </div>
-                    <small class="mt-2 d-block opacity-75">
+                    <small class="mt-2 d-block" style="opacity:0.75;">
                         Ce mois : {{ (monthRevenue / 100)|number_format(0, ',', ' ') }} &euro;
                     </small>
                 </div>
@@ -49,7 +49,7 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="fs-3 fw-bold">{{ pendingOrders + processingOrders }}</div>
-                            <div>A traiter</div>
+                            <div>&Agrave; traiter</div>
                         </div>
                         <i class="fa fa-clock fa-2x opacity-50"></i>
                     </div>
@@ -112,48 +112,13 @@
     </div>
     {% endif %}
 
-    {# ===== COMMANDES PAR STATUT + CA MENSUEL ===== #}
+    {# ===== GRAPHIQUES : CA MENSUEL + COMMANDES PAR STATUT ===== #}
     <div class="row mb-4">
-        {# Répartition commandes par statut #}
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title mb-0"><i class="fa fa-chart-pie me-2"></i>Commandes par statut</h5>
-                </div>
-                <div class="card-body">
-                    {% set statusConfig = {
-                        'pending': {'label': 'En attente', 'color': 'warning', 'icon': 'clock'},
-                        'paid': {'label': 'Payées', 'color': 'success', 'icon': 'credit-card'},
-                        'processing': {'label': 'En préparation', 'color': 'primary', 'icon': 'box'},
-                        'shipped': {'label': 'Expédiées', 'color': 'info', 'icon': 'truck'},
-                        'delivered': {'label': 'Livrées', 'color': 'secondary', 'icon': 'check-circle'},
-                        'cancelled': {'label': 'Annulées', 'color': 'danger', 'icon': 'times-circle'},
-                        'refunded': {'label': 'Remboursées', 'color': 'dark', 'icon': 'undo'},
-                    } %}
-                    {% for statusValue, config in statusConfig %}
-                        {% set count = ordersByStatus[statusValue] ?? 0 %}
-                        {% if count > 0 %}
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span>
-                                <i class="fa fa-{{ config.icon }} text-{{ config.color }} me-2"></i>
-                                {{ config.label }}
-                            </span>
-                            <span class="badge bg-{{ config.color }}">{{ count }}</span>
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% if ordersByStatus|length == 0 %}
-                        <p class="text-muted mb-0">Aucune commande.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        {# CA mensuel #}
+        {# CA mensuel — barres dégradé château #}
         <div class="col-lg-8 mb-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title mb-0"><i class="fa fa-chart-bar me-2"></i>Chiffre d'affaires mensuel</h5>
+                    <h5 class="card-title mb-0"><i class="fa fa-chart-bar me-2" style="color:#C9A87C;"></i>Chiffre d'affaires mensuel</h5>
                 </div>
                 <div class="card-body">
                     {% if monthlyRevenue|length > 0 %}
@@ -161,15 +126,25 @@
                         {% for m in monthlyRevenue %}
                             {% if m.revenue > maxRevenue %}{% set maxRevenue = m.revenue %}{% endif %}
                         {% endfor %}
-                        <div class="d-flex align-items-end gap-1" style="height: 200px;">
+                        <div class="d-flex align-items-end gap-1" style="height: 180px;">
                             {% for m in monthlyRevenue %}
-                                {% set percentage = (m.revenue / maxRevenue * 100)|round %}
-                                <div class="flex-fill text-center" style="min-width: 0;">
-                                    <div class="small text-muted mb-1" style="font-size: 10px;">{{ (m.revenue / 100)|number_format(0, ',', ' ') }}&euro;</div>
-                                    <div class="bg-primary rounded-top mx-auto" style="height: {{ percentage }}%; min-height: 4px; max-width: 40px; opacity: {{ percentage > 0 ? '0.7' : '0.2' }};"></div>
-                                    <div class="small text-muted mt-1" style="font-size: 10px;">
-                                        {% set parts = m.month|split('-') %}
-                                        {{ parts[1] }}/{{ parts[0][2:] }}
+                                {% set pct = m.revenue > 0 ? (m.revenue / maxRevenue * 100)|round : 0 %}
+                                <div class="flex-fill text-center d-flex flex-column align-items-center justify-content-end" style="min-width:0; height:100%;">
+                                    <div style="font-size:9px; color:#8B7355; margin-bottom:2px; white-space:nowrap;">
+                                        {% if m.revenue > 0 %}{{ (m.revenue / 100)|number_format(0, ',', ' ') }}&euro;{% endif %}
+                                    </div>
+                                    <div title="{{ m.count }} commande{{ m.count > 1 ? 's' : '' }} — {{ (m.revenue / 100)|number_format(2, ',', ' ') }} €"
+                                         style="width:80%; max-width:36px;
+                                                height:{{ pct > 0 ? pct : 0 }}%;
+                                                min-height:{{ m.revenue > 0 ? '6' : '2' }}px;
+                                                background:{{ m.revenue > 0 ? 'linear-gradient(to top,#5B4638,#C9A87C)' : '#e8e3d9' }};
+                                                border-radius:3px 3px 0 0;
+                                                cursor:default;
+                                                transition:opacity .15s;"
+                                         onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+                                    </div>
+                                    <div style="font-size:9px; color:#8B7355; margin-top:3px;">
+                                        {% set parts = m.month|split('-') %}{{ parts[1] }}/{{ parts[0][2:] }}
                                     </div>
                                 </div>
                             {% endfor %}
@@ -180,25 +155,101 @@
                 </div>
             </div>
         </div>
+
+        {# Commandes par statut #}
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fa fa-chart-pie me-2" style="color:#C9A87C;"></i>Commandes par statut</h5>
+                </div>
+                <div class="card-body">
+                    {% set statusConfig = {
+                        'pending':    {'label': 'En attente',     'color': 'warning',   'icon': 'clock'},
+                        'paid':       {'label': 'Payées',         'color': 'success',   'icon': 'credit-card'},
+                        'processing': {'label': 'En préparation', 'color': 'primary',   'icon': 'box'},
+                        'shipped':    {'label': 'Expédiées',      'color': 'info',      'icon': 'truck'},
+                        'delivered':  {'label': 'Livrées',        'color': 'secondary', 'icon': 'check-circle'},
+                        'cancelled':  {'label': 'Annulées',       'color': 'danger',    'icon': 'times-circle'},
+                        'refunded':   {'label': 'Remboursées',    'color': 'dark',      'icon': 'undo'},
+                    } %}
+                    {% set hasOrders = false %}
+                    {% for statusValue, config in statusConfig %}
+                        {% set count = ordersByStatus[statusValue] ?? 0 %}
+                        {% if count > 0 %}
+                            {% set hasOrders = true %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>
+                                    <i class="fa fa-{{ config.icon }} text-{{ config.color }} me-2"></i>{{ config.label }}
+                                </span>
+                                <span class="badge bg-{{ config.color }}">{{ count }}</span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasOrders %}
+                        <p class="text-muted mb-0">Aucune commande.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ===== GRAPHIQUE RÉSERVATIONS MENSUELLES ===== #}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fa fa-calendar-alt me-2" style="color:#C9A87C;"></i>R&eacute;servations de d&eacute;gustation — 12 derniers mois</h5>
+                </div>
+                <div class="card-body">
+                    {% if monthlyReservations|length > 0 %}
+                        {% set maxCount = 1 %}
+                        {% for m in monthlyReservations %}
+                            {% if m.count > maxCount %}{% set maxCount = m.count %}{% endif %}
+                        {% endfor %}
+                        <div class="d-flex align-items-end gap-1" style="height:120px;">
+                            {% for m in monthlyReservations %}
+                                {% set pct = m.count > 0 ? (m.count / maxCount * 100)|round : 0 %}
+                                <div class="flex-fill text-center d-flex flex-column align-items-center justify-content-end" style="min-width:0; height:100%;">
+                                    <div style="font-size:9px; color:#8B7355; margin-bottom:2px;">
+                                        {% if m.count > 0 %}{{ m.count }}{% endif %}
+                                    </div>
+                                    <div title="{{ m.count }} réservation{{ m.count > 1 ? 's' : '' }} — {{ m.participants }} participant{{ m.participants > 1 ? 's' : '' }}"
+                                         style="width:80%; max-width:36px;
+                                                height:{{ pct > 0 ? pct : 0 }}%;
+                                                min-height:{{ m.count > 0 ? '6' : '2' }}px;
+                                                background:{{ m.count > 0 ? 'linear-gradient(to top,#8B7355,#C9A87C)' : '#e8e3d9' }};
+                                                border-radius:3px 3px 0 0;
+                                                cursor:default;
+                                                transition:opacity .15s;"
+                                         onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+                                    </div>
+                                    <div style="font-size:9px; color:#8B7355; margin-top:3px;">
+                                        {% set parts = m.month|split('-') %}{{ parts[1] }}/{{ parts[0][2:] }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Pas de r&eacute;servations sur cette p&eacute;riode.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 
     {# ===== TOP VINS + STOCKS ===== #}
     <div class="row mb-4">
-        {# Top vins vendus #}
         <div class="col-lg-6 mb-4">
             <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fa fa-trophy me-2"></i>Top vins vendus</h5>
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fa fa-trophy me-2" style="color:#C9A87C;"></i>Top vins vendus</h5>
                 </div>
                 <div class="card-body p-0">
                     {% if topWines|length > 0 %}
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Vin</th>
-                                    <th class="text-center">Qt&eacute;</th>
-                                    <th class="text-end">CA</th>
+                                    <th>#</th><th>Vin</th><th class="text-center">Qt&eacute;</th><th class="text-end">CA</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -207,14 +258,9 @@
                                         <td>
                                             {% if loop.index <= 3 %}
                                                 <span class="badge bg-{{ loop.index == 1 ? 'warning' : (loop.index == 2 ? 'secondary' : 'dark') }}">{{ loop.index }}</span>
-                                            {% else %}
-                                                <span class="text-muted">{{ loop.index }}</span>
-                                            {% endif %}
+                                            {% else %}<span class="text-muted">{{ loop.index }}</span>{% endif %}
                                         </td>
-                                        <td>
-                                            <strong>{{ wine.wineName }}</strong>
-                                            {% if wine.wineVintage %}<small class="text-muted">{{ wine.wineVintage }}</small>{% endif %}
-                                        </td>
+                                        <td><strong>{{ wine.wineName }}</strong>{% if wine.wineVintage %} <small class="text-muted">{{ wine.wineVintage }}</small>{% endif %}</td>
                                         <td class="text-center">{{ wine.totalQuantity }} bout.</td>
                                         <td class="text-end">{{ (wine.totalRevenue / 100)|number_format(2, ',', ' ') }} &euro;</td>
                                     </tr>
@@ -228,48 +274,34 @@
             </div>
         </div>
 
-        {# Alertes stock #}
         <div class="col-lg-6 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fa fa-warehouse me-2"></i>Stock &amp; inventaire</h5>
+                    <h5 class="card-title mb-0"><i class="fa fa-warehouse me-2" style="color:#C9A87C;"></i>Stock &amp; inventaire</h5>
                     <span class="badge bg-secondary">Valeur : {{ (totalStockValue / 100)|number_format(0, ',', ' ') }} &euro;</span>
                 </div>
                 <div class="card-body p-0">
                     {% if lowStockWines|length > 0 %}
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr>
-                                    <th>Vin</th>
-                                    <th class="text-center">Stock</th>
-                                    <th class="text-end">Statut</th>
-                                </tr>
+                                <tr><th>Vin</th><th class="text-center">Stock</th><th class="text-end">Statut</th></tr>
                             </thead>
                             <tbody>
                                 {% for wine in lowStockWines %}
                                     <tr>
-                                        <td>
-                                            <strong>{{ wine.name }}</strong>
-                                            {% if wine.vintage %}<small class="text-muted">{{ wine.vintage }}</small>{% endif %}
-                                        </td>
+                                        <td><strong>{{ wine.name }}</strong>{% if wine.vintage %} <small class="text-muted">{{ wine.vintage }}</small>{% endif %}</td>
                                         <td class="text-center">{{ wine.stock }}</td>
                                         <td class="text-end">
-                                            {% if wine.stock == 0 %}
-                                                <span class="badge bg-danger">Rupture</span>
-                                            {% elseif wine.stock <= 5 %}
-                                                <span class="badge bg-warning text-dark">Critique</span>
-                                            {% else %}
-                                                <span class="badge bg-info">Bas</span>
-                                            {% endif %}
+                                            {% if wine.stock == 0 %}<span class="badge bg-danger">Rupture</span>
+                                            {% elseif wine.stock <= 5 %}<span class="badge bg-warning text-dark">Critique</span>
+                                            {% else %}<span class="badge bg-info">Bas</span>{% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     {% else %}
-                        <div class="p-3">
-                            <p class="text-success mb-0"><i class="fa fa-check-circle me-1"></i>Tous les stocks sont OK.</p>
-                        </div>
+                        <div class="p-3"><p class="text-success mb-0"><i class="fa fa-check-circle me-1"></i>Tous les stocks sont OK.</p></div>
                     {% endif %}
                 </div>
             </div>
@@ -278,11 +310,10 @@
 
     {# ===== DÉGUSTATIONS + RÉSERVATIONS ===== #}
     <div class="row mb-4">
-        {# Dégustations les plus demandées #}
         <div class="col-lg-5 mb-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title mb-0"><i class="fa fa-glass-cheers me-2"></i>D&eacute;gustations populaires</h5>
+                    <h5 class="card-title mb-0"><i class="fa fa-glass-cheers me-2" style="color:#C9A87C;"></i>D&eacute;gustations populaires</h5>
                 </div>
                 <div class="card-body">
                     {% if popularTastings|length > 0 %}
@@ -292,7 +323,7 @@
                                     <strong>{{ tasting.tastingName }}</strong>
                                     <div class="small text-muted">{{ tasting.totalParticipants }} participant{{ tasting.totalParticipants > 1 ? 's' : '' }}</div>
                                 </div>
-                                <span class="badge bg-primary fs-6">{{ tasting.reservationCount }}</span>
+                                <span class="badge fs-6" style="background:#5B4638;">{{ tasting.reservationCount }}</span>
                             </div>
                             {% if not loop.last %}<hr class="my-2">{% endif %}
                         {% endfor %}
@@ -303,32 +334,22 @@
             </div>
         </div>
 
-        {# Prochaines réservations #}
         <div class="col-lg-7 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fa fa-calendar-alt me-2"></i>Prochaines r&eacute;servations</h5>
+                    <h5 class="card-title mb-0"><i class="fa fa-calendar-check me-2" style="color:#C9A87C;"></i>Prochaines r&eacute;servations</h5>
                     <a href="{{ ea_url().setController('App\\Controller\\Admin\\ReservationCrudController').setAction('index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
                 </div>
                 <div class="card-body p-0">
                     {% if upcomingReservations|length > 0 %}
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Formule</th>
-                                    <th>Client</th>
-                                    <th class="text-center">Pers.</th>
-                                    <th>Statut</th>
-                                </tr>
+                                <tr><th>Date</th><th>Formule</th><th>Client</th><th class="text-center">Pers.</th><th>Statut</th></tr>
                             </thead>
                             <tbody>
                                 {% for reservation in upcomingReservations %}
                                     <tr>
-                                        <td>
-                                            <strong>{{ reservation.slot.date|date('d/m') }}</strong>
-                                            <small class="text-muted">{{ reservation.slot.startTime|date('H:i') }}</small>
-                                        </td>
+                                        <td><strong>{{ reservation.slot.date|date('d/m') }}</strong> <small class="text-muted">{{ reservation.slot.startTime|date('H:i') }}</small></td>
                                         <td>{{ reservation.slot.tasting.name }}</td>
                                         <td>{{ reservation.fullName }}</td>
                                         <td class="text-center">{{ reservation.numberOfParticipants }}</td>
@@ -351,24 +372,17 @@
 
     {# ===== DERNIÈRES COMMANDES + AVIS ===== #}
     <div class="row">
-        {# Recent Orders #}
         <div class="col-lg-7 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fa fa-receipt me-2"></i>Derni&egrave;res commandes</h5>
+                    <h5 class="card-title mb-0"><i class="fa fa-receipt me-2" style="color:#C9A87C;"></i>Derni&egrave;res commandes</h5>
                     <a href="{{ ea_url().setController('App\\Controller\\Admin\\OrderCrudController').setAction('index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
                 </div>
                 <div class="card-body p-0">
                     {% if recentOrders|length > 0 %}
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr>
-                                    <th>R&eacute;f&eacute;rence</th>
-                                    <th>Client</th>
-                                    <th>Statut</th>
-                                    <th class="text-end">Total</th>
-                                    <th>Date</th>
-                                </tr>
+                                <tr><th>R&eacute;f.</th><th>Client</th><th>Statut</th><th class="text-end">Total</th><th>Date</th></tr>
                             </thead>
                             <tbody>
                                 {% for order in recentOrders %}
@@ -376,15 +390,7 @@
                                         <td><strong>{{ order.reference }}</strong></td>
                                         <td>{{ order.customerFullName ?: order.customerEmail }}</td>
                                         <td>
-                                            <span class="badge bg-{{ {
-                                                'pending': 'warning',
-                                                'paid': 'success',
-                                                'processing': 'primary',
-                                                'shipped': 'info',
-                                                'delivered': 'secondary',
-                                                'cancelled': 'danger',
-                                                'refunded': 'dark',
-                                            }[order.status.value] ?? 'secondary' }}">{{ order.status.label }}</span>
+                                            <span class="badge bg-{{ {'pending':'warning','paid':'success','processing':'primary','shipped':'info','delivered':'secondary','cancelled':'danger','refunded':'dark'}[order.status.value] ?? 'secondary' }}">{{ order.status.label }}</span>
                                         </td>
                                         <td class="text-end">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} &euro;</td>
                                         <td>{{ order.createdAt|date('d/m/Y') }}</td>
@@ -399,32 +405,23 @@
             </div>
         </div>
 
-        {# Pending Reviews #}
         <div class="col-lg-5 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fa fa-star me-2"></i>Avis en attente</h5>
+                    <h5 class="card-title mb-0"><i class="fa fa-star me-2" style="color:#C9A87C;"></i>Avis en attente</h5>
                     <a href="{{ ea_url().setController('App\\Controller\\Admin\\ReviewCrudController').setAction('index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
                 </div>
                 <div class="card-body p-0">
                     {% if recentReviews|length > 0 %}
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr>
-                                    <th>Vin</th>
-                                    <th>Note</th>
-                                    <th>Date</th>
-                                </tr>
+                                <tr><th>Vin</th><th>Note</th><th>Date</th></tr>
                             </thead>
                             <tbody>
                                 {% for review in recentReviews %}
                                     <tr>
                                         <td>{{ review.wine }}</td>
-                                        <td>
-                                            <span class="text-warning">
-                                                {% for i in 1..5 %}{{ i <= review.rating ? '&#9733;' : '&#9734;' }}{% endfor %}
-                                            </span>
-                                        </td>
+                                        <td><span style="color:#C9A87C;">{% for i in 1..5 %}{{ i <= review.rating ? '&#9733;' : '&#9734;' }}{% endfor %}</span></td>
                                         <td>{{ review.createdAt|date('d/m/Y') }}</td>
                                     </tr>
                                 {% endfor %}

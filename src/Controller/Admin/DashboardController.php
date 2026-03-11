@@ -69,6 +69,9 @@ class DashboardController extends AbstractDashboardController
         // --- CA mensuel (12 derniers mois) ---
         $monthlyRevenue = $orderRepo->getMonthlyRevenue(12);
 
+        // --- Réservations mensuelles (12 derniers mois) ---
+        $monthlyReservations = $reservationRepo->getMonthlyCount(12);
+
         // --- Top vins vendus ---
         $topWines = $orderItemRepo->getTopSellingWines(10);
 
@@ -127,6 +130,7 @@ class DashboardController extends AbstractDashboardController
             'averageOrder' => $averageOrder,
             'ordersByStatus' => $ordersByStatus,
             'monthlyRevenue' => $monthlyRevenue,
+            'monthlyReservations' => $monthlyReservations,
             'topWines' => $topWines,
             'lowStockWines' => $lowStockWines,
             'outOfStockCount' => $outOfStockCount,
@@ -152,12 +156,33 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        // Compteurs pour les badges (requêtes légères COUNT)
+        $orderRepo = $this->em->getRepository(Order::class);
+        $reviewRepo = $this->em->getRepository(Review::class);
+        $reservationRepo = $this->em->getRepository(Reservation::class);
+
+        $ordersBadge = $orderRepo->count(['status' => OrderStatus::PENDING])
+            + $orderRepo->count(['status' => OrderStatus::PROCESSING]);
+        $reviewsBadge = $reviewRepo->count(['isApproved' => false]);
+        $reservationsBadge = $reservationRepo->count(['status' => ReservationStatus::PENDING]);
+
         yield MenuItem::linkToDashboard('Tableau de bord', 'fa fa-home');
 
         yield MenuItem::section('Boutique');
-        yield MenuItem::linkToCrud('Commandes', 'fa fa-shopping-cart', Order::class);
+
+        $ordersItem = MenuItem::linkToCrud('Commandes', 'fa fa-shopping-cart', Order::class);
+        if ($ordersBadge > 0) {
+            $ordersItem->setBadge($ordersBadge, 'danger');
+        }
+        yield $ordersItem;
+
         yield MenuItem::linkToUrl('Export CSV', 'fa fa-download', '/admin/orders/export.csv');
-        yield MenuItem::linkToCrud('Avis clients', 'fa fa-star', Review::class);
+
+        $reviewsItem = MenuItem::linkToCrud('Avis clients', 'fa fa-star', Review::class);
+        if ($reviewsBadge > 0) {
+            $reviewsItem->setBadge($reviewsBadge, 'warning');
+        }
+        yield $reviewsItem;
 
         yield MenuItem::section('Catalogue');
         yield MenuItem::linkToCrud('Vins', 'fa fa-wine-glass', Wine::class);
@@ -170,7 +195,12 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Dégustations');
         yield MenuItem::linkToCrud('Formules', 'fa fa-glass-cheers', Tasting::class);
         yield MenuItem::linkToCrud('Créneaux', 'fa fa-clock', TastingSlot::class);
-        yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar-check', Reservation::class);
+
+        $reservationsItem = MenuItem::linkToCrud('Réservations', 'fa fa-calendar-check', Reservation::class);
+        if ($reservationsBadge > 0) {
+            $reservationsItem->setBadge($reservationsBadge, 'warning');
+        }
+        yield $reservationsItem;
 
         yield MenuItem::section('Contenu du site');
         yield MenuItem::linkToCrud('Actualités', 'fa fa-newspaper', NewsArticle::class);

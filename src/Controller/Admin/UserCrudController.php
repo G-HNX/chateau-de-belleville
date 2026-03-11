@@ -30,7 +30,7 @@ class UserCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Utilisateur')
             ->setEntityLabelInPlural('Utilisateurs')
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setSearchFields(['email', 'firstName', 'lastName']);
+            ->setSearchFields(['email', 'firstName', 'lastName', 'phone']);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -43,7 +43,10 @@ class UserCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add('isVerified');
+            ->add('isVerified')
+            ->add('newsletterOptIn')
+            ->add('twoFactorEnabled')
+            ->add('createdAt');
     }
 
     public function configureFields(string $pageName): iterable

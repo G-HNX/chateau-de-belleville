@@ -32,6 +32,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     {% endblock %}
+    {% block preload %}{% endblock %}
     <style>
         /* Dropdown "Le Domaine"
            align-self: stretch hérité de .nav-links { align-items: stretch } dans app.css */
@@ -348,8 +349,8 @@
         </div>
     </footer>
 
-    {# Sommelier IA Widget #}
-    {% include '_sommelier.html.twig' %}
+    {# Sommelier IA Widget — désactivé temporairement, à réactiver lors de l'intégration de l'IA #}
+    {# {% include '_sommelier.html.twig' %} #}
 
     {# Bannière consentement cookies + vérification âge (RGPD) #}
     <div data-controller="cookie-consent">

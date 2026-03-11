@@ -12,12 +12,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 
 class WineCrudController extends AbstractCrudController
 {
@@ -32,7 +34,7 @@ class WineCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Vin')
             ->setEntityLabelInPlural('Vins')
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setSearchFields(['name', 'slug', 'appellation.name']);
+            ->setSearchFields(['name', 'slug', 'appellation.name', 'vintage', 'shortDescription']);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -44,36 +46,46 @@ class WineCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
+            ->add('appellation')
             ->add('category')
+            ->add(NumericFilter::new('vintage', 'Millésime'))
+            ->add(NumericFilter::new('stock', 'Stock'))
             ->add('isActive')
             ->add('isFeatured');
     }
 
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addPanel('Identification');
         yield TextField::new('name', 'Nom');
         yield SlugField::new('slug', 'Slug')
             ->setTargetFieldName('name')
             ->hideOnIndex();
         yield IntegerField::new('vintage', 'Millésime');
-        yield MoneyField::new('priceInCents', 'Prix')
-            ->setCurrency('EUR')
-            ->setStoredAsCents(true);
-        yield IntegerField::new('stock', 'Stock');
         yield AssociationField::new('category', 'Catégorie');
         yield AssociationField::new('appellation', 'Appellation');
         yield AssociationField::new('grapeVarieties', 'Cépages')
             ->hideOnIndex();
         yield AssociationField::new('foodPairings', 'Accords mets-vins')
             ->hideOnIndex();
-        yield NumberField::new('alcoholDegree', 'Degré')
-            ->hideOnIndex();
-        yield TextField::new('servingTemperature', 'Température')
-            ->hideOnIndex();
-        yield TextField::new('agingPotential', 'Garde')
-            ->hideOnIndex();
+
+        yield FormField::addPanel('Prix & stock');
+        yield MoneyField::new('priceInCents', 'Prix')
+            ->setCurrency('EUR')
+            ->setStoredAsCents(true);
+        yield IntegerField::new('stock', 'Stock');
         yield IntegerField::new('volumeCl', 'Volume (cl)')
             ->hideOnIndex();
+
+        yield FormField::addPanel('Caractéristiques');
+        yield NumberField::new('alcoholDegree', 'Degré')
+            ->hideOnIndex();
+        yield TextField::new('servingTemperature', 'Température de service')
+            ->hideOnIndex();
+        yield TextField::new('agingPotential', 'Potentiel de garde')
+            ->hideOnIndex();
+
+        yield FormField::addPanel('Descriptions');
         yield TextareaField::new('shortDescription', 'Description courte')
             ->hideOnIndex();
         yield TextareaField::new('description', 'Description')
@@ -82,6 +94,8 @@ class WineCrudController extends AbstractCrudController
             ->hideOnIndex();
         yield TextareaField::new('terroir', 'Terroir')
             ->hideOnIndex();
+
+        yield FormField::addPanel('Publication');
         yield BooleanField::new('isActive', 'Actif');
         yield BooleanField::new('isFeatured', 'Mis en avant');
         yield NumberField::new('averageRating', 'Note moyenne')
