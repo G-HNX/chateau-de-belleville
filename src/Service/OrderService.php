@@ -103,7 +103,8 @@ class OrderService
             'items_count'    => $order->getItems()->count(),
         ]);
 
-        $this->emailService->sendOrderConfirmation($order);
+        // L'email de confirmation est envoyé par le WebhookController
+        // après réception du paiement Stripe (sendPaymentConfirmation)
 
         return $order;
     }

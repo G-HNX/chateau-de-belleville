@@ -34,9 +34,10 @@ class SecurityAuditSubscriber implements EventSubscriberInterface
         $ip = $request?->getClientIp() ?? 'unknown';
         $email = $event->getRequest()->request->get('email', 'unknown');
 
+        $maskedEmail = strlen($email) > 3 ? substr($email, 0, 3) . '***' : '***';
         $this->logger->warning('Échec de connexion.', [
             'ip' => $ip,
-            'email' => $email,
+            'email' => $maskedEmail,
         ]);
     }
 

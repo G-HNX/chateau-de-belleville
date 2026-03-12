@@ -20,12 +20,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class ReviewCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {}
 
     public static function getEntityFqcn(): string
@@ -45,12 +48,22 @@ class ReviewCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $approveAction = Action::new('approveReview', 'Approuver', 'fa fa-check')
-            ->linkToCrudAction('approveReview')
+            ->linkToUrl(fn (Review $r) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('approveReview')
+                ->setEntityId($r->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_review_action')->getValue())
+                ->generateUrl())
             ->displayIf(fn (Review $r) => !$r->isApproved())
             ->setCssClass('text-success');
 
         $rejectAction = Action::new('rejectReview', 'Rejeter', 'fa fa-times')
-            ->linkToCrudAction('rejectReview')
+            ->linkToUrl(fn (Review $r) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('rejectReview')
+                ->setEntityId($r->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_review_action')->getValue())
+                ->generateUrl())
             ->displayIf(fn (Review $r) => $r->isApproved())
             ->setCssClass('text-danger');
 
@@ -91,6 +104,12 @@ class ReviewCrudController extends AbstractCrudController
 
     public function approveReview(AdminContext $context): Response
     {
+        $request = $context->getRequest();
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('admin_review_action', $request->query->get('token', '')))) {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+            return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+        }
+
         /** @var Review $review */
         $review = $context->getEntity()->getInstance();
         $review->setIsApproved(true);
@@ -106,6 +125,12 @@ class ReviewCrudController extends AbstractCrudController
 
     public function rejectReview(AdminContext $context): Response
     {
+        $request = $context->getRequest();
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('admin_review_action', $request->query->get('token', '')))) {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+            return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+        }
+
         /** @var Review $review */
         $review = $context->getEntity()->getInstance();
         $review->setIsApproved(false);

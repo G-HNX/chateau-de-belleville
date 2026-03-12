@@ -24,6 +24,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class OrderCrudController extends AbstractCrudController
 {
@@ -31,6 +33,7 @@ class OrderCrudController extends AbstractCrudController
         private readonly EntityManagerInterface $em,
         private readonly EmailService $emailService,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {}
 
     public static function getEntityFqcn(): string
@@ -62,19 +65,39 @@ class OrderCrudController extends AbstractCrudController
             ->displayAsLink();
 
         $markProcessing = Action::new('markProcessing', 'En préparation', 'fa fa-box')
-            ->linkToCrudAction('markAsProcessing')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('markAsProcessing')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
             ->displayIf(fn (Order $o) => $o->getStatus() === OrderStatus::PAID);
 
         $markShipped = Action::new('markShipped', 'Marquer expédiée', 'fa fa-truck')
-            ->linkToCrudAction('markAsShipped')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('markAsShipped')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
             ->displayIf(fn (Order $o) => $o->getStatus() === OrderStatus::PROCESSING);
 
         $markDelivered = Action::new('markDelivered', 'Marquer livrée', 'fa fa-check-circle')
-            ->linkToCrudAction('markAsDelivered')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('markAsDelivered')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
             ->displayIf(fn (Order $o) => $o->getStatus() === OrderStatus::SHIPPED);
 
         $cancelOrder = Action::new('cancelOrder', 'Annuler', 'fa fa-times')
-            ->linkToCrudAction('cancelOrder')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('cancelOrder')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
             ->displayIf(fn (Order $o) => $o->canBeCancelled())
             ->setCssClass('text-danger');
 
@@ -159,8 +182,23 @@ class OrderCrudController extends AbstractCrudController
             ->onlyOnDetail();
     }
 
+    private function validateCsrfOrRedirect(AdminContext $context, ?int $entityId = null): ?Response
+    {
+        $token = $context->getRequest()->query->get('token', '');
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('admin_order_action', $token))) {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+            $url = $this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl();
+            return $this->redirect($url);
+        }
+        return null;
+    }
+
     public function markAsProcessing(AdminContext $context): Response
     {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
         if ($order->getStatus() !== OrderStatus::PAID) {
@@ -186,6 +224,10 @@ class OrderCrudController extends AbstractCrudController
 
     public function markAsShipped(AdminContext $context): Response
     {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
         if ($order->getStatus() !== OrderStatus::PROCESSING) {
@@ -226,6 +268,10 @@ class OrderCrudController extends AbstractCrudController
 
     public function markAsDelivered(AdminContext $context): Response
     {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
         if ($order->getStatus() !== OrderStatus::SHIPPED) {
@@ -251,6 +297,10 @@ class OrderCrudController extends AbstractCrudController
 
     public function cancelOrder(AdminContext $context): Response
     {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
         /** @var Order $order */
         $order = $context->getEntity()->getInstance();
         if (!$order->canBeCancelled()) {

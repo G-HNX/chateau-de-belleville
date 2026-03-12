@@ -152,7 +152,7 @@ class NewsletterCrudController extends AbstractCrudController
         $failCount = 0;
         foreach ($allRecipients as $recipient) {
             $email = (new TemplatedEmail())
-                ->from('chateaudebelleville@gmail.com')
+                ->from(new \Symfony\Component\Mime\Address('noreply@chateaudebelleville.fr', 'Château de Belleville'))
                 ->to($recipient['email'])
                 ->subject($newsletter->getSubject())
                 ->htmlTemplate('email/newsletter.html.twig')

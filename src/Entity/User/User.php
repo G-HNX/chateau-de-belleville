@@ -75,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column]
     private bool $twoFactorEnabled = false;
 
-    #[ORMColumn]
+    #[ORM\Column]
     private int $trustedTokenVersion = 0;
 
     /** @var Collection<int, Address> */

@@ -320,13 +320,13 @@
                                   data-controller="cart-add" data-action="submit->cart-add#add"
                                   class="shop-card-form">
                                 <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
-                                <div class="shop-qty-wrap">
+                                <div class="shop-qty-wrap" data-controller="quantity">
                                     <button type="button" class="shop-qty-btn" aria-label="Diminuer la quantité"
-                                            onclick="var i=this.nextElementSibling; i.value=Math.max(1,parseInt(i.value)-1)">−</button>
+                                            data-action="click->quantity#decrement">−</button>
                                     <input type="number" name="quantity" value="1"
-                                           min="1" max="{{ wine.stock }}" class="shop-qty-input" aria-label="Quantité">
+                                           min="1" max="{{ wine.stock }}" class="shop-qty-input" aria-label="Quantité" data-quantity-target="input">
                                     <button type="button" class="shop-qty-btn" aria-label="Augmenter la quantité"
-                                            onclick="var i=this.previousElementSibling; i.value=Math.min({{ wine.stock }},parseInt(i.value)+1)">+</button>
+                                            data-action="click->quantity#increment">+</button>
                                 </div>
                                 <button type="submit" class="shop-add-btn" data-cart-add-target="button">
                                     Ajouter au panier

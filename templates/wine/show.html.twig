@@ -213,10 +213,10 @@
                     <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" class="wine-add-form"
                           data-controller="cart-add" data-action="submit->cart-add#add">
                         <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
-                        <div class="quantity-selector">
-                            <button type="button" class="quantity-btn" onclick="this.nextElementSibling.stepDown()">-</button>
-                            <input type="number" name="quantity" class="quantity-input" value="1" min="1" max="{{ wine.stock }}">
-                            <button type="button" class="quantity-btn" onclick="this.previousElementSibling.stepUp()">+</button>
+                        <div class="quantity-selector" data-controller="quantity">
+                            <button type="button" class="quantity-btn" data-action="click->quantity#decrement">-</button>
+                            <input type="number" name="quantity" class="quantity-input" value="1" min="1" max="{{ wine.stock }}" data-quantity-target="input">
+                            <button type="button" class="quantity-btn" data-action="click->quantity#increment">+</button>
                         </div>
                         <button type="submit" class="btn btn-primary" style="flex: 1;" data-cart-add-target="button">Ajouter au panier</button>
                     </form>
@@ -225,10 +225,10 @@
                 {% endif %}
                 {# Bouton sommelier IA — à réactiver avec le widget #}
                 {# <button type="button"
-                        onclick="document.dispatchEvent(new CustomEvent('sommelier:ask', {detail: {message: 'Parlez-moi du {{ wine.name|e('js') }} : accords mets-vins, quand le servir, avec quel plat ?'}}))"
-                        style="width: 100%; margin-top: 0.75rem; padding: 0.75rem; border: 1px solid var(--color-gold); background: transparent; color: var(--color-gold); border-radius: 6px; cursor: pointer; font-size: 0.9rem; letter-spacing: 0.5px; transition: background 0.2s, color 0.2s;"
-                        onmouseover="this.style.background='var(--color-gold)';this.style.color='white'"
-                        onmouseout="this.style.background='transparent';this.style.color='var(--color-gold)'">
+                        data-action="click->sommelier#ask"
+                        data-sommelier-message-param="Parlez-moi du {{ wine.name|e('js') }} : accords mets-vins, quand le servir, avec quel plat ?"
+                        class="hover-sommelier-btn"
+                        style="width: 100%; margin-top: 0.75rem; padding: 0.75rem; border: 1px solid var(--color-gold); background: transparent; color: var(--color-gold); border-radius: 6px; cursor: pointer; font-size: 0.9rem; letter-spacing: 0.5px;">
                     🍷 Demander au sommelier
                 </button> #}
             </div>

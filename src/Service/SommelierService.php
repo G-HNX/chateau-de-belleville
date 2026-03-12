@@ -102,20 +102,7 @@ PROMPT;
             $grapes = $wine->getGrapeVarietiesAsString();
             $pairings = $wine->getFoodPairings()->isEmpty() ? 'Non précisé' : $wine->getFoodPairingsAsString();
             $tastingNotes = $wine->getTastingNotes();
-            $notesStr = '';
-            if ($tastingNotes) {
-                $parts = [];
-                if (!empty($tastingNotes['nose'])) {
-                    $parts[] = 'Nez: ' . $tastingNotes['nose'];
-                }
-                if (!empty($tastingNotes['palate'])) {
-                    $parts[] = 'Bouche: ' . $tastingNotes['palate'];
-                }
-                if (!empty($tastingNotes['visual'])) {
-                    $parts[] = 'Visuel: ' . $tastingNotes['visual'];
-                }
-                $notesStr = implode(' | ', $parts);
-            }
+            $notesStr = $tastingNotes ? 'Notes: ' . $tastingNotes : '';
 
             $line = sprintf(
                 '- %s (%s%s) : %.2f€ | Cépages: %s | Accords: %s | %s°, servir à %s | Stock: %d%s',

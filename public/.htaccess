@@ -43,8 +43,8 @@ Options -Indexes
     # Interdire l'acces aux API sensibles du navigateur
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 
-    # Forcer HTTPS (decommenter une fois le certificat SSL actif)
-    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    # Forcer HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 </IfModule>
 
 # ==============================================================

@@ -84,7 +84,7 @@
 
                     {% if recentOrders|length > 0 %}
                         {% for order in recentOrders|slice(0, 3) %}
-                            <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" class="account-order-row" onmouseover="this.style.background='var(--color-cream)'" onmouseout="this.style.background='transparent'">
+                            <a href="{{ path('app_account_order_show', {reference: order.reference}) }}" class="account-order-row hover-bg-cream">
                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                     <div style="width: 38px; height: 38px; background: var(--color-cream); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>

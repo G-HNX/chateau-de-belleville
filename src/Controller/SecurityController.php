@@ -63,7 +63,7 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $limiter = $registrationLimiter->create($request->getClientIp());
+            $limiter = $registrationLimiter->create($request->getClientIp() ?? '0.0.0.0');
             if (!$limiter->consume(1)->isAccepted()) {
                 $this->addFlash('error', 'Trop de tentatives d\'inscription. Veuillez patienter avant de réessayer.');
 

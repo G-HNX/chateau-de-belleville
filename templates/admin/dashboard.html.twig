@@ -134,14 +134,13 @@
                                         {% if m.revenue > 0 %}{{ (m.revenue / 100)|number_format(0, ',', ' ') }}&euro;{% endif %}
                                     </div>
                                     <div title="{{ m.count }} commande{{ m.count > 1 ? 's' : '' }} — {{ (m.revenue / 100)|number_format(2, ',', ' ') }} €"
+                                         class="hover-opacity-bar"
                                          style="width:80%; max-width:36px;
                                                 height:{{ pct > 0 ? pct : 0 }}%;
                                                 min-height:{{ m.revenue > 0 ? '6' : '2' }}px;
                                                 background:{{ m.revenue > 0 ? 'linear-gradient(to top,#5B4638,#C9A87C)' : '#e8e3d9' }};
                                                 border-radius:3px 3px 0 0;
-                                                cursor:default;
-                                                transition:opacity .15s;"
-                                         onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+                                                cursor:default;"
                                     </div>
                                     <div style="font-size:9px; color:#8B7355; margin-top:3px;">
                                         {% set parts = m.month|split('-') %}{{ parts[1] }}/{{ parts[0][2:] }}
@@ -214,14 +213,13 @@
                                         {% if m.count > 0 %}{{ m.count }}{% endif %}
                                     </div>
                                     <div title="{{ m.count }} réservation{{ m.count > 1 ? 's' : '' }} — {{ m.participants }} participant{{ m.participants > 1 ? 's' : '' }}"
+                                         class="hover-opacity-bar"
                                          style="width:80%; max-width:36px;
                                                 height:{{ pct > 0 ? pct : 0 }}%;
                                                 min-height:{{ m.count > 0 ? '6' : '2' }}px;
                                                 background:{{ m.count > 0 ? 'linear-gradient(to top,#8B7355,#C9A87C)' : '#e8e3d9' }};
                                                 border-radius:3px 3px 0 0;
-                                                cursor:default;
-                                                transition:opacity .15s;"
-                                         onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+                                                cursor:default;"
                                     </div>
                                     <div style="font-size:9px; color:#8B7355; margin-top:3px;">
                                         {% set parts = m.month|split('-') %}{{ parts[1] }}/{{ parts[0][2:] }}

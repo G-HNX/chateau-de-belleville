@@ -79,7 +79,7 @@
                         <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">Continuer mes achats</a>
                         <form action="{{ path('app_cart_clear') }}" method="post">
                             <input type="hidden" name="_token" value="{{ csrf_token('cart_clear') }}">
-                            <button type="submit" class="btn btn-outline" onclick="return confirm('Vider tout le panier ?')">Vider le panier</button>
+                            <button type="submit" class="btn btn-outline" data-turbo-confirm="Vider tout le panier ?">Vider le panier</button>
                         </form>
                     </div>
                     <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; min-width: min(350px, 100%);" data-reveal="fade-up">

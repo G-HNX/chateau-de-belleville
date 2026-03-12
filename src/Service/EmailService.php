@@ -14,7 +14,7 @@ use Symfony\Component\Mime\Address;
 
 class EmailService
 {
-    private const FROM_EMAIL = 'chateaudebelleville@gmail.com';
+    private const FROM_EMAIL = 'noreply@chateaudebelleville.fr';
     private const FROM_NAME = 'Château de Belleville';
 
     public function __construct(

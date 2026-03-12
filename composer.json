@@ -39,7 +39,7 @@
         "symfony/uid": "^7.2",
         "symfony/ux-live-component": "^2.22",
         "symfony/ux-turbo": "^2.22",
-        "symfony/ux-twig-component": "*",
+        "symfony/ux-twig-component": "^2.22",
         "symfony/validator": "^7.2",
         "symfony/yaml": "^7.2",
         "symfonycasts/reset-password-bundle": "^1.24",

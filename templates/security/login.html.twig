@@ -9,8 +9,9 @@
     </header>
 {% endblock %}
 
+{% block turbo_cache %}<meta name="turbo-cache-control" content="no-cache">{% endblock %}
+
 {% block body %}
-    <meta name="turbo-cache-control" content="no-cache">
     <section class="section section-white">
         <div class="container" style="max-width: 500px;">
             <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);" data-reveal="fade-up">

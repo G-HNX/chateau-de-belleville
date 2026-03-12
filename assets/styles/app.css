@@ -3535,3 +3535,48 @@ body {
         padding: 1.5rem 1rem;
     }
 }
+
+/* ============================================
+   Hover utility classes (replacing inline handlers)
+   ============================================ */
+.hover-scale-img {
+    transition: transform 0.4s ease;
+}
+.hover-scale-img:hover {
+    transform: scale(1.04);
+}
+
+.hover-opacity-bar {
+    transition: opacity 0.15s;
+}
+.hover-opacity-bar:hover {
+    opacity: 0.7;
+}
+
+.hover-bg-cream {
+    transition: background 0.15s;
+}
+.hover-bg-cream:hover {
+    background: var(--color-cream);
+}
+
+.hover-bg-rose {
+    transition: background 0.15s;
+}
+.hover-bg-rose:hover {
+    background: #FFF5F5;
+}
+
+.hover-newsletter-unsub {
+    transition: background 0.2s, color 0.2s;
+}
+.hover-newsletter-unsub:hover {
+    background: #FFF5F5;
+}
+
+.hover-newsletter-sub {
+    transition: background 0.2s;
+}
+.hover-newsletter-sub:hover {
+    background: var(--color-secondary);
+}

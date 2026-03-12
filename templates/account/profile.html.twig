@@ -68,7 +68,7 @@
                                 <form action="{{ path('app_account_newsletter_toggle') }}" method="POST" style="flex-shrink: 0;">
                                     <input type="hidden" name="_token" value="{{ csrf_token('newsletter_toggle') }}">
                                     {% if user.newsletterOptIn %}
-                                        <button type="submit" style="
+                                        <button type="submit" class="hover-newsletter-unsub" style="
                                             padding: 0.65rem 1.4rem;
                                             background: transparent;
                                             color: #C62828;
@@ -78,14 +78,11 @@
                                             font-size: 0.8rem;
                                             letter-spacing: 0.04em;
                                             cursor: pointer;
-                                            transition: background 0.2s, color 0.2s;
-                                        "
-                                        onmouseover="this.style.background='#FFF5F5'"
-                                        onmouseout="this.style.background='transparent'">
+                                        ">
                                             Se désinscrire
                                         </button>
                                     {% else %}
-                                        <button type="submit" style="
+                                        <button type="submit" class="hover-newsletter-sub" style="
                                             padding: 0.65rem 1.4rem;
                                             background: var(--color-primary);
                                             color: white;
@@ -95,10 +92,7 @@
                                             font-size: 0.8rem;
                                             letter-spacing: 0.04em;
                                             cursor: pointer;
-                                            transition: background 0.2s;
-                                        "
-                                        onmouseover="this.style.background='var(--color-secondary)'"
-                                        onmouseout="this.style.background='var(--color-primary)'">
+                                        ">
                                             S'inscrire à la newsletter
                                         </button>
                                     {% endif %}

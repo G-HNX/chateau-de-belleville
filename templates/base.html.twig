@@ -13,7 +13,7 @@
     <meta property="og:title" content="{% block og_title %}{{ block('title') }}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}{{ block('meta_description') }}{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ app.request ? app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') : '' }}{% endblock %}">
-    <meta property="og:url" content="{{ app.request ? app.request.schemeAndHttpHost ~ app.request.requestUri : '' }}">
+    <meta property="og:url" content="{{ app.request ? app.request.schemeAndHttpHost ~ app.request.pathInfo : '' }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{% block twitter_title %}{{ block('og_title') }}{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}{{ block('og_description') }}{% endblock %}">
@@ -107,14 +107,37 @@
             font-size: 0.875rem !important;
             opacity: 0.8;
         }
+        /* Cookie consent buttons */
+        .consent-btn-primary {
+            background: #5B4638; color: #F5F2ED;
+            border: none; border-radius: 2px;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+            font-weight: 500; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .consent-btn-primary:hover { background: #8B7355; }
+        .consent-btn-secondary {
+            background: transparent; color: #5B4638;
+            border: 1px solid #A08D7A; border-radius: 2px;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .consent-btn-secondary:hover { background: rgba(91,70,56,0.06); }
     </style>
+
+    {% block turbo_cache %}{% endblock %}
 
     {% block javascripts %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
     {% endblock %}
 
     {# JSON-LD Organisation (toutes les pages) #}
-    <script type="application/ld+json">
+    <script type="application/ld+json" nonce="{{ csp_nonce() }}">
     {
         "@context": "https://schema.org",
         "@type": "Winery",
@@ -397,31 +420,11 @@
 
                 <div style="display: flex; flex-direction: column; gap: 0.65rem;">
                     <button data-action="cookie-consent#acceptAll"
-                            style="
-                                background: #5B4638; color: #F5F2ED;
-                                border: none; border-radius: 2px;
-                                padding: 0.875rem 1.5rem;
-                                font-family: 'Montserrat', sans-serif;
-                                font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
-                                font-weight: 500; cursor: pointer;
-                                transition: background 0.2s;
-                            "
-                            onmouseover="this.style.background='#8B7355'"
-                            onmouseout="this.style.background='#5B4638'">
+                            class="consent-btn-primary">
                         J'ai 18 ans — Accepter tous les cookies
                     </button>
                     <button data-action="cookie-consent#acceptNecessary"
-                            style="
-                                background: transparent; color: #5B4638;
-                                border: 1px solid #A08D7A; border-radius: 2px;
-                                padding: 0.75rem 1.5rem;
-                                font-family: 'Montserrat', sans-serif;
-                                font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
-                                cursor: pointer;
-                                transition: background 0.2s, border-color 0.2s;
-                            "
-                            onmouseover="this.style.background='rgba(91,70,56,0.06)'"
-                            onmouseout="this.style.background='transparent'">
+                            class="consent-btn-secondary">
                         J'ai 18 ans — Cookies nécessaires uniquement
                     </button>
                     <button data-action="cookie-consent#decline"
