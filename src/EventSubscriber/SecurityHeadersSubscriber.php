@@ -48,8 +48,8 @@ class SecurityHeadersSubscriber implements EventSubscriberInterface
         $headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
         $headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
-            // Stripe.js + nonce pour JSON-LD et scripts inline légitimes
-            "script-src 'self' https://js.stripe.com 'nonce-{$nonce}'",
+            // Stripe.js + nonce pour scripts inline + data: pour les CSS importés via importmap
+            "script-src 'self' https://js.stripe.com 'nonce-{$nonce}' data:",
             // Stripe iframes
             "frame-src https://js.stripe.com",
             "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'",

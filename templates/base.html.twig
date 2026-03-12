@@ -23,7 +23,7 @@
     <link rel="apple-touch-icon" href="{{ asset('images/logo.jpg') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#5B4638">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta property="og:locale" content="fr_FR">
 
@@ -133,7 +133,7 @@
     {% block turbo_cache %}{% endblock %}
 
     {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% block importmap %}{{ importmap('app', {nonce: csp_nonce()}) }}{% endblock %}
     {% endblock %}
 
     {# JSON-LD Organisation (toutes les pages) #}
