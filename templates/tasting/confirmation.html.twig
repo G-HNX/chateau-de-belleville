@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservation confirmée - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Réservation confirmée</h1>
+        <p>Merci pour votre réservation !</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 700px; text-align: center;" data-reveal="fade-up">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">✅</div>
+            <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); margin-bottom: 1rem;">Merci !</h2>
+            <p style="color: var(--color-secondary); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                Votre réservation a bien été enregistrée. Vous recevrez une confirmation par email.
+            </p>
+
+            <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; text-align: left; margin-bottom: 2rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Détails de la réservation</h3>
+                <div class="grid-2-col">
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Référence</div>
+                        <div style="color: var(--color-primary); font-weight: 600; font-size: 1.1rem;">{{ reservation.reference }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Formule</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ reservation.slot.tasting.name }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Date</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ reservation.slot.date|date('d/m/Y') }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Horaire</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ reservation.slot.startTime|date('H:i') }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Participants</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ reservation.numberOfParticipants }} personne{{ reservation.numberOfParticipants > 1 ? 's' : '' }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 0.3rem;">Nom</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ reservation.firstName }} {{ reservation.lastName }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="{{ path('app_home') }}" class="btn btn-secondary">Retour à l'accueil</a>
+                <a href="{{ path('app_tasting_index') }}" class="btn btn-primary">Nos dégustations</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

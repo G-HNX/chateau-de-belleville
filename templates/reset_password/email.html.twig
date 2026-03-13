@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Georgia', serif; background: #F5F2ED; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #5B4638; padding: 30px; text-align: center; }
+        .header h1 { color: #C9A87C; font-size: 22px; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
+        .header p { color: #E8E3D9; font-size: 13px; margin: 8px 0 0; }
+        .body { padding: 40px 30px; }
+        .body p { color: #2C2420; line-height: 1.8; margin: 0 0 20px; }
+        .btn { display: block; width: fit-content; margin: 30px auto; background: #5B4638; color: white !important; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 15px; letter-spacing: 1px; }
+        .expiry { background: #F5F2ED; border-left: 3px solid #C9A87C; padding: 12px 15px; font-size: 13px; color: #8B7355; margin: 20px 0; }
+        .footer { background: #F5F2ED; padding: 20px; text-align: center; font-size: 12px; color: #8B7355; border-top: 1px solid #E8E3D9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Château de Belleville</h1>
+            <p>Réinitialisation de mot de passe</p>
+        </div>
+        <div class="body">
+            <p>Bonjour,</p>
+            <p>Vous avez demandé à réinitialiser le mot de passe de votre compte. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe :</p>
+
+            <a href="{{ url('app_reset_password', {token: resetToken.token}) }}" class="btn">
+                Réinitialiser mon mot de passe
+            </a>
+
+            <div class="expiry">
+                Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+            </div>
+
+            <p style="font-size: 13px; color: #8B7355;">
+                Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email — votre mot de passe restera inchangé.
+            </p>
+        </div>
+        <div class="footer">
+            Château de Belleville — 49 · Anjou · France
+        </div>
+    </div>
+</body>
+</html>

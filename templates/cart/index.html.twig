@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Votre Panier</h1>
+        <p>{% if cart and not cart.empty %}{{ cart.itemsCount }} article{{ cart.itemsCount > 1 ? 's' : '' }}{% else %}Votre panier est vide{% endif %}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            {% if cart and not cart.empty %}
+                {# Cart Table #}
+                <div style="overflow-x: auto;" data-reveal="fade-in">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; min-width: 480px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-beige);">
+                                <th style="padding: 1rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Produit</th>
+                                <th style="padding: 1rem; text-align: center; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Prix</th>
+                                <th style="padding: 1rem; text-align: center; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Quantité</th>
+                                <th style="padding: 1rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary);">Total</th>
+                                <th style="padding: 1rem; text-align: center; width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart.items %}
+                                <tr style="border-bottom: 1px solid var(--color-beige);">
+                                    <td style="padding: 1.5rem 1rem;">
+                                        <div style="display: flex; align-items: center; gap: 1rem;">
+                                            <div style="width: 80px; height: 80px; background: var(--color-cream); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                {% if item.wine.mainImage %}
+                                                    <img src="{{ asset('uploads/wines/' ~ item.wine.mainImage.filename) }}" alt="{{ item.wine.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain; padding: 0.25rem;">
+                                                {% else %}
+                                                    <span style="font-size: 2rem; opacity: 0.3;">🍷</span>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <a href="{{ path('app_wine_show', {slug: item.wine.slug}) }}" style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary); text-decoration: none;">{{ item.wine.name }}</a>
+                                                {% if item.wine.appellation %}
+                                                    <div style="font-size: 0.85rem; color: var(--color-secondary);">{{ item.wine.appellation }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 1.5rem 1rem; text-align: center; color: var(--color-secondary);">
+                                        {{ item.wine.formattedPrice }}
+                                    </td>
+                                    <td style="padding: 1.5rem 1rem; text-align: center;">
+                                        <form action="{{ path('app_cart_update', {id: item.id}) }}" method="post" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('cart_update') }}">
+                                            <div class="quantity-selector">
+                                                <button type="submit" name="quantity" value="{{ item.quantity - 1 }}" class="quantity-btn" {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
+                                                <input type="number" name="quantity" class="quantity-input" value="{{ item.quantity }}" min="1" max="{{ item.wine.stock }}" onchange="this.form.submit()">
+                                                <button type="submit" name="quantity" value="{{ item.quantity + 1 }}" class="quantity-btn">+</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td style="padding: 1.5rem 1rem; text-align: right; font-weight: 500; color: var(--color-primary);">
+                                        {{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €
+                                    </td>
+                                    <td style="padding: 1.5rem 0.5rem; text-align: center;">
+                                        <form action="{{ path('app_cart_remove', {id: item.id}) }}" method="post">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('cart_remove') }}">
+                                            <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--color-accent);" title="Retirer">✕</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {# Cart Summary #}
+                <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 2rem;">
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">Continuer mes achats</a>
+                        <form action="{{ path('app_cart_clear') }}" method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('cart_clear') }}">
+                            <button type="submit" class="btn btn-outline" data-turbo-confirm="Vider tout le panier ?">Vider le panier</button>
+                        </form>
+                    </div>
+                    <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; min-width: min(350px, 100%);" data-reveal="fade-up">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span style="color: var(--color-secondary);">Sous-total</span>
+                            <span style="font-weight: 500;">{{ (cart.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span style="color: var(--color-secondary);">Livraison</span>
+                            <span style="font-weight: 500;">{% if cart.totalInCents >= 15000 %}Offerte{% else %}Calculée à l'étape suivante{% endif %}</span>
+                        </div>
+                        <div style="height: 1px; background: var(--color-beige); margin: 1rem 0;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.4rem;">
+                            <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);">Total TTC</span>
+                            <span style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold); font-weight: 600;">{{ (cart.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                        <div style="text-align: right; font-size: 0.8rem; color: var(--color-secondary); margin-bottom: 1.5rem;">dont TVA 20% : {{ (cart.totalInCents / 600)|number_format(2, ',', ' ') }} €</div>
+                        <a href="{{ path('app_checkout_index') }}" class="btn btn-primary btn-full">Passer commande</a>
+                    </div>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 4rem;">
+                    <div style="font-size: 4rem; opacity: 0.5; margin-bottom: 1rem;">🛒</div>
+                    <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Votre panier est vide</h2>
+                    <p style="color: var(--color-secondary); margin-bottom: 2rem;">Découvrez nos vins d'exception et ajoutez-les à votre panier.</p>
+                    <a href="{{ path('app_wine_index') }}" class="btn btn-primary">Découvrir nos vins</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ tasting.name }} - Dégustations - Château de Belleville{% endblock %}
+{% block meta_description %}{{ tasting.name }} au Château de Belleville. {{ tasting.formattedPrice }}, durée {{ tasting.formattedDuration }}. Réservez votre dégustation en Val de Loire.{% endblock %}
+{% block og_type %}event{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "{{ tasting.name }}",
+    "description": "{{ tasting.description ? tasting.description|striptags|slice(0, 200) : (tasting.name ~ ' au Château de Belleville.') }}",
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') }}",
+    "url": "{{ app.request.schemeAndHttpHost ~ path('app_tasting_show', {slug: tasting.slug}) }}",
+    "organizer": {
+        "@type": "Organization",
+        "name": "Château de Belleville",
+        "url": "{{ app.request.schemeAndHttpHost }}"
+    },
+    "location": {
+        "@type": "Place",
+        "name": "Château de Belleville",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "36 rue de la Garde",
+            "addressLocality": "Sainte-Verge",
+            "postalCode": "79100",
+            "addressCountry": "FR"
+        }
+    },
+    "offers": {
+        "@type": "Offer",
+        "priceCurrency": "EUR",
+        "price": "{{ tasting.price|number_format(2, '.', '') }}",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ app.request.schemeAndHttpHost ~ path('app_tasting_show', {slug: tasting.slug}) }}"
+    },
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "eventStatus": "https://schema.org/EventScheduled"
+}
+</script>
+{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>{{ tasting.name }}</h1>
+        <p>{{ tasting.formattedPrice }} — Durée : {{ tasting.formattedDuration }}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-2-col" style="gap: 4rem; align-items: start;">
+                {# Description #}
+                <div data-reveal="slide-left">
+                    <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">{{ tasting.name }}</h2>
+
+                    <div style="font-family: var(--font-display); font-size: 2rem; color: var(--color-gold); margin-bottom: 2rem;">
+                        {{ tasting.formattedPrice }}
+                    </div>
+
+                    {% if tasting.description %}
+                        <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 2rem;">{{ tasting.description }}</p>
+                    {% endif %}
+
+                    {% if tasting.includedItems %}
+                        <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Inclus dans cette formule</h3>
+                        <ul style="list-style: none; margin-bottom: 2rem;">
+                            {% for item in tasting.includedItems %}
+                                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--color-beige); color: var(--color-secondary); display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="color: var(--color-gold); font-weight: bold;">✓</span>
+                                    {{ item }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <div class="grid-2-col" style="gap: 1rem; padding: 1.5rem; background: var(--color-cream); border-radius: 8px;">
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Durée</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ tasting.formattedDuration }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Participants</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ tasting.minParticipants }} - {{ tasting.maxParticipants }} pers.</div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Calendar #}
+                <div data-reveal="slide-right" data-reveal-delay="150" data-controller="tasting-calendar"
+                     data-tasting-calendar-slots-value="{{ slotsJson|e('html_attr') }}"
+                     data-tasting-calendar-tasting-slug-value="{{ tasting.slug }}">
+                    <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem;">Choisir un créneau</h3>
+                    {% if availableSlots|length > 0 %}
+                        {# Month navigation #}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <button type="button" data-tasting-calendar-target="prevBtn" data-action="click->tasting-calendar#prev"
+                                    style="background: none; border: 1px solid var(--color-beige); border-radius: 6px; padding: 0.4rem 0.8rem; color: var(--color-primary); cursor: pointer; font-family: var(--font-body);">&#8592;</button>
+                            <span data-tasting-calendar-target="monthLabel" style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary);"></span>
+                            <button type="button" data-action="click->tasting-calendar#next"
+                                    style="background: none; border: 1px solid var(--color-beige); border-radius: 6px; padding: 0.4rem 0.8rem; color: var(--color-primary); cursor: pointer; font-family: var(--font-body);">&#8594;</button>
+                        </div>
+
+                        {# Calendar grid #}
+                        <div data-tasting-calendar-target="calendar" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); margin-bottom: 1.5rem;"></div>
+
+                        {# Selected day slots #}
+                        <div data-tasting-calendar-target="slots"></div>
+                    {% else %}
+                        <div style="text-align: center; padding: 3rem; background: var(--color-cream); border-radius: 8px;">
+                            <p style="color: var(--color-secondary);">Aucun créneau disponible pour le moment.</p>
+                            <p style="color: var(--color-accent); font-size: 0.9rem; margin-top: 0.5rem;">Revenez bientôt ou contactez-nous.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-cream" style="text-align: center;">
+        <a href="{{ path('app_tasting_index') }}" class="btn btn-secondary">← Retour aux dégustations</a>
+    </section>
+{% endblock %}

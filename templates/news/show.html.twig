@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }} - Château de Belleville{% endblock %}
+{% block meta_description %}{{ article.excerpt ?? article.title }}{% endblock %}
+{% block og_image %}{% if article.coverImage %}{{ app.request.schemeAndHttpHost ~ asset('uploads/news/' ~ article.coverImage) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "{{ article.title }}",
+    "description": "{{ article.excerpt ?? article.title }}",
+    {% if article.coverImage %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('uploads/news/' ~ article.coverImage) }}",
+    {% else %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') }}",
+    {% endif %}
+    "url": "{{ app.request.schemeAndHttpHost ~ path('app_news_show', {slug: article.slug}) }}",
+    {% if article.publishedAt %}
+    "datePublished": "{{ article.publishedAt|date('c') }}",
+    {% endif %}
+    {% if article.updatedAt %}
+    "dateModified": "{{ article.updatedAt|date('c') }}",
+    {% endif %}
+    "publisher": {
+        "@type": "Organization",
+        "name": "Château de Belleville",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ app.request.schemeAndHttpHost ~ asset('images/logo.jpg') }}"
+        }
+    },
+    "author": {
+        "@type": "Organization",
+        "name": "Château de Belleville"
+    }
+}
+</script>
+{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>{{ article.title }}</h1>
+        {% if article.publishedAt %}
+            <p>
+                <time datetime="{{ article.publishedAt|date('Y-m-d') }}">
+                    {{ article.publishedAt|date('d/m/Y') }}
+                </time>
+            </p>
+        {% endif %}
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-cream">
+        <div class="container">
+            <div style="max-width: 800px; margin: 0 auto;">
+
+                {# Image de couverture #}
+                {% if article.coverImagePath %}
+                    <div style="margin-bottom: 2.5rem; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10);">
+                        <img src="{{ article.coverImagePath }}"
+                             alt="{{ article.title }}"
+                             style="width: 100%; height: auto; display: block;">
+                    </div>
+                {% endif %}
+
+                {# Extrait #}
+                {% if article.excerpt %}
+                    <p style="font-size: 1.15rem; color: var(--color-secondary); line-height: 1.8; font-style: italic; border-left: 3px solid var(--color-gold); padding-left: 1.25rem; margin-bottom: 2.5rem;">
+                        {{ article.excerpt }}
+                    </p>
+                {% endif %}
+
+                {# Contenu #}
+                <div class="article-content" style="color: var(--color-dark); line-height: 1.85; font-size: 1rem;">
+                    {{ article.content|html_sanitize('app.article_content') }}
+                </div>
+
+                {# Retour aux actualités #}
+                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--color-beige);">
+                    <a href="{{ path('app_news_index') }}"
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-gold); text-decoration: none; font-weight: 500; font-size: 0.9rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                        Retour aux actualités
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}

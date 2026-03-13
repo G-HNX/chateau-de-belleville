@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+{% from '_macros/carousel.html.twig' import domain_carousel %}
+
+{% block title %}Le Domaine - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Le Domaine</h1>
+        <p>Découvrez l'histoire et les valeurs du Château de Belleville, vignoble familial au coeur de l'Anjou.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    {# Notre Histoire #}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-2-col" style="gap: 4rem; align-items: center;">
+                <div data-reveal="slide-left">
+                    <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Notre Histoire</h2>
+                    <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Niché au coeur des coteaux angevins, le Château de Belleville perpétue
+                        depuis trois générations un savoir-faire viticole d'exception. Notre famille
+                        cultive avec passion ces terres riches en histoire, où chaque parcelle
+                        raconte une partie de notre héritage.
+                    </p>
+                    <p style="color: var(--color-secondary); line-height: 1.8;">
+                        Aujourd'hui, nous exploitons 15 hectares de vignes, principalement plantés
+                        en Chenin Blanc, Cabernet Franc et Grolleau, les cépages emblématiques
+                        de notre terroir d'Anjou.
+                    </p>
+                </div>
+                <div data-reveal="slide-right" data-reveal-delay="150">{{ domain_carousel(photosHistoire, [
+                    {icon: '🏰', label: 'Vue du château',      bg: 'linear-gradient(135deg, #e8dcc8, #d4c8a8)'},
+                    {icon: '🌄', label: 'Les coteaux',         bg: 'linear-gradient(135deg, #d4c8a8, #c8b890)'},
+                    {icon: '🍂', label: 'Saisons du vignoble', bg: 'linear-gradient(135deg, #c8b890, #b8a878)'}
+                ], '400px', 5000) }}</div>
+            </div>
+        </div>
+    </section>
+
+    {# Notre Parcours #}
+    <section class="section section-cream">
+        <div class="container">
+            <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); text-align: center; margin-bottom: 3rem;"
+                data-reveal="fade-up">Notre Parcours</h2>
+            <div style="position: relative; padding-left: 3rem; border-left: 2px solid var(--color-gold);">
+                <div style="margin-bottom: 3rem; position: relative;" data-reveal="slide-left">
+                    <div style="position: absolute; left: -3.6rem; top: 0; width: 14px; height: 14px; background: var(--color-gold); border-radius: 50%;"></div>
+                    <div style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold); margin-bottom: 0.5rem;">1970</div>
+                    <div style="font-weight: 600; color: var(--color-primary); margin-bottom: 0.5rem;">Les débuts</div>
+                    <p style="color: var(--color-secondary); line-height: 1.6;">La première génération plante les premières vignes sur le domaine de Belleville.</p>
+                </div>
+                <div style="margin-bottom: 3rem; position: relative;" data-reveal="slide-left" data-reveal-delay="100">
+                    <div style="position: absolute; left: -3.6rem; top: 0; width: 14px; height: 14px; background: var(--color-gold); border-radius: 50%;"></div>
+                    <div style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold); margin-bottom: 0.5rem;">1995</div>
+                    <div style="font-weight: 600; color: var(--color-primary); margin-bottom: 0.5rem;">Transmission familiale</div>
+                    <p style="color: var(--color-secondary); line-height: 1.6;">La deuxième génération reprend le flambeau et développe la production.</p>
+                </div>
+                <div style="margin-bottom: 3rem; position: relative;" data-reveal="slide-left" data-reveal-delay="200">
+                    <div style="position: absolute; left: -3.6rem; top: 0; width: 14px; height: 14px; background: var(--color-gold); border-radius: 50%;"></div>
+                    <div style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold); margin-bottom: 0.5rem;">2015</div>
+                    <div style="font-weight: 600; color: var(--color-primary); margin-bottom: 0.5rem;">Nouvelle ère</div>
+                    <p style="color: var(--color-secondary); line-height: 1.6;">La troisième génération modernise le domaine tout en préservant les traditions.</p>
+                </div>
+                <div style="position: relative;" data-reveal="slide-left" data-reveal-delay="300">
+                    <div style="position: absolute; left: -3.6rem; top: 0; width: 14px; height: 14px; background: var(--color-gold); border-radius: 50%;"></div>
+                    <div style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold); margin-bottom: 0.5rem;">2020</div>
+                    <div style="font-weight: 600; color: var(--color-primary); margin-bottom: 0.5rem;">Certifications environnementales</div>
+                    <p style="color: var(--color-secondary); line-height: 1.6;">Obtention des labels Terra Vitis et Haute Valeur Environnementale.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Nos Valeurs #}
+    <section class="section section-white">
+        <div class="container">
+            <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); text-align: center; margin-bottom: 3rem;"
+                data-reveal="fade-up">Nos Valeurs</h2>
+            <div class="grid-3-col">
+
+                <a href="{{ path('app_domain_nature') }}" class="value-card" style="text-decoration: none; display: flex; flex-direction: column; align-items: center;"
+                   data-reveal="fade-up">
+                    <div class="value-icon">🌱</div>
+                    <h3 class="value-title">Respect de la Nature</h3>
+                    <p class="value-text" style="flex: 1;">Agriculture raisonnée et certifiée, nous travaillons en harmonie avec notre environnement.</p>
+                    <div style="margin-top: 1.25rem; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--color-gold); font-weight: 500;">
+                        En savoir plus
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                </a>
+
+                <a href="{{ path('app_domain_transmission') }}" class="value-card" style="text-decoration: none; display: flex; flex-direction: column; align-items: center;"
+                   data-reveal="fade-up" data-reveal-delay="120">
+                    <div class="value-icon">👨‍👩‍👧</div>
+                    <h3 class="value-title">Transmission</h3>
+                    <p class="value-text" style="flex: 1;">Un savoir-faire familial transmis de génération en génération avec passion.</p>
+                    <div style="margin-top: 1.25rem; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--color-gold); font-weight: 500;">
+                        En savoir plus
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                </a>
+
+                <a href="{{ path('app_domain_excellence') }}" class="value-card" style="text-decoration: none; display: flex; flex-direction: column; align-items: center;"
+                   data-reveal="fade-up" data-reveal-delay="240">
+                    <div class="value-icon">⭐</div>
+                    <h3 class="value-title">Excellence</h3>
+                    <p class="value-text" style="flex: 1;">La recherche constante de la qualité dans chacune de nos cuvées.</p>
+                    <div style="margin-top: 1.25rem; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--color-gold); font-weight: 500;">
+                        En savoir plus
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    {# Notre Terroir #}
+    <section class="section section-cream">
+        <div class="container">
+            <div class="grid-2-col" style="gap: 4rem; align-items: center;">
+                <div data-reveal="slide-left">{{ domain_carousel(photosTerrroir, [
+                    {icon: '🍇', label: 'La vigne en été',           bg: 'linear-gradient(135deg, #c8dab0, #b0c898)'},
+                    {icon: '🌿', label: 'Le terroir argilo-calcaire', bg: 'linear-gradient(135deg, #b0c898, #98b880)'},
+                    {icon: '🍂', label: 'Les vendanges',              bg: 'linear-gradient(135deg, #98b880, #80a068)'}
+                ], '400px', 5500) }}</div>
+                <div data-reveal="slide-right" data-reveal-delay="150">
+                    <h2 style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Notre Terroir</h2>
+                    <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Situé à Sainte-Verge, aux portes de Thouars, notre domaine bénéficie
+                        d'un terroir unique composé de sols argilo-calcaires. Cette géologie
+                        particulière confère à nos vins leur minéralité caractéristique.
+                    </p>
+                    <p style="color: var(--color-secondary); line-height: 1.8;">
+                        Le climat océanique tempéré de l'Anjou, avec ses étés doux et ses
+                        automnes ensoleillés, offre des conditions idéales pour la maturation
+                        lente de nos raisins.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

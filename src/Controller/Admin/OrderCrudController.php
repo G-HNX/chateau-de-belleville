@@ -1,0 +1,335 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Admin;
+
+use App\Entity\Order\Order;
+use App\Enum\OrderStatus;
+use App\Service\EmailService;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+
+class OrderCrudController extends AbstractCrudController
+{
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly EmailService $emailService,
+        private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+    ) {}
+
+    public static function getEntityFqcn(): string
+    {
+        return Order::class;
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Commande')
+            ->setEntityLabelInPlural('Commandes')
+            ->setDefaultSort(['createdAt' => 'DESC'])
+            ->setSearchFields(['reference', 'customerEmail', 'customerLastName', 'customerFirstName'])
+            ->showEntityActionsInlined()
+            ->overrideTemplate('crud/detail', 'admin/order_detail.html.twig');
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $invoiceAction = Action::new('invoice', 'Facture PDF', 'fa fa-file-pdf')
+            ->linkToUrl(fn (Order $order) => $this->generateUrl('admin_order_invoice', ['id' => $order->getId()]))
+            ->setHtmlAttributes(['target' => '_blank'])
+            ->displayAsLink();
+
+        $orderSlipAction = Action::new('orderSlip', 'Bon de commande', 'fa fa-clipboard-list')
+            ->linkToUrl(fn (Order $order) => $this->generateUrl('admin_order_slip', ['id' => $order->getId()]))
+            ->setHtmlAttributes(['target' => '_blank'])
+            ->displayAsLink();
+
+        $markProcessing = Action::new('markProcessing', 'En préparation', 'fa fa-box')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('markAsProcessing')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
+            ->displayIf(fn (Order $o) => $o->getStatus() === OrderStatus::PAID);
+
+        $markShipped = Action::new('markShipped', 'Marquer expédiée', 'fa fa-truck')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('markAsShipped')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
+            ->displayIf(fn (Order $o) => $o->getStatus() === OrderStatus::PROCESSING);
+
+        $markDelivered = Action::new('markDelivered', 'Marquer livrée', 'fa fa-check-circle')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('markAsDelivered')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
+            ->displayIf(fn (Order $o) => $o->getStatus() === OrderStatus::SHIPPED);
+
+        $cancelOrder = Action::new('cancelOrder', 'Annuler', 'fa fa-times')
+            ->linkToUrl(fn (Order $o) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('cancelOrder')
+                ->setEntityId($o->getId())
+                ->set('token', $this->csrfTokenManager->getToken('admin_order_action')->getValue())
+                ->generateUrl())
+            ->displayIf(fn (Order $o) => $o->canBeCancelled())
+            ->setCssClass('text-danger');
+
+        return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_DETAIL, $invoiceAction)
+            ->add(Crud::PAGE_DETAIL, $orderSlipAction)
+            ->add(Crud::PAGE_DETAIL, $markProcessing)
+            ->add(Crud::PAGE_DETAIL, $markShipped)
+            ->add(Crud::PAGE_DETAIL, $markDelivered)
+            ->add(Crud::PAGE_DETAIL, $cancelOrder)
+            ->add(Crud::PAGE_INDEX, $invoiceAction)
+            ->disable(Action::NEW, Action::DELETE);
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('status')
+            ->add('createdAt')
+            ->add(DateTimeFilter::new('paidAt', 'Payée le'));
+    }
+
+    public function configureFields(string $pageName): iterable
+    {
+        yield TextField::new('reference', 'Référence')
+            ->setFormTypeOption('disabled', true);
+        yield ChoiceField::new('status', 'Statut')
+            ->setChoices(array_combine(
+                array_map(fn (OrderStatus $s) => $s->label(), OrderStatus::cases()),
+                OrderStatus::cases(),
+            ))
+            ->renderAsBadges([
+                OrderStatus::PENDING->value => 'warning',
+                OrderStatus::PAID->value => 'info',
+                OrderStatus::PROCESSING->value => 'primary',
+                OrderStatus::SHIPPED->value => 'info',
+                OrderStatus::DELIVERED->value => 'success',
+                OrderStatus::CANCELLED->value => 'danger',
+                OrderStatus::REFUNDED->value => 'secondary',
+            ])
+            ->setFormTypeOption('disabled', true);
+        yield TextField::new('customerFullName', 'Client')
+            ->hideOnForm();
+        yield EmailField::new('customerEmail', 'Email')
+            ->onlyOnDetail();
+        yield TextField::new('customerPhone', 'Téléphone')
+            ->onlyOnDetail();
+        yield DateField::new('customerBirthDate', 'Date de naissance (majorité)')
+            ->onlyOnDetail()
+            ->setFormat('dd/MM/yyyy');
+        yield MoneyField::new('totalInCents', 'Total TTC')
+            ->setCurrency('EUR')
+            ->setStoredAsCents(true)
+            ->setFormTypeOption('disabled', true);
+        yield MoneyField::new('subtotalInCents', 'Sous-total')
+            ->setCurrency('EUR')
+            ->setStoredAsCents(true)
+            ->onlyOnDetail();
+        yield MoneyField::new('taxAmountInCents', 'TVA')
+            ->setCurrency('EUR')
+            ->setStoredAsCents(true)
+            ->onlyOnDetail();
+        yield MoneyField::new('shippingCostInCents', 'Livraison')
+            ->setCurrency('EUR')
+            ->setStoredAsCents(true)
+            ->onlyOnDetail();
+        yield TextField::new('trackingNumber', 'N° suivi')
+            ->hideOnIndex();
+        yield TextField::new('carrier', 'Transporteur')
+            ->hideOnIndex();
+        yield TextareaField::new('adminNotes', 'Notes admin')
+            ->hideOnIndex();
+        yield TextareaField::new('customerNotes', 'Notes client')
+            ->hideOnIndex()
+            ->setFormTypeOption('disabled', true);
+        yield DateTimeField::new('createdAt', 'Créée le')
+            ->setFormTypeOption('disabled', true);
+        yield DateTimeField::new('paidAt', 'Payée le')
+            ->onlyOnDetail();
+        yield DateTimeField::new('shippedAt', 'Expédiée le')
+            ->onlyOnDetail();
+    }
+
+    private function validateCsrfOrRedirect(AdminContext $context, ?int $entityId = null): ?Response
+    {
+        $token = $context->getRequest()->query->get('token', '');
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('admin_order_action', $token))) {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+            $url = $this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl();
+            return $this->redirect($url);
+        }
+        return null;
+    }
+
+    public function markAsProcessing(AdminContext $context): Response
+    {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
+        /** @var Order $order */
+        $order = $context->getEntity()->getInstance();
+        if ($order->getStatus() !== OrderStatus::PAID) {
+            $this->addFlash('danger', 'Seule une commande payée peut être mise en préparation.');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+        $order->setStatus(OrderStatus::PROCESSING);
+        $this->em->flush();
+
+        $this->addFlash('success', sprintf('Commande %s marquée en préparation.', $order->getReference()));
+
+        return $this->redirect($this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::DETAIL)
+            ->setEntityId($order->getId())
+            ->generateUrl());
+    }
+
+    public function markAsShipped(AdminContext $context): Response
+    {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
+        /** @var Order $order */
+        $order = $context->getEntity()->getInstance();
+        if ($order->getStatus() !== OrderStatus::PROCESSING) {
+            $this->addFlash('danger', 'Seule une commande en préparation peut être marquée expédiée.');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+        if (!$order->getTrackingNumber()) {
+            $this->addFlash('warning', sprintf(
+                'Commande %s : aucun numéro de suivi défini. Renseignez-le via "Modifier" avant de marquer la commande comme expédiée.',
+                $order->getReference()
+            ));
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+
+        $order->markAsShipped($order->getTrackingNumber(), $order->getCarrier());
+        $this->em->flush();
+
+        $this->emailService->sendOrderShipped($order);
+
+        $this->addFlash('success', sprintf('Commande %s marquée expédiée. Email envoyé au client.', $order->getReference()));
+
+        return $this->redirect($this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::DETAIL)
+            ->setEntityId($order->getId())
+            ->generateUrl());
+    }
+
+    public function markAsDelivered(AdminContext $context): Response
+    {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
+        /** @var Order $order */
+        $order = $context->getEntity()->getInstance();
+        if ($order->getStatus() !== OrderStatus::SHIPPED) {
+            $this->addFlash('danger', 'Seule une commande expédiée peut être marquée livrée.');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+        $order->markAsDelivered();
+        $this->em->flush();
+
+        $this->addFlash('success', sprintf('Commande %s marquée livrée.', $order->getReference()));
+
+        return $this->redirect($this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::DETAIL)
+            ->setEntityId($order->getId())
+            ->generateUrl());
+    }
+
+    public function cancelOrder(AdminContext $context): Response
+    {
+        if ($redirect = $this->validateCsrfOrRedirect($context)) {
+            return $redirect;
+        }
+
+        /** @var Order $order */
+        $order = $context->getEntity()->getInstance();
+        if (!$order->canBeCancelled()) {
+            $this->addFlash('danger', 'Cette commande ne peut pas être annulée (déjà expédiée ou livrée).');
+
+            return $this->redirect($this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($order->getId())
+                ->generateUrl());
+        }
+
+        $this->em->wrapInTransaction(function () use ($order): void {
+            foreach ($order->getItems() as $item) {
+                $wine = $item->getWine();
+                if ($wine !== null) {
+                    $freshWine = $this->em->find(\App\Entity\Catalog\Wine::class, $wine->getId(), \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
+                    $freshWine?->incrementStock($item->getQuantity());
+                }
+            }
+            $order->setStatus(OrderStatus::CANCELLED);
+        });
+
+        $this->addFlash('warning', sprintf('Commande %s annulée.', $order->getReference()));
+
+        return $this->redirect($this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::DETAIL)
+            ->setEntityId($order->getId())
+            ->generateUrl());
+    }
+}

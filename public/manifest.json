@@ -1,0 +1,18 @@
+{
+    "name": "Château de Belleville",
+    "short_name": "Belleville",
+    "description": "Domaine viticole familial en Val de Loire. Vins d'Anjou et dégustations.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#F5F2ED",
+    "theme_color": "#5B4638",
+    "lang": "fr",
+    "icons": [
+        {
+            "src": "/images/logo.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg",
+            "purpose": "any"
+        }
+    ]
+}

@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Mon Profil</h1>
+        <p>Modifiez vos informations personnelles.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {% include 'account/_sidebar.html.twig' %}
+
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div>
+                        <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Informations personnelles</h2>
+                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); max-width: 600px;">
+                            {{ form_start(form, {'attr': {'class': 'form-grid'}}) }}
+                                <div class="form-group">
+                                    {{ form_label(form.firstName) }}
+                                    {{ form_widget(form.firstName) }}
+                                    {{ form_errors(form.firstName) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.lastName) }}
+                                    {{ form_widget(form.lastName) }}
+                                    {{ form_errors(form.lastName) }}
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" value="{{ user.email }}" disabled style="background: var(--color-cream); cursor: not-allowed;">
+                                    <small style="color: var(--color-secondary); margin-top: 0.3rem;">L'email ne peut pas être modifié.</small>
+                                </div>
+                                <div class="form-group full-width">
+                                    {{ form_label(form.phone) }}
+                                    {{ form_widget(form.phone) }}
+                                    {{ form_errors(form.phone) }}
+                                </div>
+                                <button type="submit" class="btn-submit">Enregistrer</button>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+
+                    {# Préférences newsletter #}
+                    <div>
+                        <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Newsletter</h2>
+                        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(91, 70, 56, 0.08); max-width: 600px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;">
+                                <div>
+                                    <p style="font-weight: 500; color: var(--color-primary); margin: 0 0 0.35rem; font-size: 0.95rem;">
+                                        Actualités &amp; offres du Château
+                                    </p>
+                                    <p style="font-size: 0.82rem; color: var(--color-secondary); margin: 0; line-height: 1.5;">
+                                        Nouvelles cuvées, événements, dégustations, informations du domaine.
+                                    </p>
+                                    <p style="margin: 0.6rem 0 0; font-size: 0.8rem;">
+                                        {% if user.newsletterOptIn %}
+                                            <span style="color: #2E7D32; font-weight: 500;">✓ Inscrit(e)</span>
+                                        {% else %}
+                                            <span style="color: var(--color-secondary);">Non inscrit(e)</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <form action="{{ path('app_account_newsletter_toggle') }}" method="POST" style="flex-shrink: 0;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('newsletter_toggle') }}">
+                                    {% if user.newsletterOptIn %}
+                                        <button type="submit" class="hover-newsletter-unsub" style="
+                                            padding: 0.65rem 1.4rem;
+                                            background: transparent;
+                                            color: #C62828;
+                                            border: 1px solid #C62828;
+                                            border-radius: 6px;
+                                            font-family: 'Montserrat', sans-serif;
+                                            font-size: 0.8rem;
+                                            letter-spacing: 0.04em;
+                                            cursor: pointer;
+                                        ">
+                                            Se désinscrire
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="hover-newsletter-sub" style="
+                                            padding: 0.65rem 1.4rem;
+                                            background: var(--color-primary);
+                                            color: white;
+                                            border: none;
+                                            border-radius: 6px;
+                                            font-family: 'Montserrat', sans-serif;
+                                            font-size: 0.8rem;
+                                            letter-spacing: 0.04em;
+                                            cursor: pointer;
+                                        ">
+                                            S'inscrire à la newsletter
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

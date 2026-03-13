@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: 'Montserrat', Arial, sans-serif; color: #2C2420; background: #F5F2ED; margin: 0; padding: 0;">
+    <div style="display: none; max-height: 0; overflow: hidden;">Votre commande {{ order.reference }} est confirmée - {{ order.itemsCount }} bouteille{{ order.itemsCount > 1 ? 's' : '' }} pour {{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</div>
+    <div style="background: #5B4638; padding: 30px; text-align: center;">
+        <h1 style="color: #C9A87C; font-family: Georgia, serif; margin: 0; font-size: 24px;">Château de Belleville</h1>
+        <p style="color: #E8E3D9; margin: 5px 0 0; font-size: 14px;">Vignoble d'Anjou</p>
+    </div>
+
+    <div style="background: #ffffff; padding: 30px; margin: 0 auto; max-width: 600px;">
+        <h2 style="color: #5B4638;">Confirmation de commande</h2>
+        <p>Bonjour {{ order.customerFirstName }},</p>
+        <p>Merci pour votre commande ! Nous l'avons bien reçue et elle est en cours de traitement.</p>
+
+        <div style="background: #F5F2ED; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+            <div style="color: #8B7355; font-size: 12px; text-transform: uppercase;">Référence</div>
+            <strong style="color: #5B4638; font-size: 18px;">{{ order.reference }}</strong>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+            <thead>
+                <tr>
+                    <th style="text-align: left; padding: 8px; color: #8B7355; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #E8E3D9;">Article</th>
+                    <th style="text-align: center; padding: 8px; color: #8B7355; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #E8E3D9;">Qté</th>
+                    <th style="text-align: right; padding: 8px; color: #8B7355; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #E8E3D9;">Prix</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items %}
+                <tr>
+                    <td style="padding: 10px 8px; border-bottom: 1px solid #F5F2ED;">{{ item.wineName }}{% if item.wineVintage %} {{ item.wineVintage }}{% endif %}</td>
+                    <td style="padding: 10px 8px; border-bottom: 1px solid #F5F2ED; text-align: center;">{{ item.quantity }}</td>
+                    <td style="padding: 10px 8px; border-bottom: 1px solid #F5F2ED; text-align: right;">{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2" style="padding: 10px 8px; text-align: right; color: #8B7355;">Sous-total</td>
+                    <td style="padding: 10px 8px; text-align: right;">{{ (order.subtotalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding: 10px 8px; text-align: right; color: #8B7355;">Livraison</td>
+                    <td style="padding: 10px 8px; text-align: right;">{% if order.shippingCostInCents == 0 %}Offerte{% else %}{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €{% endif %}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding: 10px 8px; text-align: right; border-top: 2px solid #5B4638; font-weight: bold; color: #5B4638; padding-top: 15px;">Total</td>
+                    <td style="padding: 10px 8px; text-align: right; border-top: 2px solid #5B4638; font-weight: bold; color: #C9A87C; font-size: 18px; padding-top: 15px;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Vous recevrez un email lorsque votre commande sera expédiée.</p>
+
+        <p style="text-align: center; margin-top: 25px;">
+            <a href="{{ url('app_home') }}" style="display: inline-block; background: #5B4638; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 500;">Visiter notre site</a>
+        </p>
+    </div>
+
+    <div style="text-align: center; padding: 20px; color: #8B7355; font-size: 12px;">
+        <p>EARL Maison Baron - Château de Belleville</p>
+        <p>36 rue de la Garde, 79100 Sainte-Verge — SIRET 329 416 978 000 24</p>
+        <p>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Inscription</h1>
+        <p>Créez votre compte pour profiter de tous nos services.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 600px;">
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);" data-reveal="fade-up">
+                {{ form_start(form, {'attr': {'class': 'form-grid'}}) }}
+                    <div class="form-group">
+                        {{ form_label(form.firstName) }}
+                        {{ form_widget(form.firstName) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.lastName) }}
+                        {{ form_widget(form.lastName) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                    <div class="form-group full-width">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.phone) }}
+                        {{ form_widget(form.phone) }}
+                        {{ form_errors(form.phone) }}
+                    </div>
+                    <div class="form-group">
+                        &nbsp;
+                    </div>
+                    <div class="form-group" data-controller="password" data-password-strength-value="true">
+                        {{ form_label(form.plainPassword.first) }}
+                        {{ form_widget(form.plainPassword.first) }}
+                        {{ form_errors(form.plainPassword.first) }}
+                    </div>
+                    <div class="form-group" data-controller="password">
+                        {{ form_label(form.plainPassword.second) }}
+                        {{ form_widget(form.plainPassword.second) }}
+                        {{ form_errors(form.plainPassword.second) }}
+                    </div>
+                    {{ form_errors(form.plainPassword) }}
+                    <div class="form-group full-width" style="margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: flex-start; gap: 0.625rem; cursor: pointer; font-size: 0.85rem; color: var(--color-secondary);">
+                            {{ form_widget(form.newsletterOptIn, {'attr': {'style': 'width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; accent-color: var(--color-primary);'}}) }}
+                            <span>{{ form_label(form.newsletterOptIn, null, {'label_attr': {'style': 'margin: 0; font-weight: 400; cursor: pointer;'}}) }}</span>
+                        </label>
+                        {{ form_errors(form.newsletterOptIn) }}
+                    </div>
+                    <button type="submit" class="btn-submit">Créer mon compte</button>
+                {{ form_end(form) }}
+
+                <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-beige);">
+                    <p style="color: var(--color-secondary); font-size: 0.9rem;">
+                        Déjà un compte ?
+                        <a href="{{ path('app_login') }}" style="color: var(--color-gold); text-decoration: none; font-weight: 500;">Se connecter</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

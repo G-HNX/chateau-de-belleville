@@ -1,0 +1,142 @@
+{% extends '@EasyAdmin/crud/detail.html.twig' %}
+
+{% block main %}
+    {{ parent() }}
+
+    {% set order = entity.instance %}
+
+    {# Articles de la commande #}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0"><i class="fa fa-wine-glass me-2"></i>Articles commandés ({{ order.itemsCount }} bouteille{{ order.itemsCount > 1 ? 's' : '' }})</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Article</th>
+                        <th class="text-center">Millésime</th>
+                        <th class="text-end">Prix unit.</th>
+                        <th class="text-center">Qté</th>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items %}
+                    <tr>
+                        <td><strong>{{ item.wineName }}</strong></td>
+                        <td class="text-center">{{ item.wineVintage ?? '-' }}</td>
+                        <td class="text-end">{{ (item.unitPriceInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                        <td class="text-center">{{ item.quantity }}</td>
+                        <td class="text-end"><strong>{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <td colspan="4" class="text-end">Sous-total</td>
+                        <td class="text-end">{{ (order.subtotalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-end">Livraison</td>
+                        <td class="text-end">{% if order.shippingCostInCents == 0 %}<span class="text-success">Offerte</span>{% else %}{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-end">TVA (20%)</td>
+                        <td class="text-end">{{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                    <tr class="fw-bold fs-5">
+                        <td colspan="4" class="text-end">Total TTC</td>
+                        <td class="text-end text-primary">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    {# Vérification de majorité #}
+    {% if order.customerBirthDate %}
+    <div class="card mt-4 border-warning">
+        <div class="card-header bg-warning bg-opacity-10">
+            <h5 class="card-title mb-0"><i class="fa fa-id-card me-2"></i>Vérification de majorité</h5>
+        </div>
+        <div class="card-body">
+            <span class="text-success me-2"><i class="fa fa-check-circle"></i></span>
+            Majorité certifiée — Date de naissance : <strong>{{ order.customerBirthDate|date('d/m/Y') }}</strong>
+            <span class="text-muted ms-2">({{ (date()|date('Y') - order.customerBirthDate|date('Y')) }} ans)</span>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Adresses #}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fa fa-file-invoice me-2"></i>Adresse de facturation</h5>
+                </div>
+                <div class="card-body">
+                    {% set billing = order.billingAddress %}
+                    <strong>{{ billing.firstName ?? '' }} {{ billing.lastName ?? '' }}</strong><br>
+                    {{ billing.street ?? '' }}<br>
+                    {{ billing.zipCode ?? '' }} {{ billing.city ?? '' }}<br>
+                    {{ billing.country ?? 'France' }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fa fa-truck me-2"></i>Adresse de livraison</h5>
+                </div>
+                <div class="card-body">
+                    {% set shipping = order.shippingAddress %}
+                    <strong>{{ shipping.firstName ?? '' }} {{ shipping.lastName ?? '' }}</strong><br>
+                    {{ shipping.street ?? '' }}<br>
+                    {{ shipping.zipCode ?? '' }} {{ shipping.city ?? '' }}<br>
+                    {{ shipping.country ?? 'France' }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Chronologie #}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0"><i class="fa fa-clock me-2"></i>Chronologie</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-4">
+                <div>
+                    <small class="text-muted d-block">Créée</small>
+                    <strong>{{ order.createdAt|date('d/m/Y H:i') }}</strong>
+                </div>
+                {% if order.paidAt %}
+                <div>
+                    <small class="text-muted d-block">Payée</small>
+                    <strong class="text-success">{{ order.paidAt|date('d/m/Y H:i') }}</strong>
+                </div>
+                {% endif %}
+                {% if order.shippedAt %}
+                <div>
+                    <small class="text-muted d-block">Expédiée</small>
+                    <strong class="text-info">{{ order.shippedAt|date('d/m/Y H:i') }}</strong>
+                </div>
+                {% endif %}
+                {% if order.deliveredAt %}
+                <div>
+                    <small class="text-muted d-block">Livrée</small>
+                    <strong class="text-primary">{{ order.deliveredAt|date('d/m/Y H:i') }}</strong>
+                </div>
+                {% endif %}
+                {% if order.trackingNumber %}
+                <div>
+                    <small class="text-muted d-block">N° suivi</small>
+                    <strong>{{ order.trackingNumber }}</strong>
+                    {% if order.carrier %}<br><small>{{ order.carrier }}</small>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

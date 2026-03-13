@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: 'Montserrat', Arial, sans-serif; color: #2C2420; background: #F5F2ED; margin: 0; padding: 0;">
+    <div style="display: none; max-height: 0; overflow: hidden;">Dégustation {{ reservation.slot.tasting.name }} confirmée le {{ reservation.slot.date|date('d/m/Y') }} — {{ reservation.numberOfParticipants }} personne{{ reservation.numberOfParticipants > 1 ? 's' : '' }}</div>
+    <div style="background: #5B4638; padding: 30px; text-align: center;">
+        <h1 style="color: #C9A87C; font-family: Georgia, serif; margin: 0; font-size: 24px;">Château de Belleville</h1>
+        <p style="color: #E8E3D9; margin: 5px 0 0; font-size: 14px;">Vignoble d'Anjou</p>
+    </div>
+
+    <div style="background: #ffffff; padding: 30px; margin: 0 auto; max-width: 600px;">
+        <h2 style="color: #5B4638;">Réservation confirmée</h2>
+        <p>Bonjour {{ reservation.firstName }},</p>
+        <p>Votre réservation de dégustation a bien été enregistrée !</p>
+
+        <div style="background: #F5F2ED; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 8px 0; color: #8B7355; font-size: 12px; text-transform: uppercase; vertical-align: top;">Référence</td>
+                    <td style="padding: 8px 0; text-align: right;"><strong style="color: #5B4638; font-size: 16px;">{{ reservation.reference }}</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; color: #8B7355; font-size: 12px; text-transform: uppercase; vertical-align: top;">Formule</td>
+                    <td style="padding: 8px 0; text-align: right;"><strong style="color: #5B4638;">{{ reservation.slot.tasting.name }}</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; color: #8B7355; font-size: 12px; text-transform: uppercase; vertical-align: top;">Date et heure</td>
+                    <td style="padding: 8px 0; text-align: right;"><strong style="color: #5B4638;">{{ reservation.slot.date|date('d/m/Y') }} à {{ reservation.slot.startTime|date('H:i') }}</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; color: #8B7355; font-size: 12px; text-transform: uppercase; vertical-align: top;">Participants</td>
+                    <td style="padding: 8px 0; text-align: right;"><strong style="color: #5B4638;">{{ reservation.numberOfParticipants }} personne{{ reservation.numberOfParticipants > 1 ? 's' : '' }}</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; color: #8B7355; font-size: 12px; text-transform: uppercase; vertical-align: top;">Total</td>
+                    <td style="padding: 8px 0; text-align: right;"><strong style="color: #C9A87C; font-size: 18px;">{{ reservation.formattedTotalPrice }}</strong></td>
+                </tr>
+            </table>
+        </div>
+
+        <p><strong>Adresse :</strong> 36 rue de la Garde, 79100 Sainte-Verge (Thouars)</p>
+        <p>N'hésitez pas à nous contacter au 06 70 32 74 88 pour toute question.</p>
+
+        <p style="text-align: center; margin-top: 25px;">
+            <a href="{{ url('app_home') }}" style="display: inline-block; background: #5B4638; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 500;">Visiter notre site</a>
+        </p>
+    </div>
+
+    <div style="text-align: center; padding: 20px; color: #8B7355; font-size: 12px;">
+        <p>EARL Maison Baron - Château de Belleville</p>
+        <p>36 rue de la Garde, 79100 Sainte-Verge — SIRET 329 416 978 000 24</p>
+        <p>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+    </div>
+</body>
+</html>

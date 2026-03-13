@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales - Château de Belleville{% endblock %}
+{% block meta_description %}Mentions légales du site Château de Belleville. Informations sur l'éditeur, l'hébergeur, la propriété intellectuelle et la protection des données personnelles.{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Mentions légales</h1>
+        <p>Informations légales obligatoires</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    {# ==================== SOMMAIRE ==================== #}
+    <section class="section section-white">
+        <div class="container" style="max-width: 900px;">
+            <nav class="legal-nav" aria-label="Sommaire des mentions légales">
+                <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Sommaire</h2>
+                <ul class="legal-nav-list">
+                    <li><a href="#editeur">Éditeur du site</a></li>
+                    <li><a href="#hebergeur">Hébergeur</a></li>
+                    <li><a href="#propriete">Propriété intellectuelle</a></li>
+                    <li><a href="#rgpd">Données personnelles (RGPD)</a></li>
+                    <li><a href="#cookies">Cookies et traceurs</a></li>
+                    <li><a href="#responsabilite">Limitation de responsabilité</a></li>
+                    <li><a href="#credits">Crédits</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    {# ==================== CONTENU ==================== #}
+    <section class="section section-cream">
+        <div class="container" style="max-width: 900px;">
+
+            {# ===== Éditeur du site ===== #}
+            <div class="legal-card" id="editeur">
+                <h2>Éditeur du site</h2>
+                <p>Ce site est édité par :</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Raison sociale</span>
+                        <span class="legal-value">Maison Baron</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Forme juridique</span>
+                        <span class="legal-value">EARL</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">SIRET</span>
+                        <span class="legal-value">329 416 978 000 24</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">SIREN</span>
+                        <span class="legal-value">329 416 978</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Adresse</span>
+                        <span class="legal-value">36 rue de la Garde, 79100 Sainte-Verge (Thouars)</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Téléphone</span>
+                        <span class="legal-value">06 70 32 74 88</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Email</span>
+                        <span class="legal-value">chateaudebelleville@gmail.com</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">N° TVA intracommunautaire</span>
+                        <span class="legal-value">FR08 329416978</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5rem;"><strong>Directeur de la publication :</strong> M. Baron, gérant de l'EARL Maison Baron</p>
+            </div>
+
+            {# ===== Hébergeur ===== #}
+            <div class="legal-card" id="hebergeur">
+                <h2>Hébergeur</h2>
+                <p>Conformément à la loi n° 2024-449 du 21 mai 2024 (loi SREN), voici les informations relatives à l'hébergement :</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Société</span>
+                        <span class="legal-value">O2switch SARL</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Adresse</span>
+                        <span class="legal-value">222 Boulevard Gustave Flaubert, 63000 Clermont-Ferrand, France</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Téléphone</span>
+                        <span class="legal-value">04 44 44 60 40</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Site web</span>
+                        <span class="legal-value">www.o2switch.fr</span>
+                    </div>
+                </div>
+            </div>
+
+            {# ===== Propriété intellectuelle ===== #}
+            <div class="legal-card" id="propriete">
+                <h2>Propriété intellectuelle</h2>
+                <p>Le contenu de ce site (textes, photographies, illustrations, code source, logos) est protégé par le droit d'auteur. Sauf mention contraire, l'ensemble des éléments est la propriété du Château de Belleville.</p>
+                <p>Vous êtes autorisé à consulter ce site pour votre usage personnel. Toute reproduction, représentation ou utilisation à des fins commerciales nécessite une autorisation écrite préalable.</p>
+                <div class="legal-note">
+                    Les marques et logos des partenaires et certifications (Terra Vitis, Haute Valeur Environnementale, etc.) appartiennent à leurs propriétaires respectifs et sont utilisés à titre informatif.
+                </div>
+            </div>
+
+            {# ===== RGPD ===== #}
+            <div class="legal-card" id="rgpd">
+                <h2>Protection des données personnelles (RGPD)</h2>
+                <p>Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée, des données personnelles sont collectées lors de votre utilisation de ce site (compte client, commandes, réservations, formulaire de contact).</p>
+                <p>Le responsable du traitement est <strong>EARL Maison Baron</strong>, joignable à : <strong>chateaudebelleville@gmail.com</strong></p>
+                <p>Pour l'intégralité des informations (données collectées, bases légales, sous-traitants, durées de conservation, exercice de vos droits), consultez notre politique de confidentialité dédiée :</p>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="{{ path('app_privacy') }}" class="btn btn-secondary">Politique de confidentialité</a>
+                </div>
+            </div>
+
+            {# ===== Cookies ===== #}
+            <div class="legal-card" id="cookies">
+                <h2>Cookies et traceurs</h2>
+
+                <h3>Cookie de session</h3>
+                <p>Ce site utilise un cookie de session technique (PHPSESSID) strictement nécessaire au fonctionnement du site. Ce cookie permet de :</p>
+                <ul>
+                    <li>Maintenir votre session de connexion</li>
+                    <li>Conserver votre panier d'achats</li>
+                    <li>Assurer la protection CSRF des formulaires</li>
+                </ul>
+                <div class="legal-note">
+                    Ce cookie est supprimé à la fermeture de votre navigateur (sauf si l'option « Se souvenir de moi » est activée, auquel cas il est conservé 7 jours).
+                </div>
+
+                <h3>Journaux serveur</h3>
+                <p>L'hébergeur collecte automatiquement des données techniques lors de chaque visite (adresse IP, date, pages consultées, navigateur). Ces données sont utilisées pour assurer la sécurité et le bon fonctionnement du serveur.</p>
+
+                <div class="legal-success">
+                    Aucun cookie de tracking tiers, publicitaire ou de réseaux sociaux n'est utilisé sur ce site.
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--color-secondary);">Pour le détail complet (nom, durée, base légale), voir la <a href="{{ path('app_privacy') }}#cookies" style="color: var(--color-gold);">section cookies de notre politique de confidentialité</a>.</p>
+            </div>
+
+            {# ===== Responsabilité ===== #}
+            <div class="legal-card" id="responsabilite">
+                <h2>Limitation de responsabilité</h2>
+                <p>Les informations contenues sur ce site sont aussi précises que possible et sont périodiquement mises à jour, mais peuvent toutefois contenir des inexactitudes ou des omissions.</p>
+                <p>Les photographies de produits sont non contractuelles. La consommation d'alcool est interdite aux mineurs. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+
+                <h3>Liens externes</h3>
+                <p>Ce site peut contenir des liens hypertextes vers d'autres sites. L'éditeur n'exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu.</p>
+
+                <h3>Droit applicable</h3>
+                <p>Les présentes mentions légales sont régies par le droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
+            </div>
+
+            {# ===== Crédits ===== #}
+            <div class="legal-card" id="credits">
+                <h2>Crédits</h2>
+                <p>Ce site utilise les technologies et ressources suivantes :</p>
+                <div class="legal-credits-grid">
+                    <div class="legal-credit">
+                        <strong>Symfony</strong>
+                        <span>Framework PHP (licence MIT)</span>
+                    </div>
+                    <div class="legal-credit">
+                        <strong>Tailwind CSS</strong>
+                        <span>Framework CSS (licence MIT)</span>
+                    </div>
+                    <div class="legal-credit">
+                        <strong>Google Fonts</strong>
+                        <span>Cormorant Garamond & Montserrat (OFL)</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5rem; color: var(--color-secondary);">Conception et développement : <a href="https://gabriel-heneaux.fr/">Gabriel Héneaux</a></p>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

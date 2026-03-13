@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver - {{ tasting.name }} - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Réserver</h1>
+        <p>{{ tasting.name }} — {{ slot.date|date('d/m/Y') }} à {{ slot.startTime|date('H:i') }}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container" style="max-width: 800px;">
+            {# Recap #}
+            <div style="background: var(--color-cream); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;" data-reveal="fade-up">
+                <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Récapitulatif</h3>
+                <div class="grid-2-col" style="gap: 1rem;">
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Formule</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ tasting.name }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Prix</span>
+                        <div style="color: var(--color-gold); font-weight: 500;">{{ tasting.formattedPrice }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Date</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ slot.date|date('d/m/Y') }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Horaire</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ slot.startTime|date('H:i') }} - {{ slot.endTime|date('H:i') }}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-secondary);">Places restantes</span>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ slot.remainingSpots }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {# Form #}
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(91, 70, 56, 0.1);" data-reveal="fade-up" data-reveal-delay="150">
+                <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem; text-align: center;">Vos informations</h2>
+                {{ form_start(form, {'attr': {'class': 'form-grid'}}) }}
+                    <div class="form-group">
+                        {{ form_label(form.lastName) }}
+                        {{ form_widget(form.lastName) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.firstName) }}
+                        {{ form_widget(form.firstName) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.phone) }}
+                        {{ form_widget(form.phone) }}
+                        {{ form_errors(form.phone) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.numberOfParticipants) }}
+                        {{ form_widget(form.numberOfParticipants) }}
+                        {{ form_errors(form.numberOfParticipants) }}
+                    </div>
+                    <div class="form-group full-width">
+                        {{ form_label(form.message) }}
+                        {{ form_widget(form.message) }}
+                        {{ form_errors(form.message) }}
+                    </div>
+                    <button type="submit" class="btn-submit">Confirmer la réservation</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,442 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ wine.name }}{% if wine.vintage %} {{ wine.vintage }}{% endif %} - Château de Belleville{% endblock %}
+{% block meta_description %}{{ wine.name }}{% if wine.appellation %}, {{ wine.appellation }}{% endif %}. Vin du domaine Château de Belleville, vignoble d'Anjou. {{ wine.price|number_format(2, ',', ' ') }} €.{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_image %}{% if wine.images|length > 0 %}{{ app.request.schemeAndHttpHost ~ asset('uploads/wines/' ~ wine.images|first.filename) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ wine.name }}{% if wine.vintage %} {{ wine.vintage }}{% endif %}",
+    "description": "{{ wine.description ? wine.description|striptags|slice(0, 200) : (wine.name ~ ', vin du domaine Château de Belleville.') }}",
+    {% if wine.images|length > 0 %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('uploads/wines/' ~ wine.images|first.filename) }}",
+    {% else %}
+    "image": "{{ app.request.schemeAndHttpHost ~ asset('images/hero-vignes.jpg') }}",
+    {% endif %}
+    "brand": {
+        "@type": "Brand",
+        "name": "Château de Belleville"
+    },
+    "offers": {
+        "@type": "Offer",
+        "priceCurrency": "EUR",
+        "price": "{{ wine.price|number_format(2, '.', '') }}",
+        "availability": "{% if wine.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+        "url": "{{ app.request.schemeAndHttpHost ~ path('app_wine_show', {slug: wine.slug}) }}"
+    }{% if wine.averageRating %},
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ wine.averageRating|number_format(1, '.', '') }}",
+        "bestRating": "5",
+        "worstRating": "1",
+        "ratingCount": "{{ wine.reviews|filter(r => r.isApproved)|length }}"
+    }{% endif %}
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "{{ app.request.schemeAndHttpHost ~ path('app_home') }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Boutique",
+            "item": "{{ app.request.schemeAndHttpHost ~ path('app_shop_index') }}"
+        }{% if wine.category %},
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ wine.category.name }}",
+            "item": "{{ app.request.schemeAndHttpHost ~ path('app_shop_index', {categorie: wine.category.id}) }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "{{ wine.name }}"
+        }{% else %},
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ wine.name }}"
+        }{% endif %}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>{{ wine.name }}</h1>
+        <p>{% if wine.appellation %}{{ wine.appellation }}{% endif %}{% if wine.vintage %} - {{ wine.vintage }}{% endif %}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    {# Sommelier IA — décalage mobile du toggle, à réactiver avec le widget #}
+    {# {% if wine.available %}
+    <style>
+    @media (max-width: 768px) {
+        .sommelier-toggle { bottom: 5.5rem !important; }
+    }
+    </style>
+    {% endif %} #}
+
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+        <div class="container">
+            <a href="{{ path('app_shop_index') }}">Boutique</a>
+            <span class="breadcrumb-sep">›</span>
+            {% if wine.category %}
+                <a href="{{ path('app_shop_index', {categorie: wine.category.id}) }}">{{ wine.category.name }}</a>
+                <span class="breadcrumb-sep">›</span>
+            {% endif %}
+            <span>{{ wine.name }}</span>
+        </div>
+    </nav>
+
+    {# Sticky CTA mobile #}
+    {% if wine.available %}
+        <div class="sticky-cta-mobile">
+            <div class="sticky-cta-info">
+                <span class="sticky-cta-name">{{ wine.name }}</span>
+                <span class="sticky-cta-price">{{ wine.formattedPrice }}</span>
+            </div>
+            <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post"
+                  data-controller="cart-add" data-action="submit->cart-add#add"
+                  style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.75rem 1.5rem;" data-cart-add-target="button">
+                    Ajouter au panier
+                </button>
+            </form>
+        </div>
+    {% endif %}
+
+    <section class="section section-white">
+        <div class="container grid-2-col" style="gap: 4rem; align-items: start;">
+            {# Image #}
+            <div class="wine-show-image" style="background: var(--color-cream); border-radius: 12px; padding: 2rem; text-align: center;"
+                 data-reveal="fade-up">
+                {% if wine.mainImage %}
+                    <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}" style="max-height: 500px; width: auto; object-fit: contain;" fetchpriority="high" loading="eager">
+                {% else %}
+                    <div style="font-size: 10rem; opacity: 0.3; padding: 4rem;">🍷</div>
+                {% endif %}
+            </div>
+
+            {# Details #}
+            <div class="wine-show-details" data-reveal="fade-up" data-reveal-delay="130">
+                {% if wine.category %}
+                    <span class="wine-badge" style="position: static; display: inline-block; margin-bottom: 1rem;">{{ wine.category.name }}</span>
+                {% endif %}
+
+                <h2 style="font-family: var(--font-display); font-size: 3rem; color: var(--color-primary); margin-bottom: 0.5rem;">{{ wine.name }}</h2>
+
+                {% if wine.appellation %}
+                    <div style="font-size: 1rem; color: var(--color-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">{{ wine.appellation }}</div>
+                {% endif %}
+
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                    <div class="wine-show-price">
+                        <span style="font-family: var(--font-display); font-size: 2.5rem; color: var(--color-gold);">{{ wine.formattedPrice }}</span>
+                        <div style="font-size: 0.8rem; color: var(--color-secondary); margin-top: 0.2rem;">dont TVA 20% : {{ (wine.priceInCents / 600)|number_format(2, ',', ' ') }} €</div>
+                    </div>
+                    {% if app.user %}
+                        <button
+                            data-controller="favorite-toggle"
+                            data-favorite-toggle-wine-id-value="{{ wine.id }}"
+                            data-favorite-toggle-active-value="{{ app.user.isFavoriteWine(wine) ? '1' : '0' }}"
+                            data-favorite-toggle-token-value="{{ csrf_token('favorite_' ~ wine.id) }}"
+                            data-action="click->favorite-toggle#toggle"
+                            title="{{ app.user.isFavoriteWine(wine) ? 'Retirer de mes vins' : 'Ajouter à mes vins' }}"
+                            aria-label="{{ app.user.isFavoriteWine(wine) ? 'Retirer de mes vins' : 'Ajouter à mes vins' }}"
+                            style="padding: 0.4rem 0.8rem; border: 1px solid var(--color-beige); background: white; border-radius: 6px; cursor: pointer; color: var(--color-primary); font-size: 1.3rem; line-height: 1;">
+                            <span data-heart-full style="display: {{ app.user.isFavoriteWine(wine) ? 'block' : 'none' }};">♥</span>
+                            <span data-heart-empty style="display: {{ app.user.isFavoriteWine(wine) ? 'none' : 'block' }};">♡</span>
+                        </button>
+                    {% endif %}
+                </div>
+
+                {% if wine.shortDescription %}
+                    <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 2rem; font-size: 1.1rem;">{{ wine.shortDescription }}</p>
+                {% endif %}
+
+                {# Characteristics #}
+                <div class="wine-characteristics">
+                    {% if wine.grapeVarieties|length > 0 %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Cépages</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.grapeVarietiesAsString }}</div>
+                        </div>
+                    {% endif %}
+                    {% if wine.servingTemperature %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Température</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.servingTemperature }}</div>
+                        </div>
+                    {% endif %}
+                    {% if wine.alcoholDegree %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Degré</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.alcoholDegree }}°</div>
+                        </div>
+                    {% endif %}
+                    {% if wine.agingPotential %}
+                        <div>
+                            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Garde</div>
+                            <div style="color: var(--color-primary); font-weight: 500;">{{ wine.agingPotential }}</div>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Volume</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{{ wine.volumeCl }} cl</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-secondary); margin-bottom: 0.3rem;">Stock</div>
+                        <div style="color: var(--color-primary); font-weight: 500;">{% if wine.inStock %}En stock{% else %}Rupture{% endif %}</div>
+                    </div>
+                </div>
+
+                {# Add to cart #}
+                {% if wine.available %}
+                    <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post" class="wine-add-form"
+                          data-controller="cart-add" data-action="submit->cart-add#add">
+                        <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
+                        <div class="quantity-selector" data-controller="quantity">
+                            <button type="button" class="quantity-btn" data-action="click->quantity#decrement">-</button>
+                            <input type="number" name="quantity" class="quantity-input" value="1" min="1" max="{{ wine.stock }}" data-quantity-target="input">
+                            <button type="button" class="quantity-btn" data-action="click->quantity#increment">+</button>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;" data-cart-add-target="button">Ajouter au panier</button>
+                    </form>
+                {% else %}
+                    <p style="color: var(--color-accent); font-weight: 500;">Ce vin est actuellement indisponible.</p>
+                {% endif %}
+                {# Bouton sommelier IA — à réactiver avec le widget #}
+                {# <button type="button"
+                        data-action="click->sommelier#ask"
+                        data-sommelier-message-param="Parlez-moi du {{ wine.name|e('js') }} : accords mets-vins, quand le servir, avec quel plat ?"
+                        class="hover-sommelier-btn"
+                        style="width: 100%; margin-top: 0.75rem; padding: 0.75rem; border: 1px solid var(--color-gold); background: transparent; color: var(--color-gold); border-radius: 6px; cursor: pointer; font-size: 0.9rem; letter-spacing: 0.5px;">
+                    🍷 Demander au sommelier
+                </button> #}
+            </div>
+        </div>
+    </section>
+
+    {# Description #}
+    {% if wine.description or wine.tastingNotes or wine.foodPairings is not empty or wine.terroir %}
+        <section class="section section-cream">
+            <div class="container" data-reveal="fade-up">
+                {% if wine.description %}
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Description</h3>
+                        <p style="color: var(--color-secondary); line-height: 1.8;">{{ wine.description }}</p>
+                    </div>
+                {% endif %}
+
+                {% if wine.tastingNotes %}
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Notes de dégustation</h3>
+                        <p style="color: var(--color-secondary); line-height: 1.8; white-space: pre-line;">{{ wine.tastingNotes }}</p>
+                    </div>
+                {% endif %}
+
+                {% if wine.foodPairings is not empty %}
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Accords mets-vins</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                            {% for pairing in wine.foodPairings %}
+                                <span style="background: white; padding: 0.5rem 1.2rem; border-radius: 20px; color: var(--color-secondary); font-size: 0.9rem; box-shadow: 0 2px 10px rgba(91, 70, 56, 0.1);">{{ pairing.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if wine.terroir %}
+                    <div>
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;">Terroir</h3>
+                        <p style="color: var(--color-secondary); line-height: 1.8;">{{ wine.terroir }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
+
+    {# Reviews #}
+    <section class="section section-white" id="avis">
+        <div class="container">
+            <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 1.5rem;"
+                data-reveal="fade-up">Avis clients</h3>
+
+            {# Summary #}
+            {% if reviews|length > 0 %}
+                <div class="review-summary">
+                    <span class="review-summary-score">{{ wine.averageRating|number_format(1, ',') }}</span>
+                    <div>
+                        <div class="review-summary-stars">
+                            {% for i in 1..5 %}
+                                <span{% if i > wine.averageRating|round %} class="star-empty"{% endif %}>&#9733;</span>
+                            {% endfor %}
+                        </div>
+                        <span class="review-summary-count">{{ reviews|length }} avis</span>
+                    </div>
+                </div>
+
+                {% for review in reviews %}
+                    <div class="review-card" data-reveal="fade-up" data-reveal-delay="{{ loop.index0 * 80 }}">
+                        <div class="review-card-header">
+                            <div>
+                                <span class="review-author">{{ review.user.firstName }} {{ review.user.lastName|slice(0, 1) }}.</span>
+                                {% if review.id in verifiedReviewIds %}
+                                    <span class="review-verified-badge">&#10003; Achat vérifié</span>
+                                {% endif %}
+                                <span class="review-date">{{ review.createdAt|date('d/m/Y') }}</span>
+                            </div>
+                            <div class="review-stars">
+                                {% for i in 1..5 %}
+                                    <span{% if i > review.rating %} class="star-empty"{% endif %}>&#9733;</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if review.title %}
+                            <div class="review-title">{{ review.title }}</div>
+                        {% endif %}
+                        {% if review.content %}
+                            <p class="review-content">{{ review.content }}</p>
+                        {% endif %}
+                        {% if app.user and app.user.id == review.user.id %}
+                            <div style="margin-top: 0.75rem; text-align: right;">
+                                <form action="{{ path('app_review_delete', {id: review.id}) }}" method="post" style="display: inline;"
+                                      onsubmit="return confirm('Supprimer votre avis ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-review-' ~ review.id) }}">
+                                    <button type="submit" style="background: none; border: none; color: var(--color-accent); cursor: pointer; font-size: 0.85rem; text-decoration: underline; font-family: var(--font-body);">
+                                        Supprimer mon avis
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: var(--color-secondary); margin-bottom: 2rem;">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+            {% endif %}
+
+            {# Review form #}
+            {% if reviewForm %}
+                <div class="review-form" data-reveal="fade-up">
+                    <h3>Laisser un avis</h3>
+                    {{ form_start(reviewForm, {attr: {novalidate: 'novalidate'}}) }}
+                        <div class="form-group">
+                            {{ form_label(reviewForm.rating) }}
+                            <div class="star-rating-input" data-controller="star-rating">
+                                {% for i in 1..5 %}
+                                    <button type="button" class="star-btn"
+                                            data-star-rating-target="star"
+                                            data-value="{{ i }}"
+                                            data-action="click->star-rating#select mouseenter->star-rating#hover mouseleave->star-rating#leave"
+                                            aria-label="{{ i }} étoile{{ i > 1 ? 's' : '' }}">&#9733;</button>
+                                {% endfor %}
+                                <div class="review-radios-hidden">
+                                    {{ form_widget(reviewForm.rating) }}
+                                </div>
+                            </div>
+                            {{ form_errors(reviewForm.rating) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(reviewForm.title) }}
+                            {{ form_widget(reviewForm.title) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(reviewForm.content) }}
+                            {{ form_widget(reviewForm.content) }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Publier mon avis</button>
+                    {{ form_end(reviewForm) }}
+                </div>
+            {% elseif hasReviewed %}
+                <p style="color: var(--color-secondary); font-style: italic; margin-top: 1rem;">Vous avez déjà laissé un avis pour ce vin.</p>
+            {% elseif not app.user %}
+                <p style="color: var(--color-secondary); margin-top: 1rem;">
+                    <a href="{{ path('app_login') }}" style="color: var(--color-gold);">Connectez-vous</a> pour laisser un avis.
+                </p>
+            {% endif %}
+        </div>
+    </section>
+
+    {# Vins similaires #}
+    {% if similarWines|length > 0 %}
+        <section class="section section-cream">
+            <div class="container">
+                <h3 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem; text-align: center;" data-reveal="fade-up">
+                    Vous aimerez aussi
+                </h3>
+                <div class="similar-wines-grid">
+                    {% for similar in similarWines %}
+                        <div class="shop-card" data-reveal="fade-up" data-reveal-delay="{{ loop.index0 * 100 }}">
+                            <a href="{{ path('app_wine_show', {slug: similar.slug}) }}" class="shop-card-img-link">
+                                {% if similar.mainImage %}
+                                    <img src="{{ asset('uploads/wines/' ~ similar.mainImage.filename) }}"
+                                         alt="{{ similar.name }}" class="shop-card-img" loading="lazy">
+                                {% else %}
+                                    <div class="shop-card-img-placeholder">🍷</div>
+                                {% endif %}
+                                {% if similar.category %}
+                                    <span class="shop-card-badge">{{ similar.category.name }}</span>
+                                {% endif %}
+                            </a>
+                            <div class="shop-card-body">
+                                <a href="{{ path('app_wine_show', {slug: similar.slug}) }}" class="shop-card-name">{{ similar.name }}</a>
+                                <div class="shop-card-meta">
+                                    {% if similar.appellation %}{{ similar.appellation }}{% endif %}
+                                    {% if similar.vintage %}<span class="shop-card-vintage">{{ similar.vintage }}</span>{% endif %}
+                                </div>
+                                {% if similar.averageRating %}
+                                    <div class="shop-card-rating">
+                                        {% for i in 1..5 %}
+                                            <span class="shop-star{% if i > similar.averageRating|round %} empty{% endif %}">★</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="shop-card-price">{{ similar.formattedPrice }}</div>
+                                {% if similar.available %}
+                                    <form action="{{ path('app_cart_add', {id: similar.id}) }}" method="post"
+                                          data-controller="cart-add" data-action="submit->cart-add#add"
+                                          class="shop-card-form">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="shop-add-btn" data-cart-add-target="button">
+                                            Ajouter au panier
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                <a href="{{ path('app_wine_show', {slug: similar.slug}) }}" class="shop-card-detail">
+                                    Voir la fiche
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="section section-white" style="text-align: center;">
+        <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">← Retour aux vins</a>
+    </section>
+{% endblock %}

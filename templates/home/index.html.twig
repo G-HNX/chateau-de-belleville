@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Château de Belleville - Vins d'Anjou{% endblock %}
+
+{% block preload %}
+    <link rel="preload" as="image" href="{{ asset('images/hero-vignes.jpg') }}">
+{% endblock %}
+
+{% block header %}
+    <section class="hero"
+             data-controller="parallax"
+             data-parallax-speed-value="0.3">
+        <div style="position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem 8%;">
+
+            <div style="font-size: 0.65rem; letter-spacing: 5px; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 1.25rem; animation: fadeInDown 0.9s ease both; animation-delay: 0.1s;">Vignoble Familial · Anjou</div>
+
+            <h1 style="font-family: var(--font-display); font-size: clamp(2.8rem, 7vw, 5.5rem); color: var(--color-primary); line-height: 1.05; font-weight: 600; margin-bottom: 1.25rem; animation: fadeInDown 0.9s ease both; animation-delay: 0.25s;">
+                Château de Belleville
+            </h1>
+
+            <p style="font-family: var(--font-display); font-size: clamp(1rem, 2vw, 1.35rem); color: var(--color-secondary); font-style: italic; max-width: 500px; line-height: 1.55; margin-bottom: 2rem; animation: fadeInDown 0.9s ease both; animation-delay: 0.45s;">
+                Des vins d'Anjou nés d'une terre héritée,<br>
+                cultivés avec patience depuis trois générations.
+            </p>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: fadeInDown 0.9s ease both; animation-delay: 0.65s;">
+                <a href="{{ path('app_wine_index') }}" class="btn btn-primary">Découvrir nos vins</a>
+                <a href="{{ path('app_tasting_index') }}" class="btn btn-secondary">Réserver une dégustation</a>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+{% block body %}
+    {# Collection Section #}
+    <section class="section section-white" style="position: relative;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--color-gold), transparent);"></div>
+        <div class="section-header" data-reveal="fade-up">
+            <div class="section-subtitle">Notre Gamme</div>
+            <h2 class="section-title">Nos Cuvées d'Exception</h2>
+            <p class="section-description">
+                Une sélection de vins d'Anjou élaborés avec passion, reflétant l'authenticité
+                de notre terroir et notre engagement pour la qualité.
+            </p>
+        </div>
+        <div class="container-lg grid-product" style="gap: 3rem;">
+            {% for wine in featuredWines %}
+                <a href="{{ path('app_wine_show', {slug: wine.slug}) }}"
+                   class="wine-card"
+                   style="text-decoration: none;"
+                   data-reveal="fade-up"
+                   data-reveal-delay="{{ loop.index0 * 120 }}">
+                    <div class="wine-image">
+                        {% if wine.mainImage %}
+                            <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}" alt="{{ wine.name }}">
+                        {% else %}
+                            <div style="font-size: 6rem; opacity: 0.3;">🍷</div>
+                        {% endif %}
+                        {% if wine.category %}
+                            <span class="wine-badge">{{ wine.category.name }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="wine-content">
+                        <h3 class="wine-name">{{ wine.name }}</h3>
+                        {% if wine.appellation %}
+                            <div class="wine-type">{{ wine.appellation }}</div>
+                        {% endif %}
+                        <p class="wine-desc">{{ wine.shortDescription }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 3rem;" data-reveal="fade-up" data-reveal-delay="200">
+            <a href="{{ path('app_wine_index') }}" class="btn btn-secondary">Voir tous nos vins</a>
+        </div>
+    </section>
+
+    {# Manifeste Section #}
+    <section class="section section-dark" style="padding: 4rem 8%;">
+        <div style="max-width: 680px; margin: 0 auto; text-align: center;">
+
+            <div data-reveal="fade-in"
+                 style="font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 1.5rem;">
+                Anjou · Depuis&nbsp;<span data-controller="counter"
+                                          data-counter-target-value="1970"
+                                          data-counter-duration-value="1400">1970</span>
+            </div>
+
+            <p data-reveal="fade-up" data-reveal-delay="100"
+               style="font-family: var(--font-display); font-size: clamp(1.4rem, 2.5vw, 2rem); color: var(--color-cream); line-height: 1.5; font-style: italic; margin-bottom: 1.5rem;">
+                On ne fait pas du vin.<br>
+                On accompagne la vigne.<br>
+                On écoute la terre.<br>
+                On respecte le temps.
+            </p>
+
+            <div data-reveal="scale-in" data-reveal-delay="200"
+                 style="width: 40px; height: 1px; background: var(--color-gold); margin: 0 auto 1.5rem;"></div>
+
+            <p data-reveal="fade-up" data-reveal-delay="250"
+               style="color: var(--color-beige); line-height: 1.8; font-size: 0.95rem; margin: 0 auto 1.75rem;">
+                Trois générations de la famille Baron ont appris ici, sur ces sols argilo-calcaires de Sainte-Verge,
+                que la vigne ne se force pas. Elle s'observe, elle se guide — et parfois, c'est elle qui nous guide.
+                Ce que vous trouverez dans chaque bouteille, c'est le résultat de cette écoute.
+            </p>
+
+            <a data-reveal="fade-up" data-reveal-delay="350"
+               href="{{ path('app_domain') }}"
+               style="display: inline-flex; align-items: center; gap: 0.6rem; color: var(--color-gold); text-decoration: none; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid rgba(201,168,124,0.3); padding-bottom: 0.25rem;">
+                Découvrir le domaine
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+
+        </div>
+    </section>
+
+    {# Tastings Section #}
+    {% if tastings|length > 0 %}
+        <section class="section section-cream">
+            <div class="section-header" data-reveal="fade-up">
+                <div class="section-subtitle">Vivez l'expérience</div>
+                <h2 class="section-title">Nos Dégustations</h2>
+                <p class="section-description">
+                    Choisissez l'expérience qui vous correspond parmi nos formules de dégustation.
+                </p>
+            </div>
+            <div class="container grid-3-col">
+                {% for tasting in tastings %}
+                    <div class="formule-card{% if loop.index == 2 %} featured{% endif %}"
+                         data-reveal="fade-up"
+                         data-reveal-delay="{{ loop.index0 * 150 }}">
+                        <div class="formule-header">
+                            {% if loop.index == 2 %}
+                                <span class="formule-badge">Populaire</span>
+                            {% endif %}
+                            <h3>{{ tasting.name }}</h3>
+                            <div class="formule-price">
+                                {% if tasting.free %}
+                                    Gratuit
+                                {% else %}
+                                    {{ tasting.price|number_format(0, ',', ' ') }}€ <span>/ personne</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="formule-body">
+                            {% if tasting.includedItems %}
+                                <ul>
+                                    {% for item in tasting.includedItems %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <div class="formule-duration">⏱ Durée : {{ tasting.formattedDuration }}</div>
+                        <div style="padding: 1.5rem; text-align: center;">
+                            <a href="{{ path('app_tasting_show', {slug: tasting.slug}) }}" class="btn btn-primary btn-full">Réserver</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

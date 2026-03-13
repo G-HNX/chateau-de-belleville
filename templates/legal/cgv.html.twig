@@ -1,0 +1,167 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions Générales de Vente - Château de Belleville{% endblock %}
+{% block meta_description %}Conditions générales de vente du Château de Belleville. Informations sur les commandes, paiements, livraisons et droit de rétractation.{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Conditions Générales de Vente</h1>
+        <p>Applicables à toute commande passée sur ce site</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    {# Sommaire #}
+    <section class="section section-white">
+        <div class="container" style="max-width: 900px;">
+            <nav class="legal-nav" aria-label="Sommaire des CGV">
+                <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1.5rem;">Sommaire</h2>
+                <ul class="legal-nav-list">
+                    <li><a href="#objet">Objet et champ d'application</a></li>
+                    <li><a href="#produits">Produits</a></li>
+                    <li><a href="#prix">Prix</a></li>
+                    <li><a href="#commande">Commande</a></li>
+                    <li><a href="#paiement">Paiement</a></li>
+                    <li><a href="#livraison">Livraison</a></li>
+                    <li><a href="#retractation">Droit de rétractation</a></li>
+                    <li><a href="#garanties">Garanties légales</a></li>
+                    <li><a href="#litiges">Litiges et droit applicable</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <section class="section section-cream">
+        <div class="container" style="max-width: 900px;">
+
+            <div class="legal-card" id="objet">
+                <h2>Objet et champ d'application</h2>
+                <p>Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles entre le Château de Belleville, dont le siège est situé au 36 rue de la Garde, 79100 Sainte-Verge — <strong>SIREN : [À COMPLÉTER avant mise en ligne]</strong> (ci-après « le Vendeur »), et toute personne physique majeure effectuant un achat sur le site (ci-après « le Client »).</p>
+                <p>Toute commande implique l'acceptation sans réserve des présentes CGV. Le Client reconnaît avoir la capacité légale de contracter et avoir atteint l'âge légal pour l'achat de boissons alcoolisées (18 ans en France).</p>
+                <div class="legal-note">
+                    <strong>Interdiction de vente aux mineurs (Loi Évin — art. L.3342-1 du Code de la santé publique)</strong><br>
+                    La vente de boissons alcoolisées à des personnes mineures est strictement interdite. Lors de chaque commande, le Client doit renseigner sa date de naissance et cocher une case certifiant être âgé d'au moins 18 ans. Ces informations sont conservées avec la commande à des fins de traçabilité légale. Le Vendeur se réserve le droit d'annuler toute commande dont l'acheteur s'avérerait être mineur.
+                </div>
+            </div>
+
+            <div class="legal-card" id="produits">
+                <h2>Produits</h2>
+                <p>Les vins proposés à la vente sont des productions du domaine Château de Belleville, élaborés sur notre exploitation en Anjou. Les caractéristiques essentielles des produits (appellation, millésime, cépage, description) sont présentées sur chaque fiche produit.</p>
+                <p>Les photographies sont non contractuelles. Les étiquettes peuvent varier selon les millésimes sans que cela constitue un motif de réclamation.</p>
+                <p>Le Vendeur se réserve le droit de modifier sa gamme à tout moment. En cas d'indisponibilité d'un produit après commande, le Client en sera informé par email dans les 48 heures et pourra choisir entre un produit de substitution ou un remboursement intégral.</p>
+                <div class="legal-note">
+                    <strong>Publicité et promotion de l'alcool (Loi Évin — art. L.3323-2 du Code de la santé publique)</strong><br>
+                    Conformément à la loi Évin, toute communication commerciale relative à des boissons alcoolisées doit être accompagnée du message sanitaire : « L'abus d'alcool est dangereux pour la santé ». Ce message figure sur l'ensemble de nos communications.
+                </div>
+            </div>
+
+            <div class="legal-card" id="prix">
+                <h2>Prix</h2>
+                <p>Les prix sont indiqués en euros toutes taxes comprises (TTC), hors frais de livraison. Le taux de TVA applicable est celui en vigueur au jour de la commande.</p>
+                <p>Le Vendeur se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au tarif en vigueur au moment de la validation de la commande.</p>
+                <div class="legal-info-grid">
+                    <div class="legal-info-item">
+                        <span class="legal-label">TVA boissons alcoolisées</span>
+                        <span class="legal-value">20 %</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Frais de livraison</span>
+                        <span class="legal-value">Calculés selon la destination (voir page Livraison)</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Livraison offerte</span>
+                        <span class="legal-value">À partir de 150 € d'achat (France métropolitaine)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legal-card" id="commande">
+                <h2>Commande</h2>
+                <p>La commande s'effectue en ligne via le site. Le processus de commande comprend les étapes suivantes :</p>
+                <ul>
+                    <li>Sélection des produits et ajout au panier</li>
+                    <li>Vérification du panier et saisie des informations de livraison</li>
+                    <li>Vérification de majorité : saisie de la date de naissance et certification sur l'honneur d'être âgé d'au moins 18 ans</li>
+                    <li>Choix du mode de paiement et validation</li>
+                    <li>Confirmation par email avec récapitulatif de commande</li>
+                </ul>
+                <p>La commande n'est définitivement validée qu'après confirmation du paiement. Un email de confirmation est envoyé dans les minutes suivant la validation.</p>
+                <p>Le Vendeur se réserve le droit de refuser ou d'annuler toute commande d'un Client avec lequel il existerait un litige relatif au paiement d'une commande antérieure.</p>
+            </div>
+
+            <div class="legal-card" id="paiement">
+                <h2>Paiement</h2>
+                <p>Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire de paiement sécurisé Stripe. Le débit est effectué au moment de la validation de la commande.</p>
+                <div class="legal-success">
+                    Les transactions sont sécurisées par le protocole SSL et le système 3D Secure. Le Château de Belleville ne conserve aucune donnée bancaire.
+                </div>
+                <p style="margin-top: 1rem;">En cas d'échec du paiement, la commande est automatiquement annulée. Le Client est invité à renouveler sa commande.</p>
+            </div>
+
+            <div class="legal-card" id="livraison">
+                <h2>Livraison</h2>
+                <p>Les commandes sont expédiées en France métropolitaine. Pour toute information sur les délais et tarifs de livraison, consultez notre <a href="{{ path('app_shipping') }}" style="color: var(--color-gold);">page Livraison</a>.</p>
+                <p>Les délais de livraison sont donnés à titre indicatif. Un retard de livraison ne saurait donner lieu à l'annulation de la commande ni à des dommages et intérêts, sauf dépassement manifeste du délai annoncé.</p>
+                <p>La signature d'un adulte majeur est requise à la livraison. En cas d'absence, un avis de passage est déposé. Si le colis n'est pas récupéré dans les délais impartis, il sera retourné au Vendeur qui contactera le Client.</p>
+            </div>
+
+            <div class="legal-card" id="retractation">
+                <h2>Droit de rétractation</h2>
+                <p>Conformément à l'article L.221-18 du Code de la consommation, le Client dispose d'un délai de <strong>14 jours calendaires</strong> à compter de la réception de la commande pour exercer son droit de rétractation, sans avoir à justifier de motif ni à payer de pénalité.</p>
+                <h3>Exercice du droit de rétractation</h3>
+                <p>Pour exercer ce droit, le Client doit notifier sa décision de manière claire et non ambiguë par email à <strong>chateaudebelleville@gmail.com</strong>, en indiquant son nom, son adresse, le numéro de commande et son intention de se rétracter. Le Client peut utiliser le formulaire type de rétractation prévu à l'annexe du Code de la consommation, sans y être obligé.</p>
+                <h3>Conditions de retour</h3>
+                <ul>
+                    <li>Les bouteilles doivent être retournées <strong>non ouvertes</strong>, dans leur emballage d'origine ou un emballage équivalent assurant une protection identique, en parfait état</li>
+                    <li>Les frais de retour sont à la charge du Client</li>
+                    <li>Le remboursement est effectué dans les <strong>14 jours</strong> suivant la date à laquelle le Vendeur est informé de la rétractation, et au plus tard à réception des produits retournés</li>
+                    <li>Le remboursement est réalisé par le même moyen de paiement que celui utilisé lors de la commande</li>
+                </ul>
+                <div class="legal-note">
+                    <strong>Exclusions du droit de rétractation (art. L.221-28 du Code de la consommation)</strong><br>
+                    Le droit de rétractation ne peut être exercé pour les produits <strong>descellés ou ouverts</strong> par le Client après livraison, ceux-ci ne pouvant être renvoyés pour des raisons de sécurité sanitaire. Il ne s'applique pas non plus aux produits personnalisés (étiquetage spécifique à la demande du Client) ni aux commandes passées directement au domaine.
+                </div>
+            </div>
+
+            <div class="legal-card" id="garanties">
+                <h2>Garanties légales</h2>
+                <p>Le Client bénéficie des garanties légales prévues par le Code de la consommation :</p>
+                <div class="legal-rights-grid">
+                    <div class="legal-right">
+                        <strong>Garantie de conformité</strong>
+                        <span>Articles L.217-4 à L.217-14 du Code de la consommation — 2 ans à compter de la livraison</span>
+                    </div>
+                    <div class="legal-right">
+                        <strong>Garantie des vices cachés</strong>
+                        <span>Articles 1641 à 1648 du Code civil — 2 ans à compter de la découverte du vice</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">En cas de produit défectueux ou non conforme, le Client doit contacter le Vendeur par email dans les 48 heures suivant la réception, en joignant des photos.</p>
+            </div>
+
+            <div class="legal-card" id="litiges">
+                <h2>Litiges et droit applicable</h2>
+                <p>Les présentes CGV sont soumises au droit français. En cas de litige, le Client est invité à contacter en priorité le service client à l'adresse chateaudebelleville@gmail.com afin de trouver une solution amiable.</p>
+                <h3>Médiation</h3>
+                <p>Conformément à l'article L.616-1 du Code de la consommation, le Client peut recourir gratuitement à un médiateur de la consommation en cas de litige non résolu. Le Château de Belleville adhère au service de médiation :</p>
+                <div class="legal-info-grid" style="margin: 1rem 0;">
+                    <div class="legal-info-item">
+                        <span class="legal-label">Médiateur</span>
+                        <span class="legal-value">La Médiation e-commerce (FEVAD)</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Adresse</span>
+                        <span class="legal-value">60 rue de la Boétie, 75008 Paris</span>
+                    </div>
+                    <div class="legal-info-item">
+                        <span class="legal-label">Site internet</span>
+                        <span class="legal-value"><a href="https://www.mediateurfevad.fr" target="_blank" rel="noopener" style="color: var(--color-gold);">www.mediateurfevad.fr</a></span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">La Commission européenne met à disposition une plateforme de règlement en ligne des litiges (RLL) : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener" style="color: var(--color-gold);">ec.europa.eu/consumers/odr</a></p>
+                <p>À défaut de résolution amiable, les tribunaux français seront compétents.</p>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

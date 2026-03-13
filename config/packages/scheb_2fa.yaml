@@ -1,0 +1,19 @@
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+    email:
+        enabled: true
+        sender_email: noreply@chateau-belleville.fr
+        sender_name: "Château de Belleville"
+        digits: 6
+        template: security/2fa_email.html.twig
+        mailer: App\Security\TwoFactorAuthCodeMailer
+    trusted_device:
+        enabled: true
+        key: '%env(TRUSTED_DEVICE_SECRET)%'
+        lifetime: 2592000  # 30 jours
+        extend_lifetime: true
+        cookie_name: trusted_device
+        cookie_secure: auto
+        cookie_same_site: lax

@@ -1,0 +1,106 @@
+# ==============================================================
+# SECURITE
+# ==============================================================
+
+# Desactiver le listing des repertoires
+Options -Indexes
+
+# Bloquer l'acces aux fichiers sensibles (.env, .git, composer.*, etc.)
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<FilesMatch "(composer\.(json|lock)|package\.json|webpack\..*|symfony\.lock|phpunit.*|\.gitignore|Makefile)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Headers de securite
+<IfModule mod_headers.c>
+    # Empecher le clickjacking (iframe)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Empecher le MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Protection XSS (navigateurs anciens)
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Politique de referrer
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Interdire l'acces aux API sensibles du navigateur
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+    # Forcer HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ==============================================================
+# REWRITING SYMFONY
+# ==============================================================
+
+# Use the front controller as index file.
+DirectoryIndex index.php
+
+# By default, Apache does not evaluate symbolic links if you did not enable this
+# feature in your server configuration. Uncomment the following line if you
+# install assets as symlinks or if you experience problems related to symlinks
+# when compiling LESS/Sass/CoffeeScript assets.
+# Options +FollowSymlinks
+
+# Disabling MultiViews prevents unwanted negotiation, e.g. "/index" should not resolve
+# to the front controller "/index.php" but be rewritten to "/index.php/index".
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Determine the RewriteBase automatically and set it as environment variable.
+    # If you are using Apache aliases to do mass virtual hosting or installed the
+    # project in a subdirectory, the base path will be prepended to allow proper
+    # resolution of the index.php file and to redirect to the correct URI. It will
+    # work in environments without path prefix as well, providing a safe, one-size
+    # fits all solution. But as you do not need it in this common case, you can
+    # comment the following 2 lines to eliminate the overhead.
+    RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
+    RewriteRule .* - [E=BASE:%1]
+
+    # Sets the HTTP_AUTHORIZATION header removed by Apache
+    RewriteCond %{HTTP:Authorization} .+
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
+
+    # Redirect to URI without front controller to prevent duplicate content
+    # (with and without `/index.php`). Only do this redirect on the initial
+    # rewrite by Apache and not on subsequent cycles. Otherwise we would get an
+    # pointless infinite redirect loop with `internal redirect` response.
+    RewriteCond %{ENV:REDIRECT_STATUS} =""
+    RewriteRule ^index\.php(?:/(.*)|$) %{ENV:BASE}/$1 [R=301,L]
+
+    # If the requested filename exists, simply serve it.
+    # We only want to let Apache serve files and not directories.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ %{ENV:BASE}/index.php [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    <IfModule mod_alias.c>
+        # When mod_rewrite is not available, we instruct a simple catch-all redirect to
+        # the front controller. This requires mod_alias. Apache will show the default
+        # 404 page otherwise.
+        RedirectMatch 307 ^/$ /index.php/
+    </IfModule>
+</IfModule>

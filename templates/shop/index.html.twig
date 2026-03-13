@@ -1,0 +1,353 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Boutique — Château de Belleville{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "{{ app.request ? app.request.schemeAndHttpHost ~ path('app_home') : '' }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Boutique",
+            "item": "{{ app.request ? app.request.schemeAndHttpHost ~ path('app_shop_index') : '' }}"
+        }{% if currentFilters.category is defined %},
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ currentFilters.category.name }}"
+        }{% endif %}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Boutique</h1>
+        <p>Découvrez et commandez nos vins d'Anjou, élaborés avec passion et savoir-faire.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+
+{# ── Fil d'Ariane ─────────────────────────────────────────────── #}
+<nav class="breadcrumb" aria-label="Fil d'Ariane">
+    <div class="container">
+        <a href="{{ path('app_home') }}">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        {% if currentFilters.category is defined %}
+            <a href="{{ path('app_shop_index') }}">Boutique</a>
+            <span class="breadcrumb-sep">›</span>
+            <span>{{ currentFilters.category.name }}</span>
+        {% else %}
+            <span>Boutique</span>
+        {% endif %}
+    </div>
+</nav>
+
+{# ── Barre livraison gratuite ────────────────────────────────────── #}
+<div class="shop-shipping-bar">
+    {% if remainingCents <= 0 %}
+        <span class="shop-shipping-check">✓</span>
+        <strong>Livraison offerte !</strong>
+        <span>Votre commande bénéficie de la livraison gratuite.</span>
+    {% else %}
+        <span>🚚</span>
+        <span>Plus que <strong>{{ (remainingCents / 100)|number_format(2, ',', ' ') }} €</strong> pour la livraison offerte</span>
+        {% if freeShippingProgressPct > 0 %}
+            <div class="shop-shipping-bar-track">
+                <div class="shop-shipping-bar-fill" style="width: {{ freeShippingProgressPct }}%;"></div>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+{# ── Mini-panier (si articles) ───────────────────────────────────── #}
+{% if cart and cart.items|length > 0 %}
+<div class="shop-cart-bar">
+    <div class="shop-cart-bar-inner">
+        <span class="shop-cart-bar-icon">🛒</span>
+        <span><strong>{{ cart.itemsCount }}</strong> article{{ cart.itemsCount > 1 ? 's' : '' }} dans votre panier</span>
+        <span class="shop-cart-bar-sep">·</span>
+        <span><strong>{{ (cartTotalCents / 100)|number_format(2, ',', ' ') }} €</strong></span>
+        <a href="{{ path('app_cart_index') }}" class="shop-cart-bar-btn">Voir le panier →</a>
+        <a href="{{ path('app_checkout_index') }}" class="shop-cart-bar-btn shop-cart-bar-btn-primary">Commander</a>
+    </div>
+</div>
+{% endif %}
+
+{# ── Tri + compteur ───────────────────────────────────────────────── #}
+{% set sortParams = {tri: '__TRI__'} %}
+{% if currentFilters.category is defined %}{% set sortParams = sortParams|merge({categorie: currentFilters.category.id}) %}{% endif %}
+{% if currentFilters.appellation is defined %}{% set sortParams = sortParams|merge({appellation: currentFilters.appellation.id}) %}{% endif %}
+{% if currentFilters.vintage is defined %}{% set sortParams = sortParams|merge({millesime: currentFilters.vintage}) %}{% endif %}
+{% if currentFilters.priceMin is defined %}{% set sortParams = sortParams|merge({prix_min: currentFilters.priceMin}) %}{% endif %}
+{% if currentFilters.priceMax is defined %}{% set sortParams = sortParams|merge({prix_max: currentFilters.priceMax}) %}{% endif %}
+{% if currentFilters.inStock is defined %}{% set sortParams = sortParams|merge({en_stock: 1}) %}{% endif %}
+{% set sortBase = path('app_shop_index', sortParams) %}
+
+{# ── Tags filtres actifs ─────────────────────────────────────────── #}
+{% if currentFilters|length > 0 %}
+<div class="shop-active-filters">
+    {% if currentFilters.category is defined %}
+        <span class="shop-filter-tag">
+            {{ currentFilters.category.name }}
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.appellation is defined %}
+        <span class="shop-filter-tag">
+            {{ currentFilters.appellation.name }}
+            <a href="{{ path('app_shop_index', {tri: currentSort, categorie: currentFilters.category is defined ? currentFilters.category.id : ''}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.vintage is defined %}
+        <span class="shop-filter-tag">
+            Millésime {{ currentFilters.vintage }}
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.priceMin is defined or currentFilters.priceMax is defined %}
+        <span class="shop-filter-tag">
+            {% if currentFilters.priceMin is defined %}{{ currentFilters.priceMin }} €{% else %}0 €{% endif %} – {% if currentFilters.priceMax is defined %}{{ currentFilters.priceMax }} €{% else %}∞{% endif %}
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    {% if currentFilters.inStock is defined %}
+        <span class="shop-filter-tag">
+            En stock uniquement
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}" aria-label="Retirer">×</a>
+        </span>
+    {% endif %}
+    <a href="{{ path('app_shop_index') }}" class="shop-filter-clear-all">Effacer tous les filtres</a>
+</div>
+{% endif %}
+
+<div class="shop-sort-header">
+    <span class="shop-sort-count">{{ wines|length }} vin{{ wines|length > 1 ? 's' : '' }}</span>
+    <div class="shop-sort-bar">
+        <label class="shop-sort-label" for="shop-sort">Trier par</label>
+        <select id="shop-sort" class="shop-sort-select" onchange="window.location = this.value">
+            <option value="{{ sortBase|replace({'__TRI__': 'newest'}) }}"  {% if currentSort == 'newest'     %}selected{% endif %}>Nouveautés</option>
+            <option value="{{ sortBase|replace({'__TRI__': 'price_asc'}) }}" {% if currentSort == 'price_asc' %}selected{% endif %}>Prix croissant</option>
+            <option value="{{ sortBase|replace({'__TRI__': 'price_desc'}) }}" {% if currentSort == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
+            <option value="{{ sortBase|replace({'__TRI__': 'name'}) }}"   {% if currentSort == 'name'       %}selected{% endif %}>Nom A→Z</option>
+        </select>
+    </div>
+</div>
+
+{# ── Layout sidebar + grille ─────────────────────────────────────── #}
+<div class="shop-layout">
+
+    {# Sidebar filtres #}
+    <aside class="shop-sidebar" data-reveal="slide-left">
+
+        <div class="shop-filter-block">
+            <div class="shop-filter-title">Catégories</div>
+            <a href="{{ path('app_shop_index', {tri: currentSort}) }}"
+               class="shop-filter-link{% if currentFilters.category is not defined %} active{% endif %}">
+                Tous les vins
+            </a>
+            {% for category in categories %}
+                <a href="{{ path('app_shop_index', {categorie: category.id, tri: currentSort}) }}"
+                   class="shop-filter-link{% if currentFilters.category is defined and currentFilters.category == category %} active{% endif %}">
+                    {{ category.name }}
+                    <span class="shop-filter-count">{{ category.activeWinesCount }}</span>
+                </a>
+            {% endfor %}
+        </div>
+
+        <form method="get" action="{{ path('app_shop_index') }}" class="shop-filter-block">
+            {% if currentFilters.category is defined %}
+                <input type="hidden" name="categorie" value="{{ currentFilters.category.id }}">
+            {% endif %}
+            <input type="hidden" name="tri" value="{{ currentSort }}">
+
+            {# Appellation #}
+            {% if appellations|length > 0 %}
+                <div class="shop-filter-title" style="margin-top: 1rem;">Appellation</div>
+                <select name="appellation" class="shop-filter-select">
+                    <option value="">Toutes les appellations</option>
+                    {% for appellation in appellations %}
+                        <option value="{{ appellation.id }}"{% if currentFilters.appellation is defined and currentFilters.appellation == appellation %} selected{% endif %}>
+                            {{ appellation.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+
+            {# Millésime #}
+            {% if vintages|length > 0 %}
+                <div class="shop-filter-title" style="margin-top: 1rem;">Millésime</div>
+                <select name="millesime" class="shop-filter-select">
+                    <option value="">Tous les millésimes</option>
+                    {% for vintage in vintages %}
+                        <option value="{{ vintage }}"{% if currentFilters.vintage is defined and currentFilters.vintage == vintage %} selected{% endif %}>
+                            {{ vintage }}
+                        </option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+
+            <div class="shop-filter-title" style="margin-top: 1rem;">Prix</div>
+            <div class="shop-price-inputs">
+                <div class="shop-price-field">
+                    <label>Min</label>
+                    <input type="number" name="prix_min" value="{{ currentFilters.priceMin ?? '' }}" min="0" placeholder="0" class="shop-price-input">
+                    <span>€</span>
+                </div>
+                <div class="shop-price-sep">—</div>
+                <div class="shop-price-field">
+                    <label>Max</label>
+                    <input type="number" name="prix_max" value="{{ currentFilters.priceMax ?? '' }}" min="0" placeholder="∞" class="shop-price-input">
+                    <span>€</span>
+                </div>
+            </div>
+
+            <div class="shop-filter-stock">
+                <label class="shop-checkbox">
+                    <input type="checkbox" name="en_stock" value="1"{% if currentFilters.inStock is defined %} checked{% endif %}>
+                    <span>En stock uniquement</span>
+                </label>
+            </div>
+
+            <button type="submit" class="shop-filter-apply">Appliquer</button>
+
+            {% if currentFilters|length > 0 %}
+                <a href="{{ path('app_shop_index') }}" class="shop-filter-reset">Effacer les filtres</a>
+            {% endif %}
+        </form>
+
+        <div class="shop-filter-block shop-info-block">
+            <div class="shop-info-item">
+                <span>🚚</span>
+                <span>Livraison offerte dès <strong>150 €</strong></span>
+            </div>
+            <div class="shop-info-item">
+                <span>📦</span>
+                <span>Expédition sous <strong>48 h</strong></span>
+            </div>
+            <div class="shop-info-item">
+                <span>🔒</span>
+                <span>Paiement <strong>sécurisé</strong></span>
+            </div>
+        </div>
+
+    </aside>
+
+    {# Grille produits #}
+    <main class="shop-grid-wrap">
+        {% if wines|length == 0 %}
+            <div class="shop-empty">
+                <p>Aucun vin ne correspond à vos critères.</p>
+                <a href="{{ path('app_shop_index') }}" class="btn btn-secondary">Voir tous les vins</a>
+            </div>
+        {% else %}
+            <div class="shop-grid">
+                {% for wine in wines %}
+                <div class="shop-card" data-reveal="fade-up" data-reveal-delay="{{ (loop.index0 % 3) * 100 }}">
+
+                    {# Image #}
+                    <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="shop-card-img-link">
+                        {% if wine.mainImage %}
+                            <img src="{{ asset('uploads/wines/' ~ wine.mainImage.filename) }}"
+                                 alt="{{ wine.name }}" class="shop-card-img" loading="lazy">
+                        {% else %}
+                            <div class="shop-card-img-placeholder">🍷</div>
+                        {% endif %}
+                        {% if wine.category %}
+                            <span class="shop-card-badge">{{ wine.category.name }}</span>
+                        {% endif %}
+                        {% if not wine.available %}
+                            <div class="shop-card-overlay-unavailable">Épuisé</div>
+                        {% endif %}
+                    </a>
+
+                    {# Corps #}
+                    <div class="shop-card-body">
+
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;">
+                            <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="shop-card-name" style="flex: 1;">{{ wine.name }}</a>
+                            {% if app.user %}
+                                <button
+                                    data-controller="favorite-toggle"
+                                    data-favorite-toggle-wine-id-value="{{ wine.id }}"
+                                    data-favorite-toggle-active-value="{{ app.user.isFavoriteWine(wine) ? '1' : '0' }}"
+                                    data-favorite-toggle-token-value="{{ csrf_token('favorite_' ~ wine.id) }}"
+                                    data-action="click->favorite-toggle#toggle"
+                                    title="{{ app.user.isFavoriteWine(wine) ? 'Retirer de mes vins' : 'Ajouter à mes vins' }}"
+                                    style="padding: 0.25rem; border: none; background: transparent; cursor: pointer; color: var(--color-primary); font-size: 1.1rem; line-height: 1; flex-shrink: 0; margin-top: 0.1rem;">
+                                    <span data-heart-full style="display: {{ app.user.isFavoriteWine(wine) ? 'block' : 'none' }};">♥</span>
+                                    <span data-heart-empty style="display: {{ app.user.isFavoriteWine(wine) ? 'none' : 'block' }};">♡</span>
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        <div class="shop-card-meta">
+                            {% if wine.appellation %}{{ wine.appellation }}{% endif %}
+                            {% if wine.vintage %}<span class="shop-card-vintage">{{ wine.vintage }}</span>{% endif %}
+                        </div>
+
+                        {% if wine.averageRating %}
+                            <div class="shop-card-rating">
+                                {% for i in 1..5 %}
+                                    <span class="shop-star{% if i > wine.averageRating|round %} empty{% endif %}">★</span>
+                                {% endfor %}
+                                <span class="shop-rating-count">({{ wine.reviews|filter(r => r.approved)|length }})</span>
+                            </div>
+                        {% endif %}
+
+                        {% if wine.available and wine.stock <= 5 %}
+                            <div class="shop-stock-urgent">
+                                ⚡ Plus que {{ wine.stock }} bouteille{{ wine.stock > 1 ? 's' : '' }} !
+                            </div>
+                        {% endif %}
+
+                        <div class="shop-card-price">{{ wine.formattedPrice }}</div>
+                        <div style="font-size: 0.75rem; color: var(--color-secondary);">dont TVA 20% : {{ (wine.priceInCents / 600)|number_format(2, ',', ' ') }} €</div>
+
+                        {% if wine.available %}
+                            <form action="{{ path('app_cart_add', {id: wine.id}) }}" method="post"
+                                  data-controller="cart-add" data-action="submit->cart-add#add"
+                                  class="shop-card-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('cart_add') }}">
+                                <div class="shop-qty-wrap" data-controller="quantity">
+                                    <button type="button" class="shop-qty-btn" aria-label="Diminuer la quantité"
+                                            data-action="click->quantity#decrement">−</button>
+                                    <input type="number" name="quantity" value="1"
+                                           min="1" max="{{ wine.stock }}" class="shop-qty-input" aria-label="Quantité" data-quantity-target="input">
+                                    <button type="button" class="shop-qty-btn" aria-label="Augmenter la quantité"
+                                            data-action="click->quantity#increment">+</button>
+                                </div>
+                                <button type="submit" class="shop-add-btn" data-cart-add-target="button">
+                                    Ajouter au panier
+                                </button>
+                            </form>
+                        {% else %}
+                            <div class="shop-unavailable">Épuisé</div>
+                        {% endif %}
+
+                        <a href="{{ path('app_wine_show', {slug: wine.slug}) }}" class="shop-card-detail">
+                            Voir la fiche
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </main>
+
+</div>{# /.shop-layout #}
+
+{% endblock %}

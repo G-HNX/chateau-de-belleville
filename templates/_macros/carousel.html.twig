@@ -1,0 +1,41 @@
+{% macro domain_carousel(photos, placeholders, height, delay) %}
+{#
+  photos       : tableau de DomainPhoto (depuis BDD)
+  placeholders : tableau de {icon, label, bg} utilisés si photos vide
+  height       : hauteur CSS ex. '420px'
+  delay        : délai auto-play en ms (défaut 5000)
+#}
+{% set delay = delay ?? 5000 %}
+<div data-controller="carousel"
+     data-carousel-auto-play-value="true"
+     data-carousel-delay-value="{{ delay }}"
+     class="carousel"
+     style="height: {{ height }};">
+    <div data-carousel-target="track" class="carousel-track">
+        {% if photos|length > 0 %}
+            {% for photo in photos %}
+                <div data-carousel-target="slide" class="carousel-slide">
+                    <img src="{{ asset(photo.path) }}"
+                         alt="{{ photo.caption ?? '' }}"
+                         loading="lazy">
+                    {% if photo.caption %}
+                        <div class="carousel-caption">{{ photo.caption }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            {% for p in placeholders %}
+                <div data-carousel-target="slide" class="carousel-slide">
+                    <div class="carousel-slide-placeholder" style="background: {{ p.bg }};">
+                        <span class="placeholder-icon">{{ p.icon }}</span>
+                        <span>{{ p.label }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <button data-carousel-target="prev" data-action="click->carousel#prev" class="carousel-btn carousel-btn-prev" aria-label="Précédent">&#8592;</button>
+    <button data-carousel-target="next" data-action="click->carousel#next" class="carousel-btn carousel-btn-next" aria-label="Suivant">&#8594;</button>
+    <div data-carousel-dots class="carousel-dots"></div>
+</div>
+{% endmacro %}

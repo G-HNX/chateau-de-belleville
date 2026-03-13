@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande {{ order.reference }} - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Commande {{ order.reference }}</h1>
+        <p>{{ order.createdAt|date('d/m/Y à H:i') }} — {{ order.status.label }}</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {% include 'account/_sidebar.html.twig' %}
+
+                <div>
+                    {# === Timeline de suivi === #}
+                    {% set stepMap = {'pending': 0, 'paid': 1, 'processing': 2, 'shipped': 3, 'delivered': 4} %}
+                    {% set currentStep = stepMap[order.status.value] ?? -1 %}
+
+                    {% if currentStep >= 0 %}
+                        <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--color-cream); border-radius: 8px; overflow-x: auto;">
+                            <div style="position: relative; display: flex; min-width: 460px;">
+                                {# Ligne de fond (grise) #}
+                                <div style="position: absolute; top: 19px; left: 10%; right: 10%; height: 2px; background: var(--color-beige);"></div>
+                                {# Ligne de progression (dorée) #}
+                                <div style="position: absolute; top: 19px; left: 10%; width: {{ currentStep * 20 }}%; height: 2px; background: var(--color-gold);"></div>
+
+                                {% set stepLabels = ['En attente', 'Payée', 'En préparation', 'Expédiée', 'Livrée'] %}
+                                {% for label in stepLabels %}
+                                    {% set i = loop.index0 %}
+                                    {% set done = i < currentStep %}
+                                    {% set active = i == currentStep %}
+                                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative;">
+                                        <div style="
+                                            width: 40px; height: 40px; border-radius: 50%; z-index: 1;
+                                            display: flex; align-items: center; justify-content: center;
+                                            font-size: 0.85rem; font-weight: 600;
+                                            {% if done %}
+                                                background: var(--color-gold); color: white; border: 2px solid var(--color-gold);
+                                            {% elseif active %}
+                                                background: var(--color-primary); color: white; border: 2px solid var(--color-primary);
+                                            {% else %}
+                                                background: white; color: var(--color-accent); border: 2px solid var(--color-beige);
+                                            {% endif %}
+                                        ">{{ done ? '✓' : (i + 1) }}</div>
+                                        <div style="
+                                            margin-top: 0.5rem; font-size: 0.7rem; text-align: center; line-height: 1.3;
+                                            {% if active %}color: var(--color-dark); font-weight: 600;
+                                            {% elseif done %}color: var(--color-primary);
+                                            {% else %}color: var(--color-accent);{% endif %}
+                                        ">{{ label }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% elseif order.status.value == 'cancelled' %}
+                        <div style="background: #FEE2E2; border-left: 4px solid #EF4444; padding: 1rem 1.5rem; border-radius: 4px; margin-bottom: 2rem;">
+                            <strong style="color: #B91C1C;">Commande annulée</strong>
+                        </div>
+                    {% elseif order.status.value == 'refunded' %}
+                        <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 1rem 1.5rem; border-radius: 4px; margin-bottom: 2rem;">
+                            <strong style="color: #92400E;">Commande remboursée</strong>
+                        </div>
+                    {% endif %}
+
+                    {# Order Info #}
+                    <div class="grid-2-col" style="margin-bottom: 2rem;">
+                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.75rem;">Adresse de livraison</h4>
+                            {% if order.shippingAddress %}
+                                <p style="color: var(--color-secondary); line-height: 1.6;">
+                                    {{ order.shippingAddress.firstName ?? '' }} {{ order.shippingAddress.lastName ?? '' }}<br>
+                                    {{ order.shippingAddress.street ?? '' }}<br>
+                                    {{ order.shippingAddress.zipCode ?? '' }} {{ order.shippingAddress.city ?? '' }}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 0.75rem;">Adresse de facturation</h4>
+                            {% if order.billingAddress %}
+                                <p style="color: var(--color-secondary); line-height: 1.6;">
+                                    {{ order.billingAddress.firstName ?? '' }} {{ order.billingAddress.lastName ?? '' }}<br>
+                                    {{ order.billingAddress.street ?? '' }}<br>
+                                    {{ order.billingAddress.zipCode ?? '' }} {{ order.billingAddress.city ?? '' }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# Order Items #}
+                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 1rem;">Articles</h3>
+                    <div style="overflow-x: auto; margin-bottom: 2rem;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 480px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-beige);">
+                                <th style="padding: 0.75rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Produit</th>
+                                <th style="padding: 0.75rem; text-align: center; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Qté</th>
+                                <th style="padding: 0.75rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Prix unitaire</th>
+                                <th style="padding: 0.75rem; text-align: right; font-size: 0.85rem; text-transform: uppercase; color: var(--color-secondary);">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                                <tr style="border-bottom: 1px solid var(--color-beige);">
+                                    <td style="padding: 0.75rem;">
+                                        {% if item.wine %}
+                                            <a href="{{ path('app_wine_show', {slug: item.wine.slug}) }}" style="font-weight: 500; color: var(--color-primary); text-decoration: none; transition: color 0.2s;">
+                                                {{ item.wineName }}
+                                            </a>
+                                            <br>
+                                            <a href="{{ path('app_wine_show', {slug: item.wine.slug}) }}#avis" style="font-size: 0.8rem; color: var(--color-gold); text-decoration: none;">&#9733; Donner mon avis</a>
+                                        {% else %}
+                                            <span style="font-weight: 500; color: var(--color-primary);">{{ item.wineName }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="padding: 0.75rem; text-align: center; color: var(--color-secondary);">{{ item.quantity }}</td>
+                                    <td style="padding: 0.75rem; text-align: right; color: var(--color-secondary);">{{ (item.unitPriceInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                                    <td style="padding: 0.75rem; text-align: right; font-weight: 500;">{{ (item.totalInCents / 100)|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+
+                    {# Totals #}
+                    <div class="order-totals-block">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span style="color: var(--color-secondary);">Sous-total</span>
+                            <span>{{ (order.subtotalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span style="color: var(--color-secondary);">Livraison</span>
+                            <span>{% if order.shippingCostInCents == 0 %}Offerte{% else %}{{ (order.shippingCostInCents / 100)|number_format(2, ',', ' ') }} €{% endif %}</span>
+                        </div>
+                        <div style="height: 1px; background: var(--color-beige); margin: 0.5rem 0;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 0.5rem 0; margin-bottom: 0.2rem;">
+                            <span style="font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary);">Total TTC</span>
+                            <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--color-gold); font-weight: 600;">{{ (order.totalInCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                        <div style="text-align: right; font-size: 0.8rem; color: var(--color-secondary);">dont TVA 20% : {{ (order.taxAmountInCents / 100)|number_format(2, ',', ' ') }} €</div>
+                    </div>
+
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <a href="{{ path('app_account_orders') }}" class="btn btn-secondary">← Retour aux commandes</a>
+                        <a href="{{ path('app_account_order_invoice', {reference: order.reference}) }}"
+                           class="btn btn-primary" download>
+                            ↓ Télécharger la facture
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

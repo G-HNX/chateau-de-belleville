@@ -1,0 +1,27 @@
+framework:
+    rate_limiter:
+        # sommelier_api — à réactiver lors de l'intégration du sommelier IA
+        # sommelier_api:
+        #     policy: 'sliding_window'
+        #     limit: 20
+        #     interval: '1 hour'
+        registration:
+            policy: 'sliding_window'
+            limit: 5
+            interval: '1 hour'
+        contact:
+            policy: 'sliding_window'
+            limit: 5
+            interval: '1 hour'
+        resend_verification:
+            policy: 'sliding_window'
+            limit: 3
+            interval: '1 hour'
+        reset_password:
+            policy: 'sliding_window'
+            limit: 5
+            interval: '1 hour'
+        two_factor_code:
+            policy: 'sliding_window'
+            limit: 5
+            interval: '5 minutes'

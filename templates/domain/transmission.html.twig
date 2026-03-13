@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+{% from '_macros/carousel.html.twig' import domain_carousel %}
+
+{% block title %}Transmission - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Transmission</h1>
+        <p>Trois générations, une même passion pour le vin et le terroir d'Anjou.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+
+    {# Intro #}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-2-col" style="gap: 4rem; align-items: center;">
+                <div data-reveal="slide-left">{{ domain_carousel(photosTransmission, [
+                    {icon: '👨‍👩‍👧', label: 'La famille Baron',            bg: 'linear-gradient(135deg, #f0e8d8, #e8dcc8)'},
+                    {icon: '🏡',      label: 'Le domaine familial',         bg: 'linear-gradient(135deg, #e8dcc8, #d8ccb8)'},
+                    {icon: '🍷',      label: 'Transmission du savoir-faire', bg: 'linear-gradient(135deg, #d8ccb8, #c8bca8)'}
+                ], '420px', 5000) }}</div>
+                <div data-reveal="slide-right" data-reveal-delay="150">
+                    <div style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 1rem;">Depuis 1970</div>
+                    <h2 style="font-family: var(--font-display); font-size: 2.2rem; color: var(--color-primary); margin-bottom: 1.5rem; line-height: 1.2;">Une famille,<br>un domaine, un héritage</h2>
+                    <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        La transmission n'est pas qu'un mot chez les Baron — c'est une façon d'être.
+                        Depuis les premières vignes plantées en 1970, chaque génération a su
+                        recevoir, enrichir et passer le flambeau avec soin.
+                    </p>
+                    <p style="color: var(--color-secondary); line-height: 1.8;">
+                        Ce qui se transmet, c'est bien plus qu'un domaine : c'est une lecture du paysage,
+                        une façon de tailler, d'observer les saisons, et d'écouter la vigne.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Les 3 générations #}
+    <section class="section section-cream">
+        <div class="container">
+            <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); text-align: center; margin-bottom: 3rem;" data-reveal="fade-up">Trois Générations</h2>
+
+            <div style="display: flex; flex-direction: column; gap: 0;">
+                {# Génération 1 #}
+                <div class="transmission-row" data-reveal="slide-left">
+                    <div style="padding: 2.5rem; text-align: right;">
+                        <div style="font-family: var(--font-display); font-size: 3rem; color: var(--color-gold); line-height: 1;">1970</div>
+                        <div style="font-weight: 600; color: var(--color-primary); font-size: 1.1rem; margin: 0.5rem 0;">La fondation</div>
+                        <p style="color: var(--color-secondary); line-height: 1.7; font-size: 0.95rem;">
+                            La famille Baron plante les premières vignes sur 5 hectares de sols argilo-calcaires.
+                            Un pari sur l'avenir, un acte de foi dans ce terroir de Sainte-Verge.
+                        </p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; padding-top: 2.5rem;">
+                        <div style="width: 16px; height: 16px; background: var(--color-gold); border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--color-gold);"></div>
+                        <div style="width: 2px; height: 100%; background: linear-gradient(to bottom, var(--color-gold), var(--color-beige)); min-height: 80px;"></div>
+                    </div>
+                    <div style="padding: 2.5rem;">
+                        <div style="height: 160px; background: linear-gradient(135deg, var(--color-beige), var(--color-cream)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 1px dashed var(--color-beige);">🏡</div>
+                    </div>
+                </div>
+
+                {# Génération 2 #}
+                <div class="transmission-row" data-reveal="fade-up" data-reveal-delay="150">
+                    <div style="padding: 2.5rem;">
+                        <div style="height: 160px; background: linear-gradient(135deg, var(--color-beige), var(--color-cream)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 1px dashed var(--color-beige);">🍇</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; padding-top: 2.5rem;">
+                        <div style="width: 16px; height: 16px; background: var(--color-gold); border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--color-gold);"></div>
+                        <div style="width: 2px; height: 100%; background: linear-gradient(to bottom, var(--color-gold), var(--color-beige)); min-height: 80px;"></div>
+                    </div>
+                    <div style="padding: 2.5rem;">
+                        <div style="font-family: var(--font-display); font-size: 3rem; color: var(--color-gold); line-height: 1;">1995</div>
+                        <div style="font-weight: 600; color: var(--color-primary); font-size: 1.1rem; margin: 0.5rem 0;">L'essor</div>
+                        <p style="color: var(--color-secondary); line-height: 1.7; font-size: 0.95rem;">
+                            La deuxième génération reprend le flambeau et porte le vignoble à 12 hectares.
+                            Elle ouvre la vente directe au domaine, créant un lien fort avec les amateurs de vin.
+                        </p>
+                    </div>
+                </div>
+
+                {# Génération 3 #}
+                <div class="transmission-row" data-reveal="slide-right" data-reveal-delay="300">
+                    <div style="padding: 2.5rem; text-align: right;">
+                        <div style="font-family: var(--font-display); font-size: 3rem; color: var(--color-gold); line-height: 1;">2015</div>
+                        <div style="font-weight: 600; color: var(--color-primary); font-size: 1.1rem; margin: 0.5rem 0;">La modernité</div>
+                        <p style="color: var(--color-secondary); line-height: 1.7; font-size: 0.95rem;">
+                            La troisième génération modernise les outils de cave et obtient les certifications
+                            environnementales, tout en perpétuant les méthodes et les valeurs ancestrales.
+                        </p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; padding-top: 2.5rem;">
+                        <div style="width: 16px; height: 16px; background: var(--color-gold); border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--color-gold);"></div>
+                    </div>
+                    <div style="padding: 2.5rem;">
+                        <div style="height: 160px; background: linear-gradient(135deg, var(--color-beige), var(--color-cream)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 1px dashed var(--color-beige);">🍾</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Citation + CTA #}
+    <section class="section section-white">
+        <div class="container" style="max-width: 720px; text-align: center;">
+            <div style="background: linear-gradient(135deg, var(--color-primary), #3d2e24); border-radius: 20px; padding: 3.5rem; color: white; position: relative; overflow: hidden; margin-bottom: 3rem;" data-reveal="scale-in">
+                <div style="position: absolute; right: -2rem; top: -2rem; width: 150px; height: 150px; background: rgba(201,168,124,0.1); border-radius: 50%;"></div>
+                <div style="font-size: 4rem; color: var(--color-gold); line-height: 0.7; margin-bottom: 1.5rem; font-family: Georgia, serif;">"</div>
+                <p style="font-family: var(--font-display); font-size: 1.5rem; line-height: 1.5; color: white; margin-bottom: 1.5rem; position: relative;">
+                    Ce que nous cultivons, ce ne sont pas seulement des vignes — c'est une manière d'être au monde.
+                </p>
+                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); letter-spacing: 1px;">— La famille Baron</div>
+            </div>
+
+            <p style="color: var(--color-secondary); line-height: 1.8; margin-bottom: 2rem;">
+                Venez nous rencontrer au domaine lors d'une dégustation et découvrez cette histoire à travers nos vins.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;" data-reveal="fade-up" data-reveal-delay="150">
+                <a href="{{ path('app_tasting_index') }}" class="btn btn-primary">Réserver une dégustation</a>
+                <a href="{{ path('app_domain') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-secondary); text-decoration: none; font-size: 0.9rem; padding: 0.75rem 1.5rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    Retour au Domaine
+                </a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

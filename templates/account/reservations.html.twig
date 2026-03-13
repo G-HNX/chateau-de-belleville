@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Réservations - Château de Belleville{% endblock %}
+
+{% block header %}
+    <header class="page-header">
+        <h1>Mes Réservations</h1>
+        <p>Retrouvez vos réservations de dégustation.</p>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <section class="section section-white">
+        <div class="container">
+            <div class="grid-sidebar">
+                {% include 'account/_sidebar.html.twig' %}
+
+                <div>
+                    <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem;">Mes réservations</h2>
+                    {% if reservations|length > 0 %}
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            {% for reservation in reservations %}
+                                <div class="reservation-card" style="background: var(--color-cream); padding: 1.5rem; border-radius: 8px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 1.5rem; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 500; color: var(--color-primary); margin-bottom: 0.3rem;">{{ reservation.slot.tasting.name }}</div>
+                                        <div style="font-size: 0.85rem; color: var(--color-secondary);">Réf : {{ reservation.reference }}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 500; color: var(--color-primary);">{{ reservation.slot.date|date('d/m/Y') }} à {{ reservation.slot.startTime|date('H:i') }}</div>
+                                        <div style="font-size: 0.85rem; color: var(--color-secondary);">{{ reservation.numberOfParticipants }} participant{{ reservation.numberOfParticipants > 1 ? 's' : '' }}</div>
+                                    </div>
+                                    <span style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; background: white; color: var(--color-secondary);">{{ reservation.status.label }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 3rem; background: var(--color-cream); border-radius: 8px;">
+                            <p style="color: var(--color-secondary); margin-bottom: 1rem;">Vous n'avez pas encore de réservation.</p>
+                            <a href="{{ path('app_tasting_index') }}" class="btn btn-primary">Réserver une dégustation</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,44 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
+    # Sommelier IA — à réactiver lors de l'intégration
+    # sommelier_api_key: '%env(SOMMELIER_AI_API_KEY)%'
+    # sommelier_model: '%env(SOMMELIER_AI_MODEL)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            # Sommelier IA — exclu de l'autowiring, à réactiver lors de l'intégration
+            - '../src/Service/SommelierService.php'
+            - '../src/Controller/SommelierController.php'
+
+    Scheb\TwoFactorBundle\Mailer\AuthCodeMailerInterface:
+        alias: App\Security\TwoFactorAuthCodeMailer
+
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%stripe_secret_key%'
+            $stripeWebhookSecret: '%stripe_webhook_secret%'
+
+    # Sommelier IA — à réactiver lors de l'intégration
+    # App\Service\SommelierService:
+    #     arguments:
+    #         $sommelierApiKey: '%sommelier_api_key%'
+    #         $sommelierModel: '%sommelier_model%'
