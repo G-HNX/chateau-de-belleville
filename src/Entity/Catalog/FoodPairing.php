@@ -34,6 +34,7 @@ class FoodPairing
     #[ORM\Column(length: 100, unique: true)]
     private ?string $slug = null;
 
+    /** Emoji representant visuellement le type d'accord mets-vin. */
     #[ORM\Column(length: 10)]
     private string $icon = '🍽️';
 
@@ -108,6 +109,7 @@ class FoodPairing
         return $this->wines;
     }
 
+    /** Genere automatiquement le slug a partir du nom si absent. */
     #[ORM\PrePersist]
     public function generateSlug(): void
     {

@@ -139,11 +139,13 @@ class Tasting
         return $this;
     }
 
+    /** Convertit le prix en euros depuis les centimes. */
     public function getPrice(): float
     {
         return $this->priceInCents / 100;
     }
 
+    /** Definit le prix en euros (converti en centimes pour le stockage). */
     public function setPrice(float $price): static
     {
         $this->priceInCents = (int) round($price * 100);
@@ -151,11 +153,13 @@ class Tasting
         return $this;
     }
 
+    /** Indique si la degustation est gratuite. */
     public function isFree(): bool
     {
         return $this->priceInCents === 0;
     }
 
+    /** Retourne le prix formate pour l'affichage (ex: "12,00 EUR / pers." ou "Gratuit"). */
     public function getFormattedPrice(): string
     {
         return $this->isFree()
@@ -175,6 +179,7 @@ class Tasting
         return $this;
     }
 
+    /** Retourne la duree formatee en heures et minutes (ex: "1h30", "45 min"). */
     public function getFormattedDuration(): string
     {
         $hours = intdiv($this->durationMinutes, 60);
@@ -268,6 +273,7 @@ class Tasting
         return $this;
     }
 
+    /** Genere automatiquement le slug a partir du nom si absent. */
     #[ORM\PrePersist]
     public function generateSlug(): void
     {

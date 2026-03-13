@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
+/**
+ * Sections du domaine affichées sur la page « Le Domaine ».
+ * Chaque cas correspond à un bloc éditorial avec texte et photos.
+ */
 enum DomainSection: string
 {
     case HISTOIRE    = 'histoire';
@@ -13,6 +17,7 @@ enum DomainSection: string
     case EXCELLENCE  = 'excellence';
     case TRANSMISSION = 'transmission';
 
+    /** Retourne le libellé français affiché dans l'administration. */
     public function label(): string
     {
         return match ($this) {

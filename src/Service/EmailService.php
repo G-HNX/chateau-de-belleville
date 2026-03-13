@@ -12,6 +12,13 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
+/**
+ * Service centralisé d'envoi d'emails transactionnels.
+ *
+ * Gère l'envoi de tous les emails de l'application : confirmations de commande,
+ * confirmations de paiement, notifications d'expédition et confirmations de réservation.
+ * Les erreurs d'envoi sont loguées mais ne bloquent pas le flux applicatif.
+ */
 class EmailService
 {
     private const FROM_EMAIL = 'noreply@chateaudebelleville.fr';
@@ -22,6 +29,9 @@ class EmailService
         private readonly LoggerInterface $logger,
     ) {}
 
+    /**
+     * Envoie l'email de confirmation de commande au client.
+     */
     public function sendOrderConfirmation(Order $order): void
     {
         $email = (new TemplatedEmail())
@@ -41,6 +51,9 @@ class EmailService
         }
     }
 
+    /**
+     * Envoie l'email de confirmation de paiement au client, après validation par Stripe.
+     */
     public function sendPaymentConfirmation(Order $order): void
     {
         $email = (new TemplatedEmail())
@@ -60,6 +73,9 @@ class EmailService
         }
     }
 
+    /**
+     * Envoie l'email de notification d'expédition au client, avec le suivi éventuel.
+     */
     public function sendOrderShipped(Order $order): void
     {
         $email = (new TemplatedEmail())
@@ -79,6 +95,9 @@ class EmailService
         }
     }
 
+    /**
+     * Envoie l'email de confirmation de réservation de dégustation au visiteur.
+     */
     public function sendReservationConfirmation(Reservation $reservation): void
     {
         $email = (new TemplatedEmail())

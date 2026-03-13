@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * Extension Twig fournissant le nonce CSP pour les scripts inline.
+ * Le nonce est généré une seule fois par requête et partagé avec
+ * le SecurityHeadersSubscriber via les attributs de la Request.
+ */
 class CspNonceExtension extends AbstractExtension
 {
     public function __construct(
@@ -21,6 +26,7 @@ class CspNonceExtension extends AbstractExtension
         ];
     }
 
+    /** Retourne le nonce CSP de la requête courante, en le créant si nécessaire. */
     public function getCspNonce(): string
     {
         $request = $this->requestStack->getCurrentRequest();

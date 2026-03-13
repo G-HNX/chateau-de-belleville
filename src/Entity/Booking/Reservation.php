@@ -13,6 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Reservation de degustation.
+ *
+ * Represente une reservation effectuee par un client pour un creneau de degustation.
+ * Contient un snapshot du prix par personne pour conserver le tarif au moment de la reservation.
  */
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ORM\Table(name: 'reservation')]
@@ -40,6 +43,7 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?TastingSlot $slot = null;
 
+    /** Statut courant de la reservation (en attente, confirmee, annulee). */
     #[ORM\Column(type: Types::STRING, length: 20, enumType: ReservationStatus::class)]
     private ReservationStatus $status = ReservationStatus::PENDING;
 
@@ -74,6 +78,7 @@ class Reservation
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
 
+    /** Notes internes reservees a l'administration. */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $adminNotes = null;
 
@@ -165,6 +170,7 @@ class Reservation
         return $this;
     }
 
+    /** Retourne le nom complet du participant (prenom + nom). */
     public function getFullName(): string
     {
         return trim($this->firstName . ' ' . $this->lastName);
@@ -297,6 +303,9 @@ class Reservation
             : 'Gratuit';
     }
 
+    /**
+     * Genere automatiquement une reference unique (format RES-YYYYMMDD-XXXX) et initialise createdAt.
+     */
     #[ORM\PrePersist]
     public function generateReference(): void
     {

@@ -25,6 +25,7 @@ class SecurityHeadersSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** Injecte X-Frame-Options, CSP, Referrer-Policy et Permissions-Policy sur chaque réponse. */
     public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {

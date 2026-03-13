@@ -11,6 +11,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Image associee a un vin.
+ *
+ * Chaque vin peut avoir plusieurs images ordonnees par position.
+ * Une image peut etre marquee comme principale pour l'affichage dans le catalogue.
  */
 #[ORM\Entity(repositoryClass: WineImageRepository::class)]
 #[ORM\Table(name: 'wine_image')]
@@ -30,12 +33,15 @@ class WineImage
     #[Assert\Regex(pattern: '/^[\w\-]+\.(jpe?g|png|webp|gif)$/i', message: 'Seules les images (jpg, png, webp, gif) sont autorisées.')]
     private ?string $filename = null;
 
+    /** Texte alternatif pour l'accessibilite et le SEO. */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $altText = null;
 
+    /** Ordre d'affichage parmi les images du vin. */
     #[ORM\Column(type: Types::SMALLINT)]
     private int $position = 0;
 
+    /** Indique si c'est l'image principale affichee dans le catalogue. */
     #[ORM\Column]
     private bool $isMain = false;
 

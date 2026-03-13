@@ -1,3 +1,13 @@
+/**
+ * Contrôleur Stimulus : Carte interactive (Leaflet / OpenStreetMap)
+ *
+ * Affiche une carte centrée sur le domaine avec un marqueur personnalisé
+ * et une popup d'information. Le zoom à la molette est désactivé pour
+ * éviter les scrolls accidentels.
+ *
+ * Values : lat, lng, zoom, label
+ */
+
 import { Controller } from '@hotwired/stimulus';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.min.css';
@@ -19,16 +29,19 @@ export default class extends Controller {
     };
 
     connect() {
+        // Initialisation de la carte Leaflet (scroll molette désactivé)
         this.map = L.map(this.element, { scrollWheelZoom: false }).setView(
             [this.latValue, this.lngValue],
             this.zoomValue
         );
 
+        // Fond de carte OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             maxZoom: 19,
         }).addTo(this.map);
 
+        // Marqueur personnalisé en forme de goutte aux couleurs du domaine
         const icon = L.divIcon({
             html: `<div style="
                 background: #5B4638;
@@ -47,6 +60,7 @@ export default class extends Controller {
             popupAnchor: [0, -40],
         });
 
+        // Ajout du marqueur avec popup contenant le nom et l'adresse
         L.marker([this.latValue, this.lngValue], { icon })
             .addTo(this.map)
             .bindPopup(`
@@ -58,6 +72,7 @@ export default class extends Controller {
             .openPopup();
     }
 
+    /** Nettoie la carte Leaflet pour éviter les fuites mémoire */
     disconnect() {
         if (this.map) {
             this.map.remove();

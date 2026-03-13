@@ -36,6 +36,7 @@ class CacheHeadersSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** Applique les headers de cache public sur les routes éligibles. */
     public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {

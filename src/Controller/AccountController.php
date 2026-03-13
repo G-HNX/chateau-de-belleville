@@ -23,10 +23,18 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * Gestion du compte client authentifié.
+ *
+ * Routes : /compte, /compte/commandes, /compte/reservations,
+ *          /compte/adresses, /compte/profil, /compte/mot-de-passe,
+ *          /compte/mes-vins, /compte/newsletter.
+ */
 #[Route('/compte')]
 #[IsGranted('ROLE_USER')]
 class AccountController extends AbstractController
 {
+    /** Tableau de bord du compte : commandes récentes et réservations à venir. */
     #[Route('', name: 'app_account_index')]
     public function index(
         OrderRepository $orderRepository,
@@ -42,6 +50,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Liste de toutes les commandes du client. */
     #[Route('/commandes', name: 'app_account_orders')]
     public function orders(OrderRepository $orderRepository): Response
     {
@@ -53,6 +62,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Détail d'une commande avec vérification de propriété (ownership). */
     #[Route('/commandes/{reference}', name: 'app_account_order_show')]
     public function orderShow(string $reference, OrderRepository $orderRepository): Response
     {
@@ -70,6 +80,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Téléchargement de la facture PDF d'une commande (vérification de propriété). */
     #[Route('/commandes/{reference}/facture', name: 'app_account_order_invoice', methods: ['GET'])]
     public function orderInvoice(string $reference, OrderRepository $orderRepository, PdfService $pdfService): Response
     {
@@ -90,6 +101,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Liste des réservations de dégustation du client. */
     #[Route('/reservations', name: 'app_account_reservations')]
     public function reservations(ReservationRepository $reservationRepository): Response
     {
@@ -101,6 +113,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Liste des adresses de livraison/facturation du client. */
     #[Route('/adresses', name: 'app_account_addresses')]
     public function addresses(AddressRepository $addressRepository): Response
     {
@@ -112,6 +125,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Ajout d'une nouvelle adresse avec gestion des drapeaux par défaut. */
     #[Route('/adresses/ajouter', name: 'app_account_address_add', methods: ['GET', 'POST'])]
     public function addAddress(Request $request, EntityManagerInterface $em): Response
     {
@@ -140,6 +154,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Modification d'une adresse existante avec vérification de propriété. */
     #[Route('/adresses/{id}/modifier', name: 'app_account_address_edit', methods: ['GET', 'POST'])]
     public function editAddress(Address $address, Request $request, EntityManagerInterface $em): Response
     {
@@ -168,6 +183,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Suppression d'une adresse avec vérification de propriété et token CSRF. */
     #[Route('/adresses/{id}/supprimer', name: 'app_account_address_delete', methods: ['POST'])]
     public function deleteAddress(Address $address, Request $request, EntityManagerInterface $em): Response
     {
@@ -190,6 +206,7 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('app_account_addresses');
     }
 
+    /** Bascule l'inscription newsletter du client (synchronise User + NewsletterSubscriber). */
     #[Route('/newsletter', name: 'app_account_newsletter_toggle', methods: ['POST'])]
     public function toggleNewsletter(
         Request $request,
@@ -222,6 +239,7 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('app_account_profile');
     }
 
+    /** Affichage et modification du profil utilisateur. */
     #[Route('/profil', name: 'app_account_profile', methods: ['GET', 'POST'])]
     public function profile(Request $request, EntityManagerInterface $em): Response
     {
@@ -244,6 +262,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Liste des vins favoris du client. */
     #[Route('/mes-vins', name: 'app_account_favorites')]
     public function favorites(): Response
     {
@@ -255,6 +274,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /** Changement de mot de passe avec vérification de l'ancien et migration de session. */
     #[Route('/mot-de-passe', name: 'app_account_password', methods: ['GET', 'POST'])]
     public function changePassword(
         Request $request,
@@ -293,6 +313,10 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /**
+     * Si l'adresse est marquée « par défaut », retire ce drapeau des autres adresses
+     * du même utilisateur pour garantir l'unicité.
+     */
     private function handleDefaultFlags(Address $address, User $user): void
     {
         if ($address->isDefaultShipping()) {

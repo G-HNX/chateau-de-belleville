@@ -1,3 +1,14 @@
+/**
+ * Contrôleur Stimulus : Sommelier IA (chatbot)
+ *
+ * Widget de conversation flottant qui permet aux visiteurs de poser des
+ * questions sur les vins du domaine. Les messages sont envoyés à l'API
+ * /api/sommelier (Google Gemini) avec l'historique de conversation.
+ * L'état ouvert/fermé est persisté en sessionStorage.
+ *
+ * Targets : panel, toggle, messages, input, suggestions
+ */
+
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
@@ -5,11 +16,14 @@ export default class extends Controller {
 
     connect() {
         this.conversationHistory = [];
+
+        // Restaurer l'état ouvert/fermé depuis la session
         const wasOpen = sessionStorage.getItem('sommelier-open') === 'true';
         if (wasOpen) {
             this.open();
         }
 
+        // Écouter l'événement personnalisé 'sommelier:ask' (depuis d'autres contrôleurs)
         this._onAsk = (e) => {
             this.open();
             this.inputTarget.value = e.detail.message ?? '';
@@ -23,6 +37,7 @@ export default class extends Controller {
         document.removeEventListener('sommelier:ask', this._onAsk);
     }
 
+    /** Adapte les suggestions affichées selon la page courante */
     setContextualSuggestions() {
         if (!this.hasSuggestionsTarget) return;
         const path = window.location.pathname;
@@ -40,6 +55,7 @@ export default class extends Controller {
         buttons.forEach((btn, i) => { if (suggestions[i]) btn.textContent = suggestions[i]; });
     }
 
+    /** Ouvre ou ferme le panneau de conversation */
     togglePanel() {
         if (this.panelTarget.classList.contains('open')) {
             this.close();
@@ -61,6 +77,7 @@ export default class extends Controller {
         sessionStorage.setItem('sommelier-open', 'false');
     }
 
+    /** Envoie le message saisi par l'utilisateur */
     send(event) {
         event.preventDefault();
         const input = this.inputTarget;
@@ -75,6 +92,7 @@ export default class extends Controller {
         this.callApi(text);
     }
 
+    /** Envoie une suggestion prédéfinie comme message utilisateur */
     suggest(event) {
         const text = event.currentTarget.textContent.trim();
         this.addMessage(text, 'user');
@@ -84,6 +102,7 @@ export default class extends Controller {
         this.callApi(text);
     }
 
+    /** Appel fetch vers l'API sommelier avec le message et les 10 derniers échanges */
     async callApi(message) {
         try {
             const response = await fetch('/api/sommelier', {
@@ -91,7 +110,8 @@ export default class extends Controller {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: message,
-                    history: this.conversationHistory.slice(0, -1).slice(-10), // max 10 derniers messages
+                    // Envoyer les 10 derniers messages (sans le message courant) comme contexte
+                    history: this.conversationHistory.slice(0, -1).slice(-10),
                 }),
             });
 
@@ -110,10 +130,12 @@ export default class extends Controller {
         }
     }
 
+    /** Insère un message (utilisateur ou bot) dans la zone de conversation */
     addMessage(text, type) {
         const msg = document.createElement('div');
         msg.classList.add('sommelier-msg', type);
         if (type === 'bot') {
+            // Rendu Markdown simplifié pour les réponses du bot
             msg.innerHTML = this.renderMarkdown(text);
         } else {
             msg.textContent = text;
@@ -122,6 +144,7 @@ export default class extends Controller {
         this.scrollToBottom();
     }
 
+    /** Convertit le Markdown basique (gras, italique, retours à la ligne) en HTML sécurisé */
     renderMarkdown(text) {
         return text
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -130,6 +153,7 @@ export default class extends Controller {
             .replace(/\n/g, '<br>');
     }
 
+    /** Affiche l'indicateur de saisie en cours (trois points animés) */
     showTyping() {
         const typing = document.createElement('div');
         typing.classList.add('sommelier-msg', 'typing');
@@ -150,12 +174,14 @@ export default class extends Controller {
         }
     }
 
+    /** Défile la zone de messages vers le bas (rAF pour attendre le rendu) */
     scrollToBottom() {
         requestAnimationFrame(() => {
             this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight;
         });
     }
 
+    /** Permet d'envoyer avec la touche Entrée */
     handleKeydown(event) {
         if (event.key === 'Enter') {
             this.send(event);

@@ -13,6 +13,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Creneau horaire disponible pour une degustation.
+ *
+ * Chaque creneau est lie a un type de degustation et possede un nombre
+ * de places limitees. Les reservations actives sont comptabilisees
+ * pour calculer les places restantes en temps reel.
  */
 #[ORM\Entity(repositoryClass: TastingSlotRepository::class)]
 #[ORM\Table(name: 'tasting_slot')]
@@ -36,6 +40,7 @@ class TastingSlot
     #[Assert\NotBlank]
     private ?\DateTimeInterface $startTime = null;
 
+    /** Nombre total de places disponibles pour ce creneau. */
     #[ORM\Column(type: Types::SMALLINT)]
     #[Assert\Positive]
     private int $availableSpots = 10;

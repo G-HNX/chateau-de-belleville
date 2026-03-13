@@ -10,6 +10,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Photo du domaine viticole.
+ *
+ * Les photos sont organisees par section (vignoble, chai, accueil, etc.)
+ * et ordonnees par position pour l'affichage sur la page "Le Domaine".
+ */
 #[ORM\Entity(repositoryClass: DomainPhotoRepository::class)]
 #[ORM\Table(name: 'domain_photo')]
 #[ORM\Index(columns: ['section', 'is_active', 'position'], name: 'idx_domain_photo_section')]
@@ -20,6 +26,7 @@ class DomainPhoto
     #[ORM\Column]
     private ?int $id = null;
 
+    /** Section du domaine a laquelle la photo est rattachee. */
     #[ORM\Column(type: Types::STRING, length: 30, enumType: DomainSection::class)]
     #[Assert\NotNull]
     private ?DomainSection $section = null;
@@ -29,6 +36,7 @@ class DomainPhoto
     #[Assert\Regex(pattern: '/^[\w\-]+\.(jpe?g|png|webp|gif)$/i', message: 'Seules les images (jpg, png, webp, gif) sont autorisées.')]
     private ?string $filename = null;
 
+    /** Legende affichee sous la photo. */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $caption = null;
 
@@ -67,6 +75,7 @@ class DomainPhoto
         return $this;
     }
 
+    /** Retourne le chemin public vers l'image. */
     public function getPath(): string
     {
         return '/uploads/domain/' . $this->filename;

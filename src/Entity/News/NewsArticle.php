@@ -10,6 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Article d'actualite du domaine.
+ *
+ * Permet de publier des nouvelles sur le site (evenements, vendanges, nouveaux vins, etc.).
+ * Un article peut etre en brouillon ou publie, avec une date de publication automatique.
+ */
 #[ORM\Entity(repositoryClass: NewsArticleRepository::class)]
 #[ORM\Table(name: 'news_article')]
 #[ORM\HasLifecycleCallbacks]
@@ -30,6 +36,7 @@ class NewsArticle
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
+    /** Resume court affiche dans la liste des articles. */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $excerpt = null;
 
@@ -37,6 +44,7 @@ class NewsArticle
     #[Assert\NotBlank(message: 'Le contenu est obligatoire.')]
     private ?string $content = null;
 
+    /** Image de couverture de l'article (nom de fichier). */
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Regex(pattern: '/^[\w\-]+\.(jpe?g|png|webp|gif)$/i', message: 'Seules les images (jpg, png, webp, gif) sont autorisées.')]
     private ?string $coverImage = null;
@@ -53,6 +61,7 @@ class NewsArticle
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    /** Initialise les dates, genere le slug et positionne la date de publication si necessaire. */
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
@@ -69,6 +78,7 @@ class NewsArticle
         }
     }
 
+    /** Met a jour la date de modification et positionne la date de publication si necessaire. */
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
@@ -144,6 +154,7 @@ class NewsArticle
         return $this;
     }
 
+    /** Retourne le chemin public vers l'image de couverture. */
     public function getCoverImagePath(): ?string
     {
         return $this->coverImage ? '/uploads/news/' . $this->coverImage : null;

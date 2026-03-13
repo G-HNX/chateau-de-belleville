@@ -93,6 +93,7 @@ class GrapeVariety
         return $this->wines;
     }
 
+    /** Genere automatiquement le slug a partir du nom si absent. */
     #[ORM\PrePersist]
     public function generateSlug(): void
     {
