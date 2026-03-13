@@ -8,6 +8,7 @@ use App\Entity\NewsletterSubscriber;
 use App\Entity\User\User;
 use App\Form\RegistrationType;
 use App\Repository\NewsletterSubscriberRepository;
+use App\Repository\User\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -93,14 +94,18 @@ class SecurityController extends AbstractController
                     ->context(['user' => $user])
             );
 
-            $this->addFlash('success', 'Votre compte a été créé. Vérifiez votre boîte email pour activer votre compte.');
-
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_register_success');
         }
 
         return $this->render('security/register.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    #[Route('/inscription-confirmee', name: 'app_register_success', methods: ['GET'])]
+    public function registerSuccess(): Response
+    {
+        return $this->render('security/register_success.html.twig');
     }
 
     #[Route('/renvoyer-verification', name: 'app_resend_verification')]
@@ -138,23 +143,34 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/verifier-email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request): Response
+    public function verifyUserEmail(Request $request, UserRepository $userRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $id = $request->query->get('id');
+        if (null === $id) {
+            $this->addFlash('error', 'Lien de vérification invalide.');
+            return $this->redirectToRoute('app_login');
+        }
 
-        /** @var User $user */
-        $user = $this->getUser();
+        $user = $userRepository->find($id);
+        if (null === $user) {
+            $this->addFlash('error', 'Lien de vérification invalide.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($user->isVerified()) {
+            $this->addFlash('success', 'Votre adresse email est déjà vérifiée. Connectez-vous.');
+            return $this->redirectToRoute('app_login');
+        }
 
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('error', 'Le lien de vérification est invalide ou a expiré. '.$exception->getReason());
-
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_login');
         }
 
-        $this->addFlash('success', 'Votre adresse email a été vérifiée. Bienvenue !');
+        $this->addFlash('success', 'Votre adresse email a été vérifiée. Vous pouvez maintenant vous connecter.');
 
-        return $this->redirectToRoute('app_account_index');
+        return $this->redirectToRoute('app_login');
     }
 }
