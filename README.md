@@ -138,4 +138,4 @@ src/
 
 ## Auteur
 
-Gabriel Heneaux
+**Gabriel Héneaux** — [gabriel-heneaux.fr](https://gabriel-heneaux.fr)

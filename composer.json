@@ -3,6 +3,12 @@
     "description": "E-commerce platform for Chateau de Belleville vineyard",
     "type": "project",
     "license": "proprietary",
+    "authors": [
+        {
+            "name": "Gabriel Héneaux",
+            "homepage": "https://gabriel-heneaux.fr"
+        }
+    ],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
