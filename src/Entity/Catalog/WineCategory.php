@@ -37,6 +37,7 @@ class WineCategory
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
+    /** Ordre d'affichage dans le catalogue. */
     #[ORM\Column(type: 'smallint')]
     private int $position = 0;
 
@@ -123,11 +124,13 @@ class WineCategory
         return $this->wines;
     }
 
+    /** Compte le nombre de vins actifs dans cette categorie. */
     public function getActiveWinesCount(): int
     {
         return $this->wines->filter(fn (Wine $w) => $w->isActive())->count();
     }
 
+    /** Genere automatiquement le slug a partir du nom si absent. */
     #[ORM\PrePersist]
     public function generateSlug(): void
     {

@@ -1,3 +1,10 @@
+/**
+ * Point d'entrée principal de l'application Château de Belleville.
+ *
+ * Charge les styles Tailwind et initialise les contrôleurs Stimulus,
+ * puis active les animations de scroll reveal et la barre de navigation compacte.
+ */
+
 import './styles/app.css';
 import './stimulus_bootstrap.js';
 

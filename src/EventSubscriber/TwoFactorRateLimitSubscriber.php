@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
+/**
+ * Limite le nombre de tentatives de saisie du code 2FA.
+ * Empêche le bruteforce sur le code d'authentification à deux facteurs
+ * en s'appuyant sur le rate limiter Symfony (IP du client).
+ */
 class TwoFactorRateLimitSubscriber implements EventSubscriberInterface
 {
     public function __construct(
@@ -26,6 +31,7 @@ class TwoFactorRateLimitSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** Vérifie le quota de tentatives à chaque essai de code 2FA. */
     public function onAttempt(TwoFactorAuthenticationEvent $event): void
     {
         $request = $this->requestStack->getCurrentRequest();

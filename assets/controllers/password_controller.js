@@ -1,3 +1,13 @@
+/**
+ * Contrôleur Stimulus : Champ mot de passe amélioré
+ *
+ * Ajoute dynamiquement un bouton oeil pour afficher/masquer le mot de passe
+ * et, optionnellement, une barre de force du mot de passe avec indicateurs
+ * de critères (longueur, minuscule, majuscule, chiffre, caractère spécial).
+ *
+ * Value : strength (active la barre de force si true)
+ */
+
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
@@ -18,6 +28,7 @@ export default class extends Controller {
         }
     }
 
+    /** Nettoie le DOM ajouté dynamiquement lors de la déconnexion */
     disconnect() {
         if (this._inputWrapper && this._inputWrapper.parentNode) {
             this._inputWrapper.parentNode.insertBefore(this.input, this._inputWrapper);
@@ -28,8 +39,9 @@ export default class extends Controller {
         }
     }
 
-    // --- Internals ---
+    // --- Méthodes internes ---
 
+    /** Enveloppe l'input dans un conteneur relatif pour positionner le bouton oeil */
     _wrapInput() {
         this._inputWrapper = document.createElement('div');
         this._inputWrapper.style.cssText = 'position: relative; display: block;';
@@ -37,6 +49,7 @@ export default class extends Controller {
         this._inputWrapper.appendChild(this.input);
     }
 
+    /** Crée le bouton oeil (afficher/masquer) et l'insère dans le wrapper */
     _addToggle() {
         this._toggle = document.createElement('button');
         this._toggle.type = 'button';
@@ -64,6 +77,7 @@ export default class extends Controller {
         this._inputWrapper.appendChild(this._toggle);
     }
 
+    /** Bascule la visibilité du mot de passe et met à jour l'icône */
     _handleToggle() {
         const isHidden = this.input.type === 'password';
         this.input.type = isHidden ? 'text' : 'password';
@@ -71,13 +85,16 @@ export default class extends Controller {
         this._toggle.setAttribute('aria-label', isHidden ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
     }
 
+    /** Construit la barre de force et la liste des critères sous le champ */
     _addStrengthBar() {
         this._strengthContainer = document.createElement('div');
         this._strengthContainer.style.cssText = 'margin-top: 0.5rem;';
 
+        // Piste de la barre de progression
         const track = document.createElement('div');
         track.style.cssText = 'height: 4px; background: var(--color-beige); border-radius: 2px; overflow: hidden;';
 
+        // Remplissage animé de la barre
         this._fill = document.createElement('div');
         this._fill.style.cssText = 'height: 100%; width: 0%; transition: width 0.3s ease, background-color 0.3s ease; border-radius: 2px;';
         track.appendChild(this._fill);
@@ -88,6 +105,7 @@ export default class extends Controller {
         this._criteriaList = document.createElement('ul');
         this._criteriaList.style.cssText = 'list-style: none; padding: 0; margin: 0.5rem 0 0; display: flex; flex-direction: column; gap: 0.2rem;';
 
+        // Définition des 5 critères de robustesse
         const criteria = [
             { key: 'length',  label: '12 caractères minimum',          test: v => v.length >= 12 },
             { key: 'lower',   label: 'Une lettre minuscule',            test: v => /[a-z]/.test(v) },
@@ -113,10 +131,12 @@ export default class extends Controller {
         this._inputWrapper.parentNode.insertBefore(this._strengthContainer, this._inputWrapper.nextSibling);
     }
 
+    /** Recalcule la force du mot de passe et met à jour la barre + les critères */
     _updateStrength() {
         const val = this.input.value;
         let passed = 0;
 
+        // Vérifier chaque critère et mettre à jour son icône
         this._criteria.forEach(c => {
             const ok = c.test(val);
             if (ok) passed++;
@@ -127,8 +147,10 @@ export default class extends Controller {
             }
         });
 
+        // Calcul du pourcentage de critères remplis
         const pct = val.length === 0 ? 0 : Math.round((passed / this._criteria.length) * 100);
 
+        // Niveaux de force avec couleur et label associés
         const levels = [
             { min: 0,  max: 20,  color: '#ef4444', label: 'Très faible' },
             { min: 21, max: 40,  color: '#f97316', label: 'Faible' },
@@ -144,6 +166,8 @@ export default class extends Controller {
         this._strengthLabel.textContent = val.length ? level.label : '';
         this._strengthLabel.style.color = level.color;
     }
+
+    // --- Icônes SVG ---
 
     _eyeIcon() {
         return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;

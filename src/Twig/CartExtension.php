@@ -9,6 +9,11 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * Extension Twig exposant le nombre d'articles dans le panier.
+ * Fournit la fonction `cart_count()` utilisée dans la navbar pour
+ * afficher le badge du panier en temps réel.
+ */
 class CartExtension extends AbstractExtension
 {
     public function __construct(
@@ -23,6 +28,7 @@ class CartExtension extends AbstractExtension
         ];
     }
 
+    /** Retourne le nombre total d'articles dans le panier de l'utilisateur courant. */
     public function getCartCount(): int
     {
         $cart = $this->cartService->getCart($this->security->getUser());

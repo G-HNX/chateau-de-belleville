@@ -8,8 +8,16 @@ use App\Repository\Catalog\WineRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/**
+ * Service du sommelier virtuel propulsé par l'IA (Google Gemini).
+ *
+ * Fournit un chatbot conversationnel qui recommande les vins du domaine,
+ * donne des conseils d'accords mets-vins et répond aux questions sur le domaine.
+ * Le catalogue complet des vins actifs est injecté dans le prompt système.
+ */
 class SommelierService
 {
+    /** URL de l'API Google Gemini (generateContent) */
     private const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent';
 
     public function __construct(
@@ -20,8 +28,15 @@ class SommelierService
         private readonly string $sommelierModel,
     ) {}
 
+    /**
+     * Envoie un message au sommelier IA et retourne sa réponse.
+     *
+     * @param string $userMessage      Le message de l'utilisateur
+     * @param array  $conversationHistory Historique de la conversation (rôle + contenu)
+     */
     public function chat(string $userMessage, array $conversationHistory = []): string
     {
+        // Chargement du catalogue des vins actifs pour le contexte du prompt
         $wines = $this->wineRepository->findBy(['isActive' => true]);
 
         $catalogContext = $this->buildCatalogContext($wines);
@@ -51,6 +66,7 @@ Règles :
 - Si la question ne concerne pas le vin ou le domaine, redirige poliment vers le sujet.
 PROMPT;
 
+        // Construction de l'historique de conversation au format attendu par Gemini
         $messages = [];
 
         foreach ($conversationHistory as $msg) {
@@ -64,6 +80,7 @@ PROMPT;
 
         $url = sprintf(self::GEMINI_API_URL, $this->sommelierModel);
 
+        // Appel à l'API Google Gemini avec le prompt système et l'historique
         try {
             $response = $this->httpClient->request('POST', $url, [
                 'headers' => [
@@ -91,6 +108,10 @@ PROMPT;
         }
     }
 
+    /**
+     * Construit le contexte textuel du catalogue pour le prompt système.
+     * Chaque vin est formaté sur une ligne avec ses caractéristiques principales.
+     */
     private function buildCatalogContext(array $wines): string
     {
         if (empty($wines)) {

@@ -1,8 +1,19 @@
+/**
+ * Contrôleur Stimulus : Ajout au panier (AJAX)
+ *
+ * Soumet le formulaire d'ajout au panier en fetch asynchrone,
+ * met à jour le badge du panier dans la navigation et affiche
+ * un message flash de confirmation ou d'erreur.
+ *
+ * Target : button (bouton de soumission)
+ */
+
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static targets = ['button'];
 
+    /** Envoie le formulaire d'ajout au panier via fetch (POST, JSON) */
     async add(event) {
         event.preventDefault();
 
@@ -28,6 +39,7 @@ export default class extends Controller {
                 this.updateCartBadge(data.cartCount);
                 this.showFlash('success', data.message);
                 button.textContent = 'Ajouté !';
+                // Restaurer le texte original après 2 secondes
                 setTimeout(() => {
                     button.textContent = originalText;
                     button.disabled = false;
@@ -44,6 +56,7 @@ export default class extends Controller {
         }
     }
 
+    /** Met à jour le compteur du panier dans la barre de navigation */
     updateCartBadge(count) {
         const badge = document.getElementById('cart-badge');
         if (!badge) return;
@@ -56,7 +69,9 @@ export default class extends Controller {
         }
     }
 
+    /** Crée et affiche un message flash temporaire (succès ou erreur) */
     showFlash(type, message) {
+        // Crée le conteneur flash s'il n'existe pas encore dans le DOM
         let container = document.querySelector('.flash-container');
         if (!container) {
             container = document.createElement('div');
@@ -72,6 +87,7 @@ export default class extends Controller {
         const text = document.createTextNode(message);
         flash.appendChild(text);
 
+        // Bouton de fermeture manuelle
         const dismissBtn = document.createElement('button');
         dismissBtn.className = 'flash-dismiss';
         dismissBtn.setAttribute('aria-label', 'Fermer');
@@ -85,6 +101,7 @@ export default class extends Controller {
 
         container.appendChild(flash);
 
+        // Disparition automatique après 5 secondes
         setTimeout(() => {
             if (flash.parentNode) {
                 flash.classList.add('flash-hiding');

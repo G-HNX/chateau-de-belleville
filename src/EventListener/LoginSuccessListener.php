@@ -10,12 +10,18 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 #[AsEventListener(event: LoginSuccessEvent::class)]
+/**
+ * Listener de connexion réussie.
+ * Met à jour la date de dernière connexion de l'utilisateur
+ * à chaque authentification réussie.
+ */
 class LoginSuccessListener
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
     ) {}
 
+    /** Enregistre la date/heure de connexion sur l'entité User. */
     public function __invoke(LoginSuccessEvent $event): void
     {
         $user = $event->getUser();

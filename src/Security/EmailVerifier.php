@@ -12,6 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
+/**
+ * Service de vérification d'adresse email.
+ * Génère un lien signé envoyé par email lors de l'inscription,
+ * puis valide ce lien quand l'utilisateur clique dessus.
+ */
 class EmailVerifier
 {
     public function __construct(
@@ -21,6 +26,7 @@ class EmailVerifier
     ) {
     }
 
+    /** Génère l'URL signée de confirmation et envoie l'email de vérification. */
     public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, TemplatedEmail $email): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(

@@ -13,6 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Avis client sur un vin.
+ *
+ * Un utilisateur ne peut laisser qu'un seul avis par vin (contrainte unique user+wine).
+ * L'avis doit etre approuve par un administrateur avant d'apparaitre publiquement.
  */
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 #[ORM\Table(name: 'review')]
@@ -33,6 +36,7 @@ class Review
     #[ORM\JoinColumn(nullable: false)]
     private ?Wine $wine = null;
 
+    /** Note attribuee au vin (de 1 a 5 etoiles). */
     #[ORM\Column(type: Types::SMALLINT)]
     #[Assert\Range(min: 1, max: 5)]
     private int $rating = 5;
@@ -43,6 +47,7 @@ class Review
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
+    /** Indique si l'avis a ete valide par un administrateur. */
     #[ORM\Column]
     private bool $isApproved = false;
 
@@ -88,6 +93,7 @@ class Review
         return $this->rating;
     }
 
+    /** Definit la note en la bornant entre 1 et 5. */
     public function setRating(int $rating): static
     {
         $this->rating = max(1, min(5, $rating));
@@ -131,6 +137,7 @@ class Review
         return $this;
     }
 
+    /** Approuve l'avis pour publication sur le site. */
     public function approve(): void
     {
         $this->isApproved = true;

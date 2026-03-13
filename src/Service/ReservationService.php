@@ -11,6 +11,13 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
+/**
+ * Service de gestion des réservations de dégustations.
+ *
+ * Gère le pré-remplissage des formulaires, la création de réservations
+ * avec vérification des places disponibles via verrou pessimiste,
+ * et l'envoi de l'email de confirmation.
+ */
 class ReservationService
 {
     public function __construct(
@@ -43,6 +50,7 @@ class ReservationService
         $reservation->setSlot($slot);
 
         $error = null;
+        // Transaction avec verrou pessimiste pour empêcher la surréservation simultanée
         $this->em->wrapInTransaction(function () use ($reservation, $slot, &$error): void {
             // Verrou pessimiste : empêche la surréservation simultanée
             $this->em->lock($slot, LockMode::PESSIMISTIC_WRITE);
@@ -67,6 +75,7 @@ class ReservationService
             $this->em->persist($reservation);
         });
 
+        // Envoi de l'email de confirmation après la transaction (non bloquant)
         if ($error === null) {
             try {
                 $this->emailService->sendReservationConfirmation($reservation);

@@ -13,6 +13,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gestion du panier d'achat (ajout, modification, suppression, vidage).
+ *
+ * Routes : /panier, /panier/ajouter/{id}, /panier/modifier/{id},
+ *          /panier/supprimer/{id}, /panier/vider.
+ */
 #[Route('/panier')]
 class CartController extends AbstractController
 {
@@ -20,6 +26,7 @@ class CartController extends AbstractController
         private readonly CartService $cartService,
     ) {}
 
+    /** Affichage du contenu du panier. */
     #[Route('', name: 'app_cart_index')]
     public function index(): Response
     {

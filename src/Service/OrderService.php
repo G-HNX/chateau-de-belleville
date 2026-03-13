@@ -13,6 +13,13 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Service de gestion des commandes.
+ *
+ * Orchestre la transformation d'un panier en commande : vérification du stock,
+ * création des articles de commande, décrémentation du stock avec verrou pessimiste,
+ * et suppression du panier anonyme après commande.
+ */
 class OrderService
 {
     public function __construct(
@@ -36,6 +43,9 @@ class OrderService
         return null;
     }
 
+    /**
+     * Persiste les modifications d'une commande existante en base de données.
+     */
     public function save(Order $order): void
     {
         $this->em->flush();
@@ -54,6 +64,7 @@ class OrderService
     ): Order {
         $order = new Order();
 
+        // Remplissage des informations client depuis le compte utilisateur ou le formulaire
         if ($user) {
             $order->setCustomer($user);
             $order->setCustomerEmail($user->getEmail());
@@ -72,6 +83,7 @@ class OrderService
         $order->setCustomerNotes($formData['notes']);
         $order->setCustomerBirthDate($birthDate);
 
+        // Transaction avec verrous pessimistes pour garantir la cohérence du stock
         $this->em->wrapInTransaction(function () use ($cart, $order): void {
             foreach ($cart->getItems() as $cartItem) {
                 // Lock pessimiste : empêche une double-vente si deux commandes sont simultanées
@@ -96,6 +108,7 @@ class OrderService
             }
         });
 
+        // Journalisation de la commande créée (email masqué en prod pour RGPD)
         $this->logger->info('Order created.', [
             'reference'      => $order->getReference(),
             'customer_email' => $order->getCustomerEmail(),

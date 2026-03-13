@@ -1,3 +1,14 @@
+/**
+ * Contrôleur Stimulus : Bouton favori (coeur)
+ *
+ * Permet d'ajouter ou retirer un vin des favoris de l'utilisateur
+ * via un appel fetch POST. Gère la redirection vers la connexion si
+ * l'utilisateur n'est pas authentifié (401), et peut retirer la carte
+ * du vin de la page favoris avec une animation de fondu.
+ *
+ * Values : wineId, active, token (CSRF), removeCard
+ */
+
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
@@ -8,6 +19,7 @@ export default class extends Controller {
         removeCard: { type: Boolean, default: false },
     };
 
+    /** Bascule l'état favori via un appel fetch POST */
     async toggle() {
         const formData = new FormData();
         formData.append('_token', this.tokenValue);
@@ -19,6 +31,7 @@ export default class extends Controller {
                 body: formData,
             });
 
+            // Rediriger vers la page de connexion si non authentifié
             if (response.status === 401) {
                 window.location.href = '/connexion';
                 return;
@@ -31,6 +44,7 @@ export default class extends Controller {
                 this.updateAppearance();
                 this.showFlash('success', data.message);
 
+                // Sur la page favoris, retirer la carte avec un fondu si le vin est retiré
                 if (this.removeCardValue && !data.isFavorite) {
                     const card = this.element.closest('[data-favorite-card]');
                     if (card) {
@@ -47,6 +61,7 @@ export default class extends Controller {
         }
     }
 
+    /** Met à jour l'apparence du bouton (coeur plein/vide) et le title */
     updateAppearance() {
         const heartFull = this.element.querySelector('[data-heart-full]');
         const heartEmpty = this.element.querySelector('[data-heart-empty]');
@@ -57,6 +72,7 @@ export default class extends Controller {
         this.element.title = this.activeValue ? 'Retirer de mes vins' : 'Ajouter à mes vins';
     }
 
+    /** Crée et affiche un message flash temporaire */
     showFlash(type, message) {
         let container = document.querySelector('.flash-container');
         if (!container) {
@@ -84,6 +100,7 @@ export default class extends Controller {
 
         container.appendChild(flash);
 
+        // Disparition automatique après 5 secondes
         setTimeout(() => {
             if (flash.parentNode) {
                 flash.classList.add('flash-hiding');

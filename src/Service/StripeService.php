@@ -11,17 +11,28 @@ use Stripe\PaymentIntent;
 use Stripe\Stripe;
 use Stripe\Webhook;
 
+/**
+ * Service d'intégration avec l'API Stripe pour les paiements.
+ *
+ * Gère la création et la récupération des PaymentIntents,
+ * ainsi que la vérification des signatures des webhooks Stripe
+ * pour sécuriser le traitement des événements de paiement.
+ */
 class StripeService
 {
     public function __construct(
         private readonly string $stripeSecretKey,
         private readonly string $stripeWebhookSecret,
     ) {
+        // Initialisation de la clé API Stripe au niveau global du SDK
         Stripe::setApiKey($this->stripeSecretKey);
     }
 
     /**
-     * @throws ApiErrorException
+     * Crée un PaymentIntent Stripe pour une commande donnée.
+     * Le montant est en centimes, la devise est l'euro.
+     *
+     * @throws ApiErrorException En cas d'erreur de communication avec Stripe
      */
     public function createPaymentIntent(Order $order): PaymentIntent
     {
@@ -38,7 +49,10 @@ class StripeService
     }
 
     /**
-     * @throws ApiErrorException
+     * Récupère un PaymentIntent existant par son identifiant Stripe.
+     * Utilisé pour réutiliser un PI existant au lieu d'en créer un nouveau.
+     *
+     * @throws ApiErrorException En cas d'erreur de communication avec Stripe
      */
     public function retrievePaymentIntent(string $paymentIntentId): PaymentIntent
     {
@@ -46,7 +60,13 @@ class StripeService
     }
 
     /**
-     * @throws SignatureVerificationException
+     * Vérifie la signature d'un webhook Stripe et reconstruit l'événement.
+     * Protège contre les requêtes forgées en validant la signature HMAC.
+     *
+     * @param string $payload   Le corps brut de la requête webhook
+     * @param string $sigHeader L'en-tête Stripe-Signature de la requête
+     *
+     * @throws SignatureVerificationException Si la signature est invalide
      */
     public function constructWebhookEvent(string $payload, string $sigHeader): \Stripe\Event
     {

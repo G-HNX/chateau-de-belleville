@@ -28,6 +28,7 @@ class SecurityAuditSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** Journalise un échec de connexion (IP + email masqué pour la RGPD). */
     public function onLoginFailure(LoginFailureEvent $event): void
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -41,6 +42,7 @@ class SecurityAuditSubscriber implements EventSubscriberInterface
         ]);
     }
 
+    /** Journalise une connexion réussie (IP + identifiant utilisateur). */
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
         $request = $this->requestStack->getCurrentRequest();

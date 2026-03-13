@@ -18,6 +18,12 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * Fixtures de données de démonstration pour l'environnement de développement.
+ * Charge un jeu complet : cépages, accords mets-vins, appellations,
+ * catégories, 6 vins, 3 formules de dégustation avec créneaux,
+ * 3 utilisateurs (admin, client, reviewer), avis et favoris.
+ */
 class AppFixtures extends Fixture
 {
     public function __construct(
@@ -25,33 +31,34 @@ class AppFixtures extends Fixture
     ) {
     }
 
+    /** Charge toutes les données de démonstration dans la base. */
     public function load(ObjectManager $manager): void
     {
-        // === GRAPE VARIETIES ===
+        // === CEPAGES ===
         $grapeVarieties = $this->createGrapeVarieties($manager);
 
-        // === FOOD PAIRINGS ===
+        // === ACCORDS METS-VINS ===
         $foodPairings = $this->createFoodPairings($manager);
 
-        // === APPELLATIONS ===
+        // === APPELLATIONS VITICOLES ===
         $appellations = $this->createAppellations($manager);
 
-        // === WINE CATEGORIES ===
+        // === CATEGORIES DE VINS ===
         $categories = $this->createCategories($manager);
 
-        // === WINES ===
+        // === VINS DU CATALOGUE ===
         $wines = $this->createWines($manager, $categories, $appellations, $grapeVarieties, $foodPairings);
 
-        // === TASTINGS ===
+        // === DEGUSTATIONS ===
         $this->createTastings($manager);
 
-        // === USERS ===
+        // === UTILISATEURS ===
         $users = $this->createUsers($manager);
 
-        // === REVIEWS ===
+        // === AVIS CLIENTS ===
         $this->createReviews($manager, $wines, $users);
 
-        // === FAVORITES ===
+        // === VINS FAVORIS ===
         $this->createFavorites($wines, $users);
 
         $manager->flush();
@@ -60,6 +67,7 @@ class AppFixtures extends Fixture
     /**
      * @return array<string, GrapeVariety>
      */
+    /** Crée les 4 cépages ligériens (Chenin Blanc, Cabernet Franc, etc.). */
     private function createGrapeVarieties(ObjectManager $manager): array
     {
         $varieties = [
@@ -97,6 +105,7 @@ class AppFixtures extends Fixture
     /**
      * @return array<string, FoodPairing>
      */
+    /** Crée les 16 accords mets-vins avec leur icône emoji. */
     private function createFoodPairings(ObjectManager $manager): array
     {
         $pairings = [
@@ -134,6 +143,7 @@ class AppFixtures extends Fixture
     /**
      * @return array<string, Appellation>
      */
+    /** Crée les 5 appellations du Val de Loire (Anjou, Rosé de Loire, etc.). */
     private function createAppellations(ObjectManager $manager): array
     {
         $appellations = [
@@ -181,6 +191,7 @@ class AppFixtures extends Fixture
     /**
      * @return array<string, WineCategory>
      */
+    /** Crée les 4 catégories de vins (blancs, rosés, rouges, effervescents). */
     private function createCategories(ObjectManager $manager): array
     {
         $categories = [
@@ -212,6 +223,7 @@ class AppFixtures extends Fixture
      * @param array<string, FoodPairing> $foodPairings
      * @return array<string, Wine>
      */
+    /** Crée les 6 vins du catalogue avec images, cépages et accords mets-vins. */
     private function createWines(
         ObjectManager $manager,
         array $categories,
@@ -370,7 +382,7 @@ class AppFixtures extends Fixture
                 $wine->addFoodPairing($foodPairings[$pairingSlug]);
             }
 
-            // Create wine image
+            // Image principale du vin
             $image = new WineImage();
             $image->setFilename($wineData['image']);
             $image->setAltText($wineData['name'] . ' - Château de Belleville');
@@ -386,6 +398,7 @@ class AppFixtures extends Fixture
         return $wineEntities;
     }
 
+    /** Crée les 3 formules de dégustation avec créneaux sur 30 jours (sauf dimanche). */
     private function createTastings(ObjectManager $manager): void
     {
         $tastings = [
@@ -429,17 +442,17 @@ class AppFixtures extends Fixture
             $tasting->setIncludedItems($tastingData['includedItems']);
             $tasting->setIsActive(true);
 
-            // Create sample slots for the next 30 days
+            // Créneaux de dégustation sur les 30 prochains jours
             $startDate = new \DateTime('tomorrow');
             for ($i = 0; $i < 30; $i++) {
                 $date = (clone $startDate)->modify("+{$i} days");
 
-                // Skip Sundays
+                // Pas de dégustation le dimanche
                 if ($date->format('N') === '7') {
                     continue;
                 }
 
-                // Morning slot at 10:00
+                // Créneau du matin à 10h00
                 $morningSlot = new TastingSlot();
                 $morningSlot->setTasting($tasting);
                 $morningSlot->setDate($date);
@@ -448,7 +461,7 @@ class AppFixtures extends Fixture
                 $morningSlot->setIsAvailable(true);
                 $manager->persist($morningSlot);
 
-                // Afternoon slot at 15:00
+                // Créneau de l'après-midi à 15h00
                 $afternoonSlot = new TastingSlot();
                 $afternoonSlot->setTasting($tasting);
                 $afternoonSlot->setDate($date);
@@ -465,9 +478,10 @@ class AppFixtures extends Fixture
     /**
      * @return array<string, User>
      */
+    /** Crée les 3 utilisateurs de test (admin, client, reviewer). */
     private function createUsers(ObjectManager $manager): array
     {
-        // Admin user
+        // Administrateur du domaine
         $admin = new User();
         $admin->setEmail('gabriel.heneaux@gmail.com');
         $admin->setFirstName('Admin');
@@ -478,7 +492,7 @@ class AppFixtures extends Fixture
         $admin->setTwoFactorEnabled(true);
         $manager->persist($admin);
 
-        // Test customer
+        // Client de test
         $customer = new User();
         $customer->setEmail('client@example.com');
         $customer->setFirstName('Jean');
@@ -489,7 +503,7 @@ class AppFixtures extends Fixture
         $customer->setIsVerified(true);
         $manager->persist($customer);
 
-        // Additional reviewer
+        // Utilisateur supplémentaire pour les avis
         $reviewer = new User();
         $reviewer->setEmail('marie@example.com');
         $reviewer->setFirstName('Marie');
@@ -510,6 +524,7 @@ class AppFixtures extends Fixture
      * @param array<string, Wine> $wines
      * @param array<string, User> $users
      */
+    /** Crée les avis clients sur les vins (approuvés et en attente). */
     private function createReviews(ObjectManager $manager, array $wines, array $users): void
     {
         $reviewsData = [
@@ -608,6 +623,7 @@ class AppFixtures extends Fixture
      * @param array<string, Wine> $wines
      * @param array<string, User> $users
      */
+    /** Ajoute des vins favoris au client de test. */
     private function createFavorites(array $wines, array $users): void
     {
         $users['client']->addFavoriteWine($wines['escapade']);

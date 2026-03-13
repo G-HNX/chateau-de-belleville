@@ -41,6 +41,7 @@ class Wine
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
+    /** Millesime (annee de recolte), nullable pour les vins non millesimes. */
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     #[Assert\Range(min: 1900, max: 2100)]
     private ?int $vintage = null;
@@ -62,12 +63,15 @@ class Wine
     #[Assert\PositiveOrZero]
     private int $stock = 0;
 
+    /** Degre d'alcool (ex: "12.5"). */
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1, nullable: true)]
     private ?string $alcoholDegree = null;
 
+    /** Temperature de service recommandee (ex: "8-10°C"). */
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $servingTemperature = null;
 
+    /** Potentiel de garde (ex: "3-5 ans"). */
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $agingPotential = null;
 
@@ -76,18 +80,23 @@ class Wine
     #[ORM\JoinTable(name: 'wine_food_pairing')]
     private Collection $foodPairings;
 
+    /** Notes de degustation (robe, nez, bouche). */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $tastingNotes = null;
 
+    /** Description du terroir d'origine. */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $terroir = null;
 
+    /** Volume de la bouteille en centilitres (75 cl par defaut). */
     #[ORM\Column(type: Types::SMALLINT)]
     private int $volumeCl = 75;
 
+    /** Indique si le vin est visible dans le catalogue. */
     #[ORM\Column]
     private bool $isActive = true;
 
+    /** Indique si le vin est mis en avant sur la page d'accueil. */
     #[ORM\Column]
     private bool $isFeatured = false;
 
@@ -203,6 +212,7 @@ class Wine
         return $this->priceInCents;
     }
 
+    /** Definit le prix en centimes avec garde contre les valeurs negatives. */
     public function setPriceInCents(int $priceInCents): static
     {
         if ($priceInCents < 0) {
@@ -213,11 +223,13 @@ class Wine
         return $this;
     }
 
+    /** Convertit le prix en euros depuis les centimes. */
     public function getPrice(): float
     {
         return $this->priceInCents / 100;
     }
 
+    /** Definit le prix en euros (converti en centimes) avec garde contre les valeurs negatives. */
     public function setPrice(float $price): static
     {
         if ($price < 0) {
@@ -228,6 +240,7 @@ class Wine
         return $this;
     }
 
+    /** Retourne le prix formate pour l'affichage (ex: "8,50 EUR"). */
     public function getFormattedPrice(): string
     {
         return number_format($this->getPrice(), 2, ',', ' ') . ' EUR';
@@ -245,16 +258,19 @@ class Wine
         return $this;
     }
 
+    /** Verifie si le vin est en stock. */
     public function isInStock(): bool
     {
         return $this->stock > 0;
     }
 
+    /** Verifie si le stock est suffisant pour la quantite demandee. */
     public function hasEnoughStock(int $quantity): bool
     {
         return $this->stock >= $quantity;
     }
 
+    /** Decremente le stock (sans descendre en dessous de zero). */
     public function decrementStock(int $quantity = 1): static
     {
         $this->stock = max(0, $this->stock - $quantity);
@@ -262,6 +278,7 @@ class Wine
         return $this;
     }
 
+    /** Incremente le stock (ex: annulation de commande). */
     public function incrementStock(int $quantity = 1): static
     {
         $this->stock += $quantity;
@@ -327,6 +344,7 @@ class Wine
         return $this;
     }
 
+    /** Retourne les accords mets-vins sous forme de chaine separee par des virgules. */
     public function getFoodPairingsAsString(): string
     {
         return implode(', ', $this->foodPairings->map(
@@ -450,6 +468,7 @@ class Wine
         return $this;
     }
 
+    /** Retourne les cepages sous forme de chaine separee par des virgules. */
     public function getGrapeVarietiesAsString(): string
     {
         return implode(', ', $this->grapeVarieties->map(
@@ -484,6 +503,7 @@ class Wine
         return $this;
     }
 
+    /** Retourne l'image principale du vin, ou la premiere image disponible. */
     public function getMainImage(): ?WineImage
     {
         foreach ($this->images as $image) {
@@ -501,6 +521,7 @@ class Wine
         return $this->reviews;
     }
 
+    /** Calcule la note moyenne des avis approuves (null si aucun avis). */
     public function getAverageRating(): ?float
     {
         $approvedReviews = $this->reviews->filter(fn (Review $r) => $r->isApproved());
@@ -517,11 +538,13 @@ class Wine
         return round($total / $approvedReviews->count(), 1);
     }
 
+    /** Verifie si le vin est disponible a la vente (actif et en stock). */
     public function isAvailable(): bool
     {
         return $this->isActive && $this->stock > 0;
     }
 
+    /** Genere le slug et initialise les dates lors de la creation. */
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
@@ -535,6 +558,7 @@ class Wine
         $this->updatedAt = new \DateTime();
     }
 
+    /** Met a jour la date de modification. */
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
