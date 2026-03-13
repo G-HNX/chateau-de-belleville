@@ -1,0 +1,126 @@
+{
+    "app": {
+        "path": "\/assets\/app-xz2kYPe.js",
+        "type": "js"
+    },
+    "\/assets\/styles\/app.css": {
+        "path": "\/assets\/styles\/app-MW3UyZn.css",
+        "type": "css"
+    },
+    "\/assets\/stimulus_bootstrap.js": {
+        "path": "\/assets\/stimulus_bootstrap-ZJJIDNw.js",
+        "type": "js"
+    },
+    "\/assets\/@symfony\/stimulus-bundle\/controllers.js": {
+        "path": "\/assets\/@symfony\/stimulus-bundle\/controllers-7kUGsob.js",
+        "type": "js"
+    },
+    "\/assets\/@symfony\/ux-live-component\/live_controller.js": {
+        "path": "\/assets\/@symfony\/ux-live-component\/live_controller-kHcNpEc.js",
+        "type": "js"
+    },
+    "\/assets\/@symfony\/ux-live-component\/live.min.css": {
+        "path": "\/assets\/@symfony\/ux-live-component\/live.min-FOtfHpc.css",
+        "type": "css"
+    },
+    "\/assets\/@symfony\/ux-turbo\/turbo_controller.js": {
+        "path": "\/assets\/@symfony\/ux-turbo\/turbo_controller-8wQNi2p.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/carousel_controller.js": {
+        "path": "\/assets\/controllers\/carousel_controller-2SLb-J6.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/cart_add_controller.js": {
+        "path": "\/assets\/controllers\/cart_add_controller-bU8qtB0.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/cookie_consent_controller.js": {
+        "path": "\/assets\/controllers\/cookie_consent_controller-jz_JaFA.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/counter_controller.js": {
+        "path": "\/assets\/controllers\/counter_controller-0SmtbTK.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/expand_controller.js": {
+        "path": "\/assets\/controllers\/expand_controller-k8c5fy_.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/favorite_toggle_controller.js": {
+        "path": "\/assets\/controllers\/favorite_toggle_controller-17ZVpGH.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/flash_controller.js": {
+        "path": "\/assets\/controllers\/flash_controller-I2UH0D2.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/map_controller.js": {
+        "path": "\/assets\/controllers\/map_controller-Yygfy6f.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/mobile_menu_controller.js": {
+        "path": "\/assets\/controllers\/mobile_menu_controller-cxYoXZI.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/parallax_controller.js": {
+        "path": "\/assets\/controllers\/parallax_controller-jdQG6Ju.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/password_controller.js": {
+        "path": "\/assets\/controllers\/password_controller-x6IURMH.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/quantity_controller.js": {
+        "path": "\/assets\/controllers\/quantity_controller-CxlJ0qs.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/same_address_controller.js": {
+        "path": "\/assets\/controllers\/same_address_controller-3a_MK-E.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/sommelier_controller.js": {
+        "path": "\/assets\/controllers\/sommelier_controller-IHOPq20.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/star_rating_controller.js": {
+        "path": "\/assets\/controllers\/star_rating_controller-JJmrMVn.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/stripe_payment_controller.js": {
+        "path": "\/assets\/controllers\/stripe_payment_controller-zDQxVPS.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/tasting_calendar_controller.js": {
+        "path": "\/assets\/controllers\/tasting_calendar_controller-tJaP4nc.js",
+        "type": "js"
+    },
+    "\/assets\/controllers\/csrf_protection_controller.js": {
+        "path": "\/assets\/controllers\/csrf_protection_controller-xsifGyW.js",
+        "type": "js"
+    },
+    "@hotwired\/stimulus": {
+        "path": "\/assets\/vendor\/@hotwired\/stimulus\/stimulus.index-S4zNcea.js",
+        "type": "js"
+    },
+    "@symfony\/stimulus-bundle": {
+        "path": "\/assets\/@symfony\/stimulus-bundle\/loader-V1GtHuK.js",
+        "type": "js"
+    },
+    "@symfony\/ux-live-component": {
+        "path": "\/assets\/@symfony\/ux-live-component\/live_controller-kHcNpEc.js",
+        "type": "js"
+    },
+    "@hotwired\/turbo": {
+        "path": "\/assets\/vendor\/@hotwired\/turbo\/turbo.index-pT15T6h.js",
+        "type": "js"
+    },
+    "leaflet": {
+        "path": "\/assets\/vendor\/leaflet\/leaflet.index-Y9-WLvo.js",
+        "type": "js"
+    },
+    "leaflet\/dist\/leaflet.min.css": {
+        "path": "\/assets\/vendor\/leaflet\/dist\/leaflet.min-YqA-lmN.css",
+        "type": "css"
+    }
+}
